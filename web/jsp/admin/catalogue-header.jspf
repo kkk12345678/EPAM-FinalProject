@@ -1,0 +1,8 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<div id="nav-catalogue">
+<nav>
+    <a href="${pageContext.request.contextPath}/admin/publishers"><fmt:message key="admin.nav.publishers"/></a> |
+    <a href="${pageContext.request.contextPath}/admin/categories"><fmt:message key="admin.nav.categories"/></a> |
+    <a href="${pageContext.request.contextPath}/admin/books"><fmt:message key="admin.nav.books"/></a>
+</nav>
+</div>

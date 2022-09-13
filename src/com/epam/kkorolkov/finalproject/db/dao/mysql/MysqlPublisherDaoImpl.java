@@ -1,0 +1,199 @@
+package com.epam.kkorolkov.finalproject.db.dao.mysql;
+
+import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
+import com.epam.kkorolkov.finalproject.db.entity.Publisher;
+import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.utils.DBUtils;
+
+import java.sql.*;
+import java.util.*;
+
+public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements PublisherDao {
+    @Override
+    public Optional<Publisher> get(Connection connection, int id) throws DBException {
+        Optional<Publisher> optional = Optional.empty();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.publishers.select.one"));
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Publisher publisher = new Publisher();
+                publisher.setId(id);
+                publisher.setTag(resultSet.getString("tag"));
+                publisher.setNames(new HashMap<>());
+                publisher.setDescriptions(new HashMap<>());
+                getPublisherDetails(connection, publisher);
+                optional = Optional.of(publisher);
+            }
+        } catch (SQLException e) {
+            LOGGER.info("Could not load publisher with id = " + id);
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+        return optional;
+    }
+
+    @Override
+    public List<Publisher> getAll(Connection connection) throws DBException {
+        List<Publisher> publishers = new ArrayList<>();
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.publishers.select.all"));
+            while (resultSet.next()) {
+                Publisher publisher = new Publisher();
+                publisher.setId(resultSet.getInt("id"));
+                publisher.setTag(resultSet.getString("tag"));
+                publisher.setNames(new HashMap<>());
+                publisher.setDescriptions(new HashMap<>());
+                getPublisherDetails(connection, publisher);
+                publishers.add(publisher);
+            }
+            LOGGER.info("All publishers were successfully loaded.");
+        } catch (SQLException e) {
+            LOGGER.info("Could not load publishers.");
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, statement);
+        }
+        return publishers;
+    }
+
+
+
+    @Override
+    public void update(Connection connection, Publisher publisher) throws DBException {
+        PreparedStatement preparedStatement = null;
+        try {
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(
+                    SQL_STATEMENTS.getProperty("mysql.publishers.update"));
+            preparedStatement.setInt(2, publisher.getId());
+            preparedStatement.setString(1, publisher.getTag());
+            preparedStatement.execute();
+            updatePublisherDetails(connection, publisher);
+            connection.commit();
+        } catch (SQLException e) {
+            LOGGER.info("Could not update publisher with id=" + publisher.getId());
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            DBUtils.release(preparedStatement);
+        }
+    }
+
+    private void updatePublisherDetails(Connection connection, Publisher publisher) throws SQLException {
+        try {
+            for (int languageId : publisher.getDescriptions().keySet()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.update"));
+                preparedStatement.setInt(3, publisher.getId());
+                preparedStatement.setInt(4, languageId);
+                preparedStatement.setString(1, publisher.getNames().get(languageId));
+                preparedStatement.setString(2, publisher.getDescriptions().get(languageId));
+                preparedStatement.execute();
+            }
+        } catch (SQLException e) {
+            connection.rollback();
+            LOGGER.error(e.getMessage());
+        } finally {
+            connection.setAutoCommit(true);
+        }
+    }
+
+    @Override
+    public void delete(Connection connection, int id) throws DBException {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.publishers.delete"));
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+            LOGGER.info(String.format("Publisher with id = %d successfully deleted.", id));
+        } catch (SQLException e) {
+            LOGGER.info("Could not delete publisher with id " + id);
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(preparedStatement);
+        }
+    }
+
+    @Override
+    public int insert(Connection connection, Publisher publisher) throws DBException {
+        int id;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(
+                    SQL_STATEMENTS.getProperty("mysql.publishers.insert"),
+                    Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, publisher.getTag());
+            preparedStatement.execute();
+            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet.next();
+            id = resultSet.getInt(1);
+            publisher.setId(id);
+            insertPublisherDetails(connection, publisher);
+        } catch (SQLException e) {
+            LOGGER.info("Could not insert publisher " + publisher.getTag());
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+        return id;
+    }
+
+    private void insertPublisherDetails(Connection connection, Publisher publisher) throws SQLException {
+        if (publisher.getId() != 0) {
+            try {
+                connection.setAutoCommit(false);
+                for (int languageId : publisher.getDescriptions().keySet()) {
+                    PreparedStatement preparedStatement = connection.prepareStatement(
+                            SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.insert"));
+                    preparedStatement.setInt(1, publisher.getId());
+                    preparedStatement.setInt(2, languageId);
+                    preparedStatement.setString(3, publisher.getNames().get(languageId));
+                    preparedStatement.setString(4, publisher.getDescriptions().get(languageId));
+                    preparedStatement.execute();
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                LOGGER.error(e.getMessage());
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        }
+    }
+
+    private void getPublisherDetails(Connection connection, Publisher publisher) throws DBException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.select"));
+            preparedStatement.setInt(1, publisher.getId());
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                publisher.getNames().put(resultSet.getInt("language_id"), resultSet.getString("name"));
+                publisher.getDescriptions().put(resultSet.getInt("language_id"), resultSet.getString("description"));
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            throw new DBException(e.getMessage(), e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+    }
+}

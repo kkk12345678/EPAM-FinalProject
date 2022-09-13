@@ -1,0 +1,136 @@
+header {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+table, th, td {
+    border: 1px solid;
+    padding: 5px;
+}
+
+.edit-label {
+    width: 120px;
+    margin-right: 10px;
+}
+
+table {
+    margin-top: 50px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+form {
+    width: 100%;
+}
+
+label {
+    color: #fff;
+    font-size: 1em;
+    justify-content: center;
+    display: flex;
+    margin: 30px;
+    cursor: pointer;
+}
+
+#content {
+    width: 800px;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+#locale,#nav {
+    padding: 10px;
+}
+
+#nav-catalogue {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+#users, #publishers, #categories, #form-edit, #books {
+    width: 800px;
+    display: flex;
+    justify-content: center;
+}
+
+#add-user, #add-publisher, #add-category, #add-book {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.row-control {
+    display: flex;
+    justify-content: space-between;
+}
+.row-center {
+    text-align: center;
+}
+.row-right {
+    text-align: right;
+}
+#image-input {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+#add-user-modal {
+    padding-top: 20px;
+    margin: auto;
+    display: none;
+    position: fixed;
+    width: 350px;
+    height: 500px;
+    background: darkgrey;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 5px 20px 50px #000;
+}
+
+#language-tabs {
+    display: flex;
+}
+
+.language-tab {
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    align-items: center;
+    border-color: grey;
+    border-width: 1px;
+}
+
+#input-tabs {
+    padding: 0 5px 5px 5px;
+    border: 1px solid grey;
+}
+
+.description-input, .name-input {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+#tag-input, #isbn-input, #date-input, #price-input, #quantity-input, #isbn-input, #category-input, #publisher-input {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.text-input {
+    width: 100%;
+}
+
+.input-group {
+    display: flex;
+    justify-content: space-between;
+}

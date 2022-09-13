@@ -1,0 +1,12 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<script>
+    const btnAdd = document.getElementById("add-publisher");
+    btnAdd.onclick = function () {
+        window.location.href = "./edit-publisher?id=0";
+    }
+
+    const btnsEdit = document.getElementsByClassName("edit-link");
+    for (let i = 0; i < btnsEdit.length; i++) {
+        btnsEdit[i].setAttribute("title", "<fmt:message key="admin.publishers.control.edit"/>")
+    }
+</script>
