@@ -13,6 +13,7 @@ import java.util.Properties;
 public class UserUtils {
     private static final String UTILS_PROPERTIES_FILE = "utils.properties";
     private static String salt;
+
     static {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try (InputStream utilsStream = classLoader.getResourceAsStream(UTILS_PROPERTIES_FILE)) {

@@ -14,6 +14,27 @@ import java.util.Optional;
 
 public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     @Override
+    public int count(Connection connection) throws DBException {
+        int c;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.books.select.count"));
+            resultSet.next();
+            c = resultSet.getInt(1);
+            LOGGER.info(String.format("There are %d books in the table.", c));
+        } catch (SQLException e) {
+            LOGGER.info("Could not count books.");
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, statement);
+        }
+        return c;
+    }
+
+    @Override
     public Optional<Book> get(Connection connection, int id) throws DBException {
         Optional<Book> optional = Optional.empty();
         PreparedStatement preparedStatement = null;
@@ -64,6 +85,39 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         return books;
     }
 
+    @Override
+    public List<Book> getAll(Connection connection, int limit, int page) throws DBException {
+        List<Book> books = new ArrayList<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.select.all.with.limit"));
+            preparedStatement.setInt(1, limit);
+            preparedStatement.setInt(2, (page - 1) * limit);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Book book = new Book();
+                setBook(connection, resultSet, book);
+                setBookDetails(connection, book);
+                books.add(book);
+            }
+            LOGGER.info(limit + " books were successfully loaded.");
+        } catch (SQLException e) {
+            LOGGER.info("Could not load books.");
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+        return books;
+    }
+
+    @Override
+    public List<Book> getAll(Connection connection, int limit, int page, int categoryId, int publisherId) throws DBException {
+        //TODO filtered select
+        return null;
+    }
+
     private void setBookDetails(Connection connection, Book book) throws SQLException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -102,15 +156,17 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     public void update(Connection connection, Book book) throws DBException {
         PreparedStatement preparedStatement = null;
         try {
-            connection.setAutoCommit(false);
             preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.update"));
-            preparedStatement.setInt(2, book.getId());
             preparedStatement.setString(1, book.getTag());
-
-
+            preparedStatement.setString(2, book.getIsbn());
+            preparedStatement.setInt(3, book.getQuantity());
+            preparedStatement.setInt(4, book.getPublisher().getId());
+            preparedStatement.setInt(5, book.getCategory().getId());
+            preparedStatement.setDouble(6, book.getPrice());
+            preparedStatement.setDate(7, book.getDate());
+            preparedStatement.setInt(8, book.getId());
             preparedStatement.execute();
             updateBooksDetails(connection, book);
-            connection.commit();
             LOGGER.info("Successfully updated book with id=" + book.getId());
         } catch (SQLException e) {
             LOGGER.info("Could not update book with id=" + book.getId());
@@ -127,6 +183,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     private void updateBooksDetails(Connection connection, Book book) throws SQLException {
+        connection.setAutoCommit(false);
         try {
             for (int languageId : book.getDescriptions().keySet()) {
                 PreparedStatement preparedStatement = connection.prepareStatement(
@@ -137,6 +194,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
                 preparedStatement.setString(2, book.getDescriptions().get(languageId));
                 preparedStatement.execute();
             }
+            connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             LOGGER.error(e.getMessage());

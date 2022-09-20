@@ -31,4 +31,22 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+
+    <tag>
+        <name>pages</name>
+        <tag-class>com.epam.kkorolkov.finalproject.tag.PagesTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+
+        <attribute>
+            <name>total</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+
+        <attribute>
+            <name>current</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 </taglib>

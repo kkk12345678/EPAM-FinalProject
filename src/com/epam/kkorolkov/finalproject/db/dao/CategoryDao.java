@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface CategoryDao {
     Optional<Category> get(Connection connection, int id) throws DBException;
+    Optional<Category> get(Connection connection, String tag) throws DBException;
     List<Category> getAll(Connection connection) throws DBException;
     void update(Connection connection, Category category) throws DBException;
     void delete(Connection connection, int id) throws DBException;

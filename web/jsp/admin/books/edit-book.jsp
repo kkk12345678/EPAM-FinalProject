@@ -33,7 +33,7 @@
             <span id="category-input">
                 <p class="edit-label"><fmt:message key="admin.books.edit.category"/>:</p>
                 <select name="category">
-                    <m:select-category category="${requestScope.book.category}"><fmt:message key="admin.books.edit.choose.publisher"/></m:select-category>
+                    <m:select-category category="${requestScope.book.category}"><fmt:message key="admin.books.edit.choose.category"/></m:select-category>
                 </select>
             </span>
             <span id="publisher-input">

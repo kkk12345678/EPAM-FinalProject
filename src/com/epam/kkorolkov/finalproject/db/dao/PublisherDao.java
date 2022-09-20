@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface PublisherDao {
     Optional<Publisher> get(Connection connection, int id) throws DBException;
+    Optional<Publisher> get(Connection connection, String tag) throws DBException;
     List<Publisher> getAll(Connection connection) throws DBException;
     void update(Connection connection, Publisher publisher) throws DBException;
     void delete(Connection connection, int id) throws DBException;

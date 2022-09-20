@@ -41,6 +41,34 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
         return optional;
     }
 
+    @Override
+    public Optional<Category> get(Connection connection, String tag) throws DBException {
+        Optional<Category> optional = Optional.empty();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.categories.select.one.by.tag"));
+            preparedStatement.setString(1, tag);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Category category = new Category();
+                category.setId(resultSet.getInt("id"));
+                category.setTag(tag);
+                category.setNames(new HashMap<>());
+                category.setDescriptions(new HashMap<>());
+                getCategoryDetails(connection, category);
+                optional = Optional.of(category);
+            }
+        } catch (SQLException e) {
+            LOGGER.info("Could not load category with tag = " + tag);
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+        return optional;
+    }
+
     private void getCategoryDetails(Connection connection, Category category) throws DBException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -92,32 +120,28 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
     public void update(Connection connection, Category category) throws DBException {
         PreparedStatement preparedStatement = null;
         try {
-            connection.setAutoCommit(false);
             preparedStatement = connection.prepareStatement(
                     SQL_STATEMENTS.getProperty("mysql.categories.update"));
             preparedStatement.setInt(2, category.getId());
             preparedStatement.setString(1, category.getTag());
             preparedStatement.execute();
             updateCategoryDetails(connection, category);
-            connection.commit();
+            LOGGER.info(String.format("Category with id=%d successfully updated.", category.getId()));
         } catch (SQLException e) {
             LOGGER.info("Could not update category with id=" + category.getId());
             LOGGER.error(e.getMessage());
             throw new DBException(e);
         } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
             DBUtils.release(preparedStatement);
         }
     }
 
     private void updateCategoryDetails(Connection connection, Category category) throws SQLException {
+        connection.setAutoCommit(false);
+        PreparedStatement preparedStatement = null;
         try {
             for (int languageId : category.getDescriptions().keySet()) {
-                PreparedStatement preparedStatement = connection.prepareStatement(
+                preparedStatement = connection.prepareStatement(
                         SQL_STATEMENTS.getProperty("mysql.categories.descriptions.update"));
                 preparedStatement.setInt(3, category.getId());
                 preparedStatement.setInt(4, languageId);
@@ -125,10 +149,13 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 preparedStatement.setString(2, category.getDescriptions().get(languageId));
                 preparedStatement.execute();
             }
+            connection.commit();
+            LOGGER.info(String.format("Category details with id=%d successfully updated.", category.getId()));
         } catch (SQLException e) {
             connection.rollback();
             LOGGER.error(e.getMessage());
         } finally {
+            DBUtils.release(preparedStatement);
             connection.setAutoCommit(true);
         }
     }
@@ -172,6 +199,7 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 LOGGER.error(e.getMessage());
                 throw new DBException(e);
             }
+            LOGGER.info(String.format("Category with id = %d successfully inserted" , id));
         } catch (SQLException e) {
             LOGGER.info("Could not insert category " + category.getTag());
             LOGGER.error(e.getMessage());

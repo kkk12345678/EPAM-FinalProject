@@ -43,10 +43,10 @@ public class OneConnectionDataSource implements DataSource {
         if (connection != null) {
             try {
                 connection.close();
+                LOGGER.info("Connection closed.");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        LOGGER.info("Connection closed.");
     }
 }

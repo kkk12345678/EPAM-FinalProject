@@ -4,9 +4,6 @@
            xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 		  http://java.sun.com/xml/ns/javaee/web-app_4_0.xsd"
            version="2.5">
-    <welcome-file-list>
-        <welcome-file>welcome.jsp</welcome-file>
-    </welcome-file-list>
 
     <error-page>
         <error-code>404</error-code>
@@ -28,6 +25,15 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>WelcomeFilter</filter-name>
+        <filter-class>com.epam.kkorolkov.finalproject.filter.WelcomeFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>WelcomeFilter</filter-name>
+        <url-pattern>/</url-pattern>
+    </filter-mapping>
 
 
     <jsp-config>

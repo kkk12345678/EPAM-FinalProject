@@ -38,6 +38,34 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
     }
 
     @Override
+    public Optional<Publisher> get(Connection connection, String tag) throws DBException {
+        Optional<Publisher> optional = Optional.empty();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.publishers.select.one.by.tag"));
+            preparedStatement.setString(1, tag);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Publisher publisher = new Publisher();
+                publisher.setId(resultSet.getInt("id"));
+                publisher.setTag(tag);
+                publisher.setNames(new HashMap<>());
+                publisher.setDescriptions(new HashMap<>());
+                getPublisherDetails(connection, publisher);
+                optional = Optional.of(publisher);
+            }
+        } catch (SQLException e) {
+            LOGGER.info("Could not load publisher with tag = " + tag);
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+        return optional;
+    }
+
+    @Override
     public List<Publisher> getAll(Connection connection) throws DBException {
         List<Publisher> publishers = new ArrayList<>();
         Statement statement = null;
@@ -65,38 +93,31 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         return publishers;
     }
 
-
-
     @Override
     public void update(Connection connection, Publisher publisher) throws DBException {
         PreparedStatement preparedStatement = null;
         try {
-            connection.setAutoCommit(false);
             preparedStatement = connection.prepareStatement(
                     SQL_STATEMENTS.getProperty("mysql.publishers.update"));
             preparedStatement.setInt(2, publisher.getId());
             preparedStatement.setString(1, publisher.getTag());
             preparedStatement.execute();
             updatePublisherDetails(connection, publisher);
-            connection.commit();
         } catch (SQLException e) {
             LOGGER.info("Could not update publisher with id=" + publisher.getId());
             LOGGER.error(e.getMessage());
             throw new DBException(e);
         } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
             DBUtils.release(preparedStatement);
         }
     }
 
     private void updatePublisherDetails(Connection connection, Publisher publisher) throws SQLException {
+        PreparedStatement preparedStatement = null;
         try {
+            connection.setAutoCommit(false);
             for (int languageId : publisher.getDescriptions().keySet()) {
-                PreparedStatement preparedStatement = connection.prepareStatement(
+                preparedStatement = connection.prepareStatement(
                         SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.update"));
                 preparedStatement.setInt(3, publisher.getId());
                 preparedStatement.setInt(4, languageId);
@@ -107,7 +128,9 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         } catch (SQLException e) {
             connection.rollback();
             LOGGER.error(e.getMessage());
+            throw new SQLException(e);
         } finally {
+            DBUtils.release(preparedStatement);
             connection.setAutoCommit(true);
         }
     }
@@ -157,10 +180,11 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
 
     private void insertPublisherDetails(Connection connection, Publisher publisher) throws SQLException {
         if (publisher.getId() != 0) {
+            PreparedStatement preparedStatement = null;
             try {
                 connection.setAutoCommit(false);
                 for (int languageId : publisher.getDescriptions().keySet()) {
-                    PreparedStatement preparedStatement = connection.prepareStatement(
+                    preparedStatement = connection.prepareStatement(
                             SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.insert"));
                     preparedStatement.setInt(1, publisher.getId());
                     preparedStatement.setInt(2, languageId);
@@ -174,6 +198,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
                 LOGGER.error(e.getMessage());
             } finally {
                 connection.setAutoCommit(true);
+                DBUtils.release(preparedStatement);
             }
         }
     }

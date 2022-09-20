@@ -1,11 +1,42 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="java.text.DecimalFormat" %>
 <%@ include file="../admin-header.jspf"%>
 <%@ include file="../catalogue-header.jspf"%>
 
-
-
 <div id="content">
+    <form action="${pageContext.request.contextPath}/admin/books" method="get">
+        <div id="filter">
+            <div class="filter-group">
+                <label>Tag:
+                    <input name="tag" type="text">
+                </label>
+                <label>ISBN:
+                    <input name="isbn" type="text">
+                </label>
+            </div>
+            <div class="filter-group">
+                <label><fmt:message key="admin.books.edit.category"/>
+                    <select name="category">
+                        <option selected disabled><fmt:message key="admin.books.edit.choose.category"/></option>
+                        <c:forEach items="${requestScope.categories}" var="category">
+                        <option value="${category.id}">${category.tag}</option>
+                        </c:forEach>
+                    </select>
+                </label>
+                <label><fmt:message key="admin.books.edit.publisher"/>
+                    <select name="publisher">
+                        <option selected disabled><fmt:message key="admin.books.edit.choose.publisher"/></option>
+                        <c:forEach items="${requestScope.publishers}" var="publisher">
+                        <option value="${publisher.id}">${publisher.tag}</option>
+                        </c:forEach>
+                    </select>
+                </label>
+            </div>
+            <input type="submit" class="control-button" value="<fmt:message key="admin.books.button.filter"/>">
+        </div>
+    </form>
+    <div id="pages">
+        <m:pages current="${requestScope.currentPage}" total="${requestScope.totalPages}"/>
+    </div>
     <div id="books">
         <table>
             <tbody>
@@ -24,16 +55,17 @@
                 <td class="row-center"><img src="${pageContext.request.contextPath}/static/img/product/${book.isbn}.jpg" width="40px" alt="${book.tag}"></td>
                 <td>${book.tag}</td>
                 <td>${book.isbn}</td>
-                <td class="row-right">${book.price}</td>
+                <td class="row-right"><fmt:formatNumber value="${book.price}" minFractionDigits = "2" pattern="### ###.##"/></td>
                 <td class="row-center">${book.quantity}</td>
                 <td>
                     <div class="row-control">
                         <a class="edit-link" href="${pageContext.request.contextPath}/admin/edit-book?id=${book.id}">
                             <img class="edit-img" src="${pageContext.request.contextPath}/static/img/admin/edit.png" alt="<fmt:message key="admin.books.control.edit"/>">
                         </a>
-                        <a class="delete-link" href="${pageContext.request.contextPath}/admin/delete-book?id=${book.id}">
-                           <img class="delete-img" src="${pageContext.request.contextPath}/static/img/admin/delete.png" alt="<fmt:message key="admin.books.control.delete"/>">
-                        </a>
+                        <form id="delete${book.id}" method="post" action="${pageContext.request.contextPath}/admin/delete-book">
+                            <input type="hidden" name="id" value="${book.id}">
+                            <img onclick="send('delete', ${book.id}, '<fmt:message key="admin.books.confirm.delete"/>')" class="control-img" src="${pageContext.request.contextPath}/static/img/admin/delete.png" alt="<fmt:message key="admin.books.control.delete"/>" title="<fmt:message key="admin.books.control.delete"/>">
+                        </form>
                     </div>
                 </td>
             </tr>
@@ -48,6 +80,13 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div id="import-csv">
+        <h3><fmt:message key="admin.books.control.import"/></h3>
+        <form action="${pageContext.request.contextPath}/admin/import-books" method="post" enctype="multipart/form-data">
+            <input type="file" accept=".csv" name="file" required id="file">
+            <input type="submit" class="control-button" value="<fmt:message key="admin.books.button.import"/>">
+        </form>
     </div>
 </div>
 
