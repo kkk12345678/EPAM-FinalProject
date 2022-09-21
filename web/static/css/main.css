@@ -5,6 +5,23 @@
 form {
     margin-block-end: 0;
 }
+
+img + p {
+    margin-left: 10px;
+}
+
+span + span {
+    margin-left: 100px;
+}
+
+img + input {
+    margin-left: 50px;
+}
+
+.control-img {
+    cursor: pointer;
+}
+
 .control-button {
     width: 210px;
     height: 40px;
@@ -36,20 +53,3 @@ form {
     outline: none;
     border-radius: 5px;
 }
-
-img + p {
-    margin-left: 10px;
-}
-
-span + span {
-    margin-left: 100px;
-}
-
-img + input {
-    margin-left: 50px;
-}
-
-.control-img {
-    cursor: pointer;
-}
-

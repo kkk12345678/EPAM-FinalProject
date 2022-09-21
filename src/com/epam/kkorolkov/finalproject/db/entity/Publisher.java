@@ -3,6 +3,7 @@ package com.epam.kkorolkov.finalproject.db.entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Publisher implements Serializable {
     private int id;
@@ -52,12 +53,18 @@ public class Publisher implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "Publisher{" +
-                "id=" + id +
-                ", tag='" + tag + '\'' +
-                ", names=" + names +
-                ", descriptions=" + descriptions +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Publisher)) return false;
+        Publisher publisher = (Publisher) o;
+        return id == publisher.id &&
+                tag.equals(publisher.tag) &&
+                names.equals(publisher.names) &&
+                Objects.equals(descriptions, publisher.descriptions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, tag, names, descriptions);
     }
 }

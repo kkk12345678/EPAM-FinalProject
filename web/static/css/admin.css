@@ -24,16 +24,7 @@ table {
 form {
     width: 100%;
 }
-/*
-label {
-    color: #fff;
-    font-size: 1em;
-    justify-content: center;
-    display: flex;
-    margin: 30px;
-    cursor: pointer;
-}
-*/
+
 #content {
     width: 800px;
     margin: 0 auto;

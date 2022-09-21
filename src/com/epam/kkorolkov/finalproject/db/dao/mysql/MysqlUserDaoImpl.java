@@ -66,7 +66,6 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
             throw new DBException(e);
         } finally {
             DBUtils.release(preparedStatement);
-            LOGGER.info("Connection closed");
         }
     }
 

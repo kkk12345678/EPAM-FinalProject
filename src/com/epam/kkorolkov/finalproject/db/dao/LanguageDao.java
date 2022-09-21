@@ -8,6 +8,4 @@ import java.util.Map;
 
 public interface LanguageDao {
     Map<Integer, Language> getAll(Connection connection) throws DBException;
-    int getIdByLocale(Connection connection, String locale) throws DBException;
-
 }

@@ -12,12 +12,12 @@ import java.io.IOException;
 @WebFilter(filterName = "WelcomeFilter")
 public class WelcomeFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
 
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException {
         HttpSession session = ((HttpServletRequest) request).getSession();
         User user = (User) session.getAttribute("user");
         HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -25,7 +25,7 @@ public class WelcomeFilter implements Filter {
         httpResponse.sendRedirect(
                 user == null || !user.getIsAdmin()
                 ? httpRequest.getContextPath() + "/admin"
-                : httpRequest.getContextPath() + "/product"
+                : httpRequest.getContextPath() + "/products"
         );
     }
 

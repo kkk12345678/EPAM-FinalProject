@@ -3,6 +3,7 @@ package com.epam.kkorolkov.finalproject.db.entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Category implements Serializable {
     private int id;
@@ -18,14 +19,6 @@ public class Category implements Serializable {
         category.setDescriptions(new HashMap<>());
         return category;
     }
-
-    public static Category create(String tag) {
-        Category category = Category.create();
-        category.setTag(tag);
-        return category;
-    }
-
-
     public Map<Integer, String> getNames() {
         return names;
     }
@@ -60,12 +53,18 @@ public class Category implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "Category{" +
-                "id=" + id +
-                ", tag='" + tag + '\'' +
-                ", names=" + names +
-                ", descriptions=" + descriptions +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category)) return false;
+        Category category = (Category) o;
+        return id == category.id &&
+                tag.equals(category.tag) &&
+                names.equals(category.names) &&
+                Objects.equals(descriptions, category.descriptions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, tag, names, descriptions);
     }
 }

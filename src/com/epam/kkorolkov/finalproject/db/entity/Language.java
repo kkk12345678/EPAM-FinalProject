@@ -49,14 +49,5 @@ public class Language implements Serializable {
         this.locale = locale;
     }
 
-    @Override
-    public String toString() {
-        return "Language{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", image='" + image + '\'' +
-                ", code='" + code + '\'' +
-                ", locale='" + locale + '\'' +
-                '}';
-    }
+
 }

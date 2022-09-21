@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Book  implements Serializable {
+public class Book implements Serializable {
     private int id;
     private String isbn;
     private int quantity;

@@ -35,25 +35,4 @@ public class MysqlLanguageDaoImpl extends MysqlAbstractDao implements LanguageDa
         }
         return languages;
     }
-
-    @Override
-    public int getIdByLocale(Connection connection, String locale) throws DBException{
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        int id = 1;
-        try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.languages.select.by.locale"));
-            preparedStatement.setString(1, locale);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                id = resultSet.getInt("id");
-            }
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage());
-            throw new DBException(e.getMessage(), e);
-        } finally {
-            DBUtils.release(resultSet, preparedStatement);
-        }
-        return id;
-    }
 }

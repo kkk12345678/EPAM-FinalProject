@@ -31,6 +31,11 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 getCategoryDetails(connection, category);
                 optional = Optional.of(category);
             }
+            if (optional.isEmpty()) {
+                LOGGER.info("No category found with id = " + id);
+            } else {
+                LOGGER.info("Category was found with id = " + id);
+            }
         } catch (SQLException e) {
             LOGGER.info("Could not load category with id = " + id);
             LOGGER.error(e.getMessage());
@@ -58,6 +63,11 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 category.setDescriptions(new HashMap<>());
                 getCategoryDetails(connection, category);
                 optional = Optional.of(category);
+            }
+            if (optional.isEmpty()) {
+                LOGGER.info("No category found with tag = " + tag);
+            } else {
+                LOGGER.info("Category was found with tag = " + tag);
             }
         } catch (SQLException e) {
             LOGGER.info("Could not load category with tag = " + tag);

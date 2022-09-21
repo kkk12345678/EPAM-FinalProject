@@ -29,7 +29,6 @@ public class GetUsersServlet extends HttpServlet {
                 List<User> users = userDao.getAll(connection);
                 request.setAttribute("users", users);
             }
-            dataSource.release(connection);
             request.getRequestDispatcher("../jsp/admin/users/users.jsp").include(request, response);
         } catch (DBException e) {
             // TODO handle DBException
