@@ -1,5 +1,6 @@
 package com.epam.kkorolkov.finalproject.db.datasource;
 
+import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 
 import java.io.IOException;
@@ -16,7 +17,9 @@ public abstract class AbstractDataSourceFactory {
 
     private static AbstractDataSourceFactory instance;
 
-    public static synchronized AbstractDataSourceFactory getInstance() throws DBException {
+    protected AbstractDataSourceFactory() {}
+
+    public static synchronized AbstractDataSourceFactory getInstance() throws DBConnectionException {
         if (instance == null) {
             try (InputStream dbSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream(DB_PROPERTIES_FILE)) {
                 Properties dbProperties = new Properties();
@@ -30,13 +33,11 @@ public abstract class AbstractDataSourceFactory {
                 Constructor<?> constr = c.getDeclaredConstructor();
                 instance = (AbstractDataSourceFactory) constr.newInstance();
             } catch (IOException | ReflectiveOperationException e) {
-                throw new DBException("Cannot obtain an instance of datasource", e);
+                throw new DBConnectionException("Cannot obtain an instance of datasource", e);
             }
         }
         return instance;
     }
-
-    protected AbstractDataSourceFactory() {}
 
     public abstract DataSource getDataSource();
 }

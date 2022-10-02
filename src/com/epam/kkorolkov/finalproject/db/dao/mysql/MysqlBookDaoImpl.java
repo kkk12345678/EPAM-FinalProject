@@ -3,7 +3,7 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 import com.epam.kkorolkov.finalproject.db.dao.*;
 import com.epam.kkorolkov.finalproject.db.entity.Book;
 import com.epam.kkorolkov.finalproject.exception.DBException;
-import com.epam.kkorolkov.finalproject.utils.DBUtils;
+import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.select.one"));
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.select.by.id"));
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -59,6 +59,35 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         }
         return optional;
     }
+
+    @Override
+    public Optional<Book> get(Connection connection, String tag) throws DBException {
+        Optional<Book> optional = Optional.empty();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.select.by.tag"));
+            preparedStatement.setString(1, tag);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Book book = new Book();
+                setBook(connection, resultSet, book);
+                setBookDetails(connection, book);
+                optional = Optional.of(book);
+            }
+            if (optional.isPresent()) {
+                LOGGER.info("Book with tag = " + tag + " successfully loaded.");
+            } else {
+                LOGGER.info("Book with tag = " + tag + " was not found.");
+            }
+        } catch (SQLException e) {
+            LOGGER.info("Could not load book with tag = " + tag);
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+        return optional;    }
 
     @Override
     public List<Book> getAll(Connection connection) throws DBException {

@@ -6,7 +6,7 @@ import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.User;
 import com.epam.kkorolkov.finalproject.exception.DBException;
-import com.epam.kkorolkov.finalproject.utils.UserUtils;
+import com.epam.kkorolkov.finalproject.util.UserUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,14 +23,13 @@ public class AddUserServlet extends HttpServlet {
         String lastName = request.getParameter("lastname");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        boolean isAdmin = request.getParameter("admin") != null;
         // TODO validation
         User user = new User();
         user.setEmail(email);
         user.setPassword(UserUtils.hash(password));
         user.setFirstName(firstName);
         user.setLastName(lastName);
-        user.setAdmin(isAdmin);
+        user.setAdmin(false);
         user.setBlocked(false);
         Connection connection = null;
         DataSource dataSource = null;

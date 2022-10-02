@@ -1,6 +1,7 @@
 package com.epam.kkorolkov.finalproject.db.datasource;
 
 
+import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,7 @@ public class OneConnectionDataSource implements DataSource {
     }
 
     @Override
-    public Connection getConnection() throws DBException {
+    public Connection getConnection() throws DBConnectionException {
         try {
             Class.forName(dbDriver);
             String connectionUrl = dbUrl + "?user=" + dbUser +"&password=" + dbPassword;
@@ -34,7 +35,7 @@ public class OneConnectionDataSource implements DataSource {
         } catch (SQLException | ClassNotFoundException e) {
             LOGGER.error(e.getMessage());
             e.printStackTrace();
-            throw new DBException("Unable to connect to the database", e);
+            throw new DBConnectionException("Unable to connect to the database", e);
         }
     }
 
@@ -45,7 +46,7 @@ public class OneConnectionDataSource implements DataSource {
                 connection.close();
                 LOGGER.info("Connection closed.");
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
             }
         }
     }

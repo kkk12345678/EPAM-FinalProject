@@ -3,7 +3,7 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
 import com.epam.kkorolkov.finalproject.exception.DBException;
-import com.epam.kkorolkov.finalproject.utils.DBUtils;
+import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +12,27 @@ import java.util.List;
 import java.util.Optional;
 
 public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDao {
+
+    @Override
+    public int count(Connection connection) throws DBException {
+        int c;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.categories.select.count"));
+            resultSet.next();
+            c = resultSet.getInt(1);
+            LOGGER.info(String.format("There are %d categories in the table.", c));
+        } catch (SQLException e) {
+            LOGGER.info("Could not count categories.");
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, statement);
+        }
+        return c;
+    }
 
     @Override
     public Optional<Category> get(Connection connection, int id) throws DBException {

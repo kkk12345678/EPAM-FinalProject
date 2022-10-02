@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryDao {
+    int count(Connection connection) throws DBException;
     Optional<Category> get(Connection connection, int id) throws DBException;
     Optional<Category> get(Connection connection, String tag) throws DBException;
     List<Category> getAll(Connection connection) throws DBException;

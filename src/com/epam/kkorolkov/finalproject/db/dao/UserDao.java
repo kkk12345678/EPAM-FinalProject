@@ -9,8 +9,10 @@ import java.util.Optional;
 
 public interface UserDao {
     Optional<User> get(Connection connection, int id) throws DBException;
+    Optional<User> get(Connection connection, String email) throws DBException;
     List<User> getAll(Connection connection) throws DBException;
     void update(Connection connection, User user) throws DBException;
     void delete(Connection connection, int id) throws DBException;
     int insert(Connection connection, User user) throws DBException;
+    int count(Connection connection) throws DBException;
 }

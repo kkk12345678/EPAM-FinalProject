@@ -8,7 +8,7 @@ import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
 import com.epam.kkorolkov.finalproject.db.entity.Language;
 import com.epam.kkorolkov.finalproject.exception.DBException;
-import com.epam.kkorolkov.finalproject.utils.CatalogueUtils;
+import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

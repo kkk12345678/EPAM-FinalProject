@@ -1,0 +1,10 @@
+<div id="menu">
+    <a href="${pageContext.request.contextPath}/admin"><fmt:message key="admin.title"/></a>
+    <ul>
+        <li><a href="${pageContext.request.contextPath}/admin/publishers"><fmt:message key="admin.nav.publishers"/></a></li>
+        <li><a href="${pageContext.request.contextPath}/admin/categories"><fmt:message key="admin.nav.categories"/></a></li>
+        <li><a href="${pageContext.request.contextPath}/admin/books"><fmt:message key="admin.nav.books"/></a></li>
+        <li><a href="${pageContext.request.contextPath}/admin/orders"><fmt:message key="admin.nav.orders"/></a></li>
+        <li><a href="${pageContext.request.contextPath}/admin/users"><fmt:message key="admin.nav.users"/></a></li>
+    </ul>
+</div>

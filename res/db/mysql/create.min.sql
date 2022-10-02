@@ -83,7 +83,7 @@ CREATE TABLE `users` (
 ) ENGINE=INNODB;
 
 INSERT INTO `users` (`id`, `email`, `password`, `is_admin`, `first_name`, `last_name`, `is_blocked`) VALUES
-(1, 'kostiantyn.korolkov@gmail.com', 'c0067d4af4e87f00dbac63b6156828237059172d1bbeac67427345d6a9fda484', 1, 'Костянтин', 'Корольков', 0);
+(1, 'kostiantyn.korolkov@gmail.com', '15d09b0846d4753f15c0d6487e332530b6797a3a001845440916f77ba1433f7c', 1, 'Костянтин', 'Корольков', 0);
 
 CREATE TABLE `statuses` (
                             `id` INT AUTO_INCREMENT PRIMARY KEY,

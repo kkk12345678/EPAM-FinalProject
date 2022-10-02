@@ -1,37 +1,30 @@
 package com.epam.kkorolkov.finalproject.filter;
 
 import com.epam.kkorolkov.finalproject.db.entity.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(filterName = "WelcomeFilter")
 public class WelcomeFilter implements Filter {
-    @Override
-    public void init(FilterConfig filterConfig) {
+    private static final Logger LOGGER = LogManager.getLogger("WELCOME");
+
+    public void init(FilterConfig config) throws ServletException {
 
     }
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException {
-        HttpSession session = ((HttpServletRequest) request).getSession();
-        User user = (User) session.getAttribute("user");
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        httpResponse.sendRedirect(
-                user == null || !user.getIsAdmin()
-                ? httpRequest.getContextPath() + "/admin"
-                : httpRequest.getContextPath() + "/products"
-        );
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
+        User user = (User) ((HttpServletRequest) req).getSession().getAttribute("user");
+        LOGGER.info("User is " + user);
+        String page = (user == null || !user.getIsAdmin()) ? "/shop" : "/admin";
+        LOGGER.info("Redirecting to " + page);
+        ((HttpServletResponse) resp).sendRedirect(req.getServletContext().getContextPath() + page);
     }
-
-    @Override
     public void destroy() {
-
     }
-
 }

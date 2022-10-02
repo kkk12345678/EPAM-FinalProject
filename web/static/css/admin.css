@@ -1,8 +1,45 @@
-header {
-    margin-top: 50px;
+
+
+/* admin welcome page */
+#welcome {
+    width: 1200px;
+    margin: 0 auto;
+}
+.admin-row {
+    margin: 0 auto;
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    justify-content: space-around;
+}
+
+.admin-item {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 10px;
+    width: 350px;
+    background: lightgray;
+}
+
+.counter {
+    font-size: 4em;
+}
+
+/* admin navigation menu */
+#menu {
+    width: 400px;
+    margin-left: 20px;
+    margin-top: 50px;
+    margin-right: 50px;
+}
+
+/* admin data table div */
+#data {
+    width: 800px;
+}
+
+table {
+    margin-top: 50px;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 table, th, td {
@@ -10,86 +47,46 @@ table, th, td {
     padding: 5px;
 }
 
-.edit-label {
-    width: 120px;
-    margin-right: 10px;
-}
-
-table {
-    margin-top: 20px;
-    width: 100%;
-    border-collapse: collapse;
-}
-
-form {
-    width: 100%;
-}
-
-#content {
-    width: 800px;
-    margin: 0 auto;
-    justify-content: center;
-}
-
-#locale,#nav {
-    padding: 10px;
-}
-
-#nav-catalogue {
-    margin: 0 auto;
+.row-control {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
 }
 
-#users, #publishers, #categories, #form-edit, #books {
-    width: 800px;
-    display: flex;
-    justify-content: center;
+.td-control {
+    width: 10%;
 }
 
-#add-user, #add-publisher, #add-category, #add-book {
+.row-center {
+    text-align: center;
+}
+
+#add-publisher, #add-category, #add-book, #add-user {
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
 }
 
-.row-control {
+.filter-group {
+    margin-top: 50px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 }
-.row-center {
-    text-align: center;
+
+
+/* edit catalogue */
+
+.edit-label {
+    width: 120px;
+    margin-right: 10px;
 }
-.row-right {
-    text-align: right;
-}
-#image-input {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-}
-#add-user-modal {
-    padding-top: 20px;
-    margin: auto;
-    display: none;
-    position: fixed;
-    width: 350px;
-    height: 500px;
-    background: darkgrey;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 5px 20px 50px #000;
+
+.text-input {
+    width: 100%;
 }
 
 #language-tabs {
     display: flex;
-}
-
-#pages {
-    margin-top: 20px;
 }
 .language-tab {
     padding: 5px;
@@ -106,29 +103,48 @@ form {
     border: 1px solid grey;
 }
 
-.description-input, .name-input {
+.div-input {
     width: 100%;
     display: flex;
     justify-content: left;
     align-items: center;
-}
-
-#tag-input, #isbn-input, #date-input, #price-input, #quantity-input, #isbn-input, #category-input, #publisher-input {
-    width: 100%;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-}
-.filter-group {
-    margin-top: 50px;
-    display: flex;
-    justify-content: space-around;
-}
-.text-input {
-    width: 100%;
 }
 
 .input-group {
     display: flex;
     justify-content: space-between;
+}
+
+#image-input {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+/* user modal */
+#container {
+    width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+#add-user-modal {
+    margin: 100px auto;
+    padding-top: 20px;
+    display: none;
+    position: fixed;
+    width: 350px;
+    height: 400px;
+    background: darkgrey;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 5px 20px 50px #000;
+}
+
+#content {
+    margin: 0 auto;
+    display: flex;
+    justify-content: left;
 }

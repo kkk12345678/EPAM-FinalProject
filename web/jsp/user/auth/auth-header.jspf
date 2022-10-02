@@ -1,0 +1,28 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="m" uri="/WEB-INF/mytags.tld" %>
+<%@ page isELIgnored="false" %>
+
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="user-labels"/>
+
+<html>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <link rel="stylesheet" href="<c:url value="/static/css/all.css"/>">
+    <link rel="stylesheet" href="<c:url value="/static/css/auth.css"/>">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap">
+    <title><m:auth-title><fmt:message key="user.login.title"/>,<fmt:message key="user.signup.title"/></m:auth-title></title>
+</head>
+<body>
+<header>
+    <div id="locale">
+        <select id="select-locale" name="locale">
+            <option disabled selected><fmt:message key="user.nav.language"/></option>
+            <option value="ua">Українська</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+</header>
+<div id="auth">

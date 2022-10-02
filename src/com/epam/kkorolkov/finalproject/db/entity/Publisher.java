@@ -1,12 +1,10 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Publisher implements Serializable {
-    private int id;
+public class Publisher extends Entity {
     private String tag;
     private Map<Integer, String> names;
     private Map<Integer, String> descriptions;
@@ -18,14 +16,6 @@ public class Publisher implements Serializable {
         publisher.setTag("");
         publisher.setDescriptions(new HashMap<>());
         return publisher;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTag() {

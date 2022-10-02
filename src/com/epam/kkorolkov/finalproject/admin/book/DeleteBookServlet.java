@@ -19,6 +19,7 @@ public class DeleteBookServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Connection connection = null;
         DataSource dataSource = null;
+        String page = request.getParameter("page");
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
@@ -38,6 +39,7 @@ public class DeleteBookServlet extends HttpServlet {
                 dataSource.release(connection);
             }
         }
-        response.sendRedirect("books");
+        System.out.println("redirection to books?page=" + page);
+        response.sendRedirect("books?page=" + page);
     }
 }

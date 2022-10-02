@@ -23,13 +23,10 @@ import java.util.List;
 @WebServlet("/admin/books")
 public class GetBooksServlet extends HttpServlet {
     private static final int LIMIT = 20;
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pageParameter = request.getParameter("page");
-        if (pageParameter == null || pageParameter.equals("")) {
+        if (pageParameter == null || "".equals(pageParameter)) {
             response.sendRedirect("./books?page=1");
         } else {
             int page = Integer.parseInt(pageParameter);

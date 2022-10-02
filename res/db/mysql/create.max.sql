@@ -333,7 +333,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'kostiantyn.korolkov@gmail.com','c0067d4af4e87f00dbac63b6156828237059172d1bbeac67427345d6a9fda484',1,'Костянтин','Корольков',0),(2,'email1@example.com','bc3a61970e9451c51967e7a365f1cd5bacb63c7d710920623724f0efccb5030d',0,'John','Doe',1),(3,'email2@example.com','b20edeb8678468b44162f9a52f0d09d9ab0ec0c43821a06f797fd380d003b4ed',0,'Jane','Doe',1);
+INSERT INTO `users` VALUES (1,'kostiantyn.korolkov@gmail.com','15d09b0846d4753f15c0d6487e332530b6797a3a001845440916f77ba1433f7c',1,'Костянтин','Корольков',0),(2,'email1@example.com','bc3a61970e9451c51967e7a365f1cd5bacb63c7d710920623724f0efccb5030d',0,'John','Doe',1),(3,'email2@example.com','b20edeb8678468b44162f9a52f0d09d9ab0ec0c43821a06f797fd380d003b4ed',0,'Jane','Doe',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

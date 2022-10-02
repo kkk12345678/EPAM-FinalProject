@@ -1,0 +1,35 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/mytags.tld" prefix="m" %>
+<%@ page isELIgnored="false" %>
+
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="user-labels"/>
+
+<html>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <title><fmt:message key="products.title"/></title>
+    <link rel="stylesheet" href="<c:url value="/static/css/user.css"/>">
+    <link rel="stylesheet" href="<c:url value="/static/css/all.css"/>">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap">
+</head>
+<body>
+<header>
+    <div id="locale">
+        <select id="select-locale" name="locale">
+            <option disabled selected><fmt:message key="products.nav.language"/></option>
+            <option value="ua">Українська</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+
+    <div class="user-control">
+        <img src="<c:url value="/static/img/user.png"/>" alt="" width="64">
+        <div class="dropdown-content">
+            <a onclick="login()"><fmt:message key="products.login"/></a>
+            <a onclick="signup()"><fmt:message key="products.signup"/></a>
+        </div>
+    </div>
+</header>

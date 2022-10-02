@@ -22,6 +22,12 @@
     </tag>
 
     <tag>
+        <name>auth-title</name>
+        <tag-class>com.epam.kkorolkov.finalproject.tag.TitleTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+
+    <tag>
         <name>select-category</name>
         <tag-class>com.epam.kkorolkov.finalproject.tag.CategoryTagHandler</tag-class>
         <body-content>scriptless</body-content>

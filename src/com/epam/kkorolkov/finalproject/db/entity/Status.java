@@ -1,18 +1,7 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
-import java.io.Serializable;
-
-public class Status implements Serializable {
-    private int id;
+public class Status extends Entity {
     private String name;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

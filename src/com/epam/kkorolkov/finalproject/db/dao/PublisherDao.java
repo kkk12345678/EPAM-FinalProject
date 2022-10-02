@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PublisherDao {
+    int count(Connection connection) throws DBException;
     Optional<Publisher> get(Connection connection, int id) throws DBException;
     Optional<Publisher> get(Connection connection, String tag) throws DBException;
     List<Publisher> getAll(Connection connection) throws DBException;

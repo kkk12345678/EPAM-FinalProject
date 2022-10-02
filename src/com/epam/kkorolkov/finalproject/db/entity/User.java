@@ -1,23 +1,12 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
-import java.io.Serializable;
-
-public class User implements Serializable {
-    private int id;
+public class User extends Entity {
     private String email;
     private String password;
     private String firstName;
     private String lastName;
     private boolean isAdmin;
     private boolean isBlocked;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getEmail() {
         return email;
@@ -72,7 +61,6 @@ public class User implements Serializable {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", isAdmin=" + isAdmin +

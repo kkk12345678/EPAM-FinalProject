@@ -3,7 +3,7 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 import com.epam.kkorolkov.finalproject.db.dao.UserDao;
 import com.epam.kkorolkov.finalproject.db.entity.User;
 import com.epam.kkorolkov.finalproject.exception.DBException;
-import com.epam.kkorolkov.finalproject.utils.DBUtils;
+import com.epam.kkorolkov.finalproject.util.DBUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
             statement = connection.createStatement();
             resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.users.select.all"));
             while (resultSet.next()) {
-                User user = new User();
-                setUser(resultSet, user);
-                users.add(user);
+                users.add(extractUser(resultSet));
             }
             LOGGER.info("All users were successfully loaded.");
         } catch (SQLException e) {
@@ -94,23 +92,71 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
     }
 
     @Override
+    public int count(Connection connection) throws DBException {
+        int c;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.users.select.count"));
+            resultSet.next();
+            c = resultSet.getInt(1);
+            LOGGER.info(String.format("There are %d users in the table.", c));
+        } catch (SQLException e) {
+            LOGGER.info("Could not count users.");
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, statement);
+        }
+        return c;
+    }
+
+    @Override
     public Optional<User> get(Connection connection, int id) throws DBException {
-        User user = new User();
+        Optional<User> optional = Optional.empty();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.users.select.one"));
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.users.select.by.id"));
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            setUser(resultSet, user);
+            if (resultSet.next()) {
+                optional = Optional.of(extractUser(resultSet));
+                LOGGER.info(String.format("User with id = %d was successfully found.", id));
+            } else {
+                LOGGER.info(String.format("No user with id = %d was found.", id));
+            }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
             throw new DBException(e);
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return Optional.of(user);
+        return optional;
+    }
+    @Override
+    public Optional<User> get(Connection connection, String email) throws DBException {
+        Optional<User> optional = Optional.empty();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.users.select.by.email"));
+            preparedStatement.setString(1, email);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                optional = Optional.of(extractUser(resultSet));
+                LOGGER.info(String.format("User with email = %s was successfully found.", email));
+            } else {
+                LOGGER.info(String.format("No user with email = %s was found.", email));
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+        return optional;
     }
 
     private void prepareStatement(PreparedStatement preparedStatement, User user) throws SQLException {
@@ -122,7 +168,8 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         preparedStatement.setBoolean(6, user.getIsBlocked());
     }
 
-    private void setUser(ResultSet resultSet, User user) throws SQLException {
+    private User extractUser(ResultSet resultSet) throws SQLException {
+        User user = new User();
         user.setId(resultSet.getInt("id"));
         user.setFirstName(resultSet.getString("first_name"));
         user.setLastName(resultSet.getString("last_name"));
@@ -130,5 +177,6 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         user.setPassword(resultSet.getString("password"));
         user.setAdmin(resultSet.getBoolean("is_admin"));
         user.setBlocked(resultSet.getBoolean("is_blocked"));
+        return user;
     }
 }

@@ -1,7 +1,20 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="../admin-header.jspf"%>
+<%@ include file="../header.jspf"%>
+<!-- The Modal -->
+<div id="container">
+<div id="add-user-modal">
+    <form action="${pageContext.request.contextPath}/admin/add-user" method="post">
+        <input class="user-input" type="text" name="firstname" placeholder="<fmt:message key="admin.users.header.firstname"/>" required>
+        <input class="user-input" type="text" name="lastname" placeholder="<fmt:message key="admin.users.header.laststname"/>" required>
+        <input class="user-input" type="email" name="email" placeholder="<fmt:message key="admin.users.header.email"/>" required>
+        <input class="user-input" type="password" name="password" placeholder="<fmt:message key="admin.users.header.password"/>" required>
+        <button class="control-button"><fmt:message key="admin.users.button.add"/></button>
+    </form>
+    <button id="btnCancel" class="control-button"><fmt:message key="admin.users.button.cancel"/></button>
+</div>
+</div>
 <div id="content">
-    <div id="users">
+    <%@ include file="../menu.jspf"%>
+    <div id="data">
         <table>
             <tbody>
                 <tr>
@@ -11,7 +24,7 @@
                     <th><fmt:message key="admin.users.header.email"/></th>
                     <th><fmt:message key="admin.users.header.administrator"/></th>
                     <th><fmt:message key="admin.users.header.blocked"/></th>
-                    <th width="10%"><fmt:message key="admin.users.header.actions"/></th>
+                    <th><fmt:message key="admin.users.header.actions"/></th>
                 </tr>
                 <c:forEach items="${requestScope.users}" var="user">
                 <tr>
@@ -19,21 +32,17 @@
                     <td>${user.firstName}</td>
                     <td>${user.lastName}</td>
                     <td>${user.email}</td>
-                    <td>
+                    <td class="row-center">
                     <c:if test="${user.isAdmin == true}">
-                        <p align="center">
-                            <img src="${pageContext.request.contextPath}/static/img/admin/tick.png" alt="<fmt:message key="admin.users.header.administrator"/>"/>
-                        </p>
+                        <img src="${pageContext.request.contextPath}/static/img/admin/tick.png" alt="<fmt:message key="admin.users.header.administrator"/>"/>
                     </c:if>
                     </td>
-                    <td>
-                        <c:if test="${user.isBlocked == true}">
-                            <p align="center">
-                                <img src="${pageContext.request.contextPath}/static/img/admin/tick.png" alt="<fmt:message key="admin.users.header.blocked"/>"/>
-                            </p>
-                        </c:if>
+                    <td class="row-center">
+                    <c:if test="${user.isBlocked == true}">
+                        <img src="${pageContext.request.contextPath}/static/img/admin/tick.png" alt="<fmt:message key="admin.users.header.blocked"/>"/>
+                    </c:if>
                     </td>
-                    <td>
+                    <td class="td-control">
                         <div class="row-control">
                             <c:if test="${user.isAdmin != true}">
                             <form id="delete${user.id}" method="post" action="${pageContext.request.contextPath}/admin/delete-user">
@@ -67,23 +76,11 @@
                 </tr>
             </tbody>
         </table>
-
-    </div>
-
-    <!-- The Modal -->
-    <div id="add-user-modal">
-            <form action="${pageContext.request.contextPath}/admin/add-user" method="post">
-                <input class="user-input" type="text" name="firstname" placeholder="<fmt:message key="admin.users.header.firstname"/>" required>
-                <input class="user-input" type="text" name="lastname" placeholder="<fmt:message key="admin.users.header.laststname"/>" required>
-                <input class="user-input" type="email" name="email" placeholder="<fmt:message key="admin.users.header.email"/>" required>
-                <input class="user-input" type="password" name="password" placeholder="<fmt:message key="admin.users.header.password"/>" required>
-                <label><fmt:message key="admin.users.label.administrator"/><input name="admin" type="checkbox"></label>
-                <button class="control-button"><fmt:message key="admin.users.button.add"/></button>
-            </form>
-            <button id="btnCancel" class="control-button"><fmt:message key="admin.users.button.cancel"/></button>
     </div>
 </div>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/user.js"></script>
+<%@ include file="../footer.jspf"%>
 
-<%@ include file="users-footer.jsp"%>
-<%@ include file="/jsp/admin/admin-footer.jspf"%>
+
+
 

@@ -18,7 +18,7 @@ import java.util.List;
 
 @WebServlet("/admin/users")
 public class GetUsersServlet extends HttpServlet {
-       protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Connection connection = null;
         DataSource dataSource = null;
         try {

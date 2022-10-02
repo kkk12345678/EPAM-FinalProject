@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface BookDao {
     int count(Connection connection) throws DBException;
     Optional<Book> get(Connection connection, int id) throws DBException;
+    Optional<Book> get(Connection connection, String tag) throws DBException;
     List<Book> getAll(Connection connection) throws DBException;
     List<Book> getAll(Connection connection, int limit, int page) throws DBException;
     List<Book> getAll(Connection connection, int limit, int page, int categoryId, int publisherId) throws DBException;

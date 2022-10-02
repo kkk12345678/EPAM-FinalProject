@@ -11,11 +11,7 @@ import java.io.IOException;
 
 @WebServlet("/change-locale")
 public class ChangeLocaleServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String locale = request.getParameter("locale");
         String page = request.getParameter("page");
         HttpSession session = request.getSession(false);

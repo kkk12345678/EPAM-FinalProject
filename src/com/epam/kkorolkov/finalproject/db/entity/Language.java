@@ -1,21 +1,10 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
-import java.io.Serializable;
-
-public class Language implements Serializable {
-    private int id;
+public class Language extends Entity {
     private String name;
     private String image;
     private String code;
     private String locale;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -48,6 +37,4 @@ public class Language implements Serializable {
     public void setLocale(String locale) {
         this.locale = locale;
     }
-
-
 }

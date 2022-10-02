@@ -1,0 +1,4 @@
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/locale.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/confirm.js"></script>
+</body>
+</html>

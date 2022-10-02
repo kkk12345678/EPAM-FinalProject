@@ -1,6 +1,6 @@
 package com.epam.kkorolkov.finalproject.db.datasource;
 
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +14,7 @@ public class TomcatDataSource implements com.epam.kkorolkov.finalproject.db.data
     private static final Logger LOGGER = LogManager.getLogger("DB");
 
     @Override
-    public Connection getConnection() throws DBException {
+    public Connection getConnection() throws DBConnectionException {
         try {
             Context initContext = new InitialContext();
             Context envContext  = (Context) initContext.lookup("java:/comp/env");
@@ -24,10 +24,8 @@ public class TomcatDataSource implements com.epam.kkorolkov.finalproject.db.data
         } catch (NamingException | SQLException e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
-            throw new DBException("Unable to connect to the database", e);
+            throw new DBConnectionException("Unable to connect to the database", e);
         }
-
-
     }
 
     @Override
@@ -37,10 +35,8 @@ public class TomcatDataSource implements com.epam.kkorolkov.finalproject.db.data
                 connection.close();
                 LOGGER.info("Connection closed.");
             }
-
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
-            e.printStackTrace();
         }
     }
 }

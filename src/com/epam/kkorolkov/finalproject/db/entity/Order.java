@@ -1,12 +1,10 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class Order implements Serializable {
-    private int id;
+public class Order extends Entity {
     private Status status;
     private User user;
     private Language language;
@@ -24,14 +22,6 @@ public class Order implements Serializable {
 
     public void setDetails(List<Map<Book, Integer>> details) {
         this.details = details;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Status getStatus() {

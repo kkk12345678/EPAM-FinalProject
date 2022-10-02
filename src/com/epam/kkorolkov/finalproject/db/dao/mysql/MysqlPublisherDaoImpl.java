@@ -3,12 +3,33 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.entity.Publisher;
 import com.epam.kkorolkov.finalproject.exception.DBException;
-import com.epam.kkorolkov.finalproject.utils.DBUtils;
+import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
 import java.util.*;
 
 public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements PublisherDao {
+    @Override
+    public int count(Connection connection) throws DBException {
+        int c;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.publishers.select.count"));
+            resultSet.next();
+            c = resultSet.getInt(1);
+            LOGGER.info(String.format("There are %d publishers in the table.", c));
+        } catch (SQLException e) {
+            LOGGER.info("Could not count publishers.");
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
+        } finally {
+            DBUtils.release(resultSet, statement);
+        }
+        return c;
+    }
+
     @Override
     public Optional<Publisher> get(Connection connection, int id) throws DBException {
         Optional<Publisher> optional = Optional.empty();
@@ -26,6 +47,11 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
                 publisher.setDescriptions(new HashMap<>());
                 getPublisherDetails(connection, publisher);
                 optional = Optional.of(publisher);
+            }
+            if (optional.isEmpty()) {
+                LOGGER.info("No publisher found with id = " + id);
+            } else {
+                LOGGER.info("Publisher was found with id = " + id);
             }
         } catch (SQLException e) {
             LOGGER.info("Could not load publisher with id = " + id);

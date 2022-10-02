@@ -25,7 +25,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 8.5.81" level="application_server_libraries" />
-    <orderEntry type="library" name="mysql:mysql-connector-java:8.0.30" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="mysql:mysql-connector-java:8.0.30" level="project" />
     <orderEntry type="library" name="org.apache.logging.log4j:log4j-core:2.18.0" level="project" />
     <orderEntry type="library" name="org.junit.jupiter:junit-jupiter:5.9.0" level="project" />
     <orderEntry type="library" name="io.jsonwebtoken:jjwt-api:0.11.5" level="project" />
@@ -38,5 +38,6 @@
     <orderEntry type="library" name="commons-fileupload:commons-fileupload:1.4" level="project" />
     <orderEntry type="library" name="org.mockito:mockito-all:1.10.19" level="project" />
     <orderEntry type="library" name="javax.faces:jsf-api:2.0" level="project" />
+    <orderEntry type="library" name="com.google.code.gson:gson:2.9.1" level="project" />
   </component>
 </module>

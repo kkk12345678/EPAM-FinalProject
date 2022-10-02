@@ -1,24 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8"%>
-<script>
-    const modalLogin = document.getElementById("login");
-    const modalSignup = document.getElementById("signup");
-
-    const btnCancelLogin = document.getElementById("cancel-login");
-    const btnCancelSignup = document.getElementById("cancel-signup");
-
-    btnCancelLogin.onclick = function() {
-        modalLogin.style.display = "none";
-    }
-
-    btnCancelSignup.onclick = function() {
-        modalSignup.style.display = "none";
-    }
-
-    function login() {
-        modalLogin.style.display = "block";
-    }
-    function signup() {
-        modalSignup.style.display = "block";
-    }
-
-</script>
+</div>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/locale.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/auth.js"></script>
+</body>
+</html>

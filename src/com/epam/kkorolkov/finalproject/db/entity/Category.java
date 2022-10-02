@@ -1,12 +1,10 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Category implements Serializable {
-    private int id;
+public class Category extends Entity {
     private String tag;
     private Map<Integer, String> names;
     private Map<Integer, String> descriptions;
@@ -33,15 +31,6 @@ public class Category implements Serializable {
 
     public void setDescriptions(Map<Integer, String> descriptions) {
         this.descriptions = descriptions;
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTag() {
