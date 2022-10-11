@@ -41,7 +41,6 @@ public class AddUserServlet extends HttpServlet {
                 userDao.insert(connection, user);
             }
         } catch (DBException e) {
-            e.printStackTrace();
             //TODO handle exception
         } finally {
             if (dataSource != null) {

@@ -50,7 +50,6 @@ public class EditBookServlet extends HttpServlet {
             request.setAttribute("book", Book.create());
         } catch (NumberFormatException e) {
             //TODO Handle NumberFormatException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

@@ -25,7 +25,7 @@ public class TitleTagHandler extends SimpleTagSupport {
                 writer.print(titles[1]);
             }
         } catch (IOException | JspException e) {
-            e.printStackTrace();
+            // TODO handle IOException
         }
     }
 }

@@ -48,7 +48,7 @@ public class PublisherTagHandler extends SimpleTagSupport {
                 }
             }
         } catch (IOException | DBException e) {
-            e.printStackTrace();
+            // TODO handle IOException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

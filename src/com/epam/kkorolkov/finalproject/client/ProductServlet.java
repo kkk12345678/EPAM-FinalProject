@@ -2,6 +2,7 @@ package com.epam.kkorolkov.finalproject.client;
 
 import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
 import com.epam.kkorolkov.finalproject.db.dao.BookDao;
+import com.epam.kkorolkov.finalproject.db.dao.LanguageDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Book;
@@ -25,10 +26,12 @@ public class ProductServlet extends HttpServlet {
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
             BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
+            LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();
             if (connection != null) {
                 Optional<Book> optional = bookDao.get(connection, request.getPathInfo().substring(1));
                 if (optional.isPresent()) {
                     request.setAttribute("book", optional.get());
+                    request.setAttribute("languages", languageDao.getAll(connection));
                     request.getRequestDispatcher( "../jsp/user/product.jsp").include(request, response);
                 } else {
                     response.sendRedirect(request.getServletContext().getContextPath() + "/shop");
@@ -42,6 +45,5 @@ public class ProductServlet extends HttpServlet {
                 dataSource.release(connection);
             }
         }
-
     }
 }

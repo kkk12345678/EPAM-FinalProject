@@ -29,11 +29,9 @@ public class DeleteBookServlet extends HttpServlet {
                 bookDao.delete(connection, id);
             }
         } catch (DBException e) {
-            e.printStackTrace();
             //TODO handle exception
         } catch (NumberFormatException e) {
             //TODO Handle NumberFormatException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

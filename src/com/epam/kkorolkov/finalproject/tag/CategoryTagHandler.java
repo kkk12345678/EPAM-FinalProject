@@ -50,7 +50,7 @@ public class CategoryTagHandler extends SimpleTagSupport {
                 }
             }
         } catch (IOException | DBException e) {
-            e.printStackTrace();
+            // TODO handle DBException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

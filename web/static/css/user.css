@@ -3,6 +3,7 @@ header {
     justify-content: space-between;
 }
 .user-control {
+    margin-right: 100px;
     position: relative;
     display: inline-block;
 }
@@ -21,17 +22,34 @@ header {
     z-index: 1;
 }
 
-
 #books {
     display: grid;
     column-gap: 2em;
     row-gap: 2em;
     grid-template-columns: repeat(4, 1fr);
 }
+
 .book {
-    text-align: center;
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
     padding: 5px;
+}
+
+#book {
+    display: flex;
+    justify-content: left;
+}
+
+#control {
+    display: flex;
+    justify-content: center;
+}
+
+#book-image {
+    margin: 50px;
+}
+
+#book-details {
+    margin: 50px;
 }
 img {
     border-radius: 3px;
@@ -41,5 +59,30 @@ img {
 
 #content {
     display: flex;
+    justify-content: normal;
+}
+
+#filter {
+    padding: 10px;
+}
+
+.filter-item {
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+#auth-ul {
+    list-style-type: none;
+}
+
+.book-details {
+    display: flex;
     justify-content: center;
+}
+
+.book-text-details {
+    margin-top: 70px;
+    padding-left: 20px;
+    font-size: small;
+    text-align: left;
 }

@@ -48,7 +48,6 @@ public class EditPublisherServlet extends HttpServlet {
             }
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);
@@ -94,7 +93,6 @@ public class EditPublisherServlet extends HttpServlet {
             languages = languageDao.getAll(connection);
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } catch (NumberFormatException e) {
             return null;
         } finally {

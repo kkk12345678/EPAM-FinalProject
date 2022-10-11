@@ -28,7 +28,6 @@ public class DeleteUserServlet extends HttpServlet {
                 userDao.delete(connection, id);
             }
         } catch (DBException e) {
-            e.printStackTrace();
             //TODO handle exception
         } finally {
             if (dataSource != null) {

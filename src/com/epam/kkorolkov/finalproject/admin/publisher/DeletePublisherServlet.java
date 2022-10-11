@@ -17,7 +17,6 @@ import java.sql.Connection;
 @WebServlet("/admin/delete-publisher")
 public class DeletePublisherServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         Connection connection = null;
         DataSource dataSource = null;
         try {
@@ -29,10 +28,9 @@ public class DeletePublisherServlet extends HttpServlet {
                 publisherDao.delete(connection, id);
             }
         } catch (DBException e) {
-            e.printStackTrace();
             //TODO handle exception
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            //TODO handle exception
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

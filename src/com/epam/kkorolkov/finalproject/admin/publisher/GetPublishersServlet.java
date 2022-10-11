@@ -21,15 +21,10 @@ import java.util.List;
 
 @WebServlet("/admin/publishers")
 public class GetPublishersServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         DataSource dataSource = null;
         Connection connection = null;
         try {
-
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
             PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
@@ -38,16 +33,12 @@ public class GetPublishersServlet extends HttpServlet {
                 request.setAttribute("publishers", publishers);
             }
             request.getRequestDispatcher("../jsp/admin/publishers/publishers.jsp").include(request, response);
-
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);
             }
         }
     }
-
-
 }

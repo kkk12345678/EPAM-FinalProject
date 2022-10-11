@@ -245,9 +245,10 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
         if (category.getId() != 0) {
             try {
                 connection.setAutoCommit(false);
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        SQL_STATEMENTS.getProperty("mysql.categories.descriptions.insert"));
                 for (int languageId : category.getDescriptions().keySet()) {
-                    PreparedStatement preparedStatement = connection.prepareStatement(
-                            SQL_STATEMENTS.getProperty("mysql.categories.descriptions.insert"));
+
                     preparedStatement.setInt(1, category.getId());
                     preparedStatement.setInt(2, languageId);
                     preparedStatement.setString(3, category.getNames().get(languageId));

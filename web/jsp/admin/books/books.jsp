@@ -3,37 +3,35 @@
 <div id="content">
     <%@ include file="../menu.jspf"%>
     <div id="data">
-    <form action="${pageContext.request.contextPath}/admin/books" method="get">
         <div id="filter">
             <div class="filter-group">
                 <label>Tag:
-                    <input name="tag" type="text">
+                    <input id="tag" name="tag" type="text">
                 </label>
                 <label>ISBN:
-                    <input name="isbn" type="text">
+                    <input id="isbn" name="isbn" type="text">
                 </label>
             </div>
             <div class="filter-group">
                 <label><fmt:message key="admin.books.edit.category"/>
-                    <select name="category">
-                        <option selected disabled><fmt:message key="admin.books.edit.choose.category"/></option>
+                    <select id="category" name="category">
+                        <option selected value=""><fmt:message key="admin.books.all.categories"/></option>
                         <c:forEach items="${requestScope.categories}" var="category">
                         <option value="${category.id}">${category.tag}</option>
                         </c:forEach>
                     </select>
                 </label>
                 <label><fmt:message key="admin.books.edit.publisher"/>
-                    <select name="publisher">
-                        <option selected disabled><fmt:message key="admin.books.edit.choose.publisher"/></option>
+                    <select id="publisher" name="publisher">
+                        <option selected value=""><fmt:message key="admin.books.all.publishers"/></option>
                         <c:forEach items="${requestScope.publishers}" var="publisher">
                         <option value="${publisher.id}">${publisher.tag}</option>
                         </c:forEach>
                     </select>
                 </label>
             </div>
-            <input type="submit" class="control-button" value="<fmt:message key="admin.books.button.filter"/>">
+            <button id="button-filter" class="control-button"><fmt:message key="admin.books.button.filter"/></button>
         </div>
-    </form>
     <div id="pages">
         <m:pages current="${requestScope.currentPage}" total="${requestScope.totalPages}"/>
     </div>

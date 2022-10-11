@@ -32,7 +32,6 @@ public class GetUsersServlet extends HttpServlet {
             request.getRequestDispatcher("../jsp/admin/users/users.jsp").include(request, response);
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

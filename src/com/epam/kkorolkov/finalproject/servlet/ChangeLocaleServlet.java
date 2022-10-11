@@ -14,7 +14,7 @@ public class ChangeLocaleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String locale = request.getParameter("locale");
         String page = request.getParameter("page");
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         session.setAttribute("locale", locale);
         response.sendRedirect(page);
     }

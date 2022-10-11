@@ -5,6 +5,8 @@ import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
+import com.epam.kkorolkov.finalproject.exception.BadRequestException;
+import com.epam.kkorolkov.finalproject.exception.DBException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -24,7 +26,6 @@ public class ImportCategoriesFromCsvServlet extends HttpServlet {
      protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
          DataSource dataSource = null;
          Connection connection = null;
-
          try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getPart("file").getInputStream())))  {
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
@@ -45,8 +46,8 @@ public class ImportCategoriesFromCsvServlet extends HttpServlet {
                 categoryDao.insert(connection, category);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+             // TODO handle DBException
+         } finally {
              if (dataSource != null) {
                  dataSource.release(connection);
              }

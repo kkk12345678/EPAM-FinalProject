@@ -31,7 +31,6 @@ public class BlockUserServlet extends HttpServlet {
                 userDao.update(connection, user);
             }
         } catch (DBException e) {
-            e.printStackTrace();
             //TODO handle exception
         } finally {
             if (dataSource != null) {

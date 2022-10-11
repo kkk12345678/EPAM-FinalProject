@@ -32,7 +32,6 @@ public class UnblockUserServlet extends HttpServlet {
             }
 
         } catch (DBException e) {
-            e.printStackTrace();
             //TODO handle exception
         } finally {
             if (dataSource != null) {

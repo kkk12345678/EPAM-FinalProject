@@ -68,10 +68,8 @@ public class EditCategoryServlet extends HttpServlet {
             }
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } catch (NullPointerException e) {
             // TODO handle NullPointerException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

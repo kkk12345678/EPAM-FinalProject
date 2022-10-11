@@ -24,7 +24,6 @@ public class GetOrdersServlet extends HttpServlet {
         DataSource dataSource = null;
         Connection connection = null;
         try {
-
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
             OrderDao orderDao = AbstractDaoFactory.getInstance().getOrderDao();
@@ -33,10 +32,8 @@ public class GetOrdersServlet extends HttpServlet {
                 request.setAttribute("orders", orders);
             }
             request.getRequestDispatcher("../jsp/admin/orders/orders.jsp").include(request, response);
-
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

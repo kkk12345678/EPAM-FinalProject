@@ -41,8 +41,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect(request.getServletContext().getContextPath() + page);
                 }
             } catch (DBException e) {
-                //TODO
-                e.printStackTrace();
+                // TODO handle DBException
             }
         } else {
             if (sessionUser.getIsAdmin()) {

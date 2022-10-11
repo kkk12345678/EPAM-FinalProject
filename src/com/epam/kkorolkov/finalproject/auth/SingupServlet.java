@@ -45,7 +45,6 @@ public class SingupServlet extends HttpServlet {
             }
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

@@ -3,6 +3,7 @@ package com.epam.kkorolkov.finalproject.admin;
 import com.epam.kkorolkov.finalproject.db.dao.*;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
+import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 
 import javax.servlet.ServletException;
@@ -30,14 +31,15 @@ public class AdminServlet extends HttpServlet {
                 request.setAttribute("usersCount", userDao.count(connection));
                 request.setAttribute("categoriesCount", categoryDao.count(connection));
                 request.setAttribute("publishersCount", publisherDao.count(connection));
-                request.setAttribute("booksCount", bookDao.count(connection));
+                request.setAttribute("booksCount", bookDao.count(connection, null));
                 request.setAttribute("ordersCount", orderDao.count(connection));
                 request.setAttribute("user", request.getSession().getAttribute("user"));
             }
             request.getRequestDispatcher("./jsp/admin/welcome.jsp").include(request, response);
+        } catch (BadRequestException e) {
+            // TODO handle BadRequestException
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

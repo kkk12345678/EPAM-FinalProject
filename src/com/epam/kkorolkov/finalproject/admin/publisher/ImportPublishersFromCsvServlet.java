@@ -5,6 +5,8 @@ import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Publisher;
+import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -24,9 +26,11 @@ import java.util.Map;
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class ImportPublishersFromCsvServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        DataSource dataSource = null;
+        Connection connection = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getPart("file").getInputStream())))  {
-            DataSource dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
-            Connection connection = dataSource.getConnection();
+            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
+            connection = dataSource.getConnection();
             PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
             reader.readLine();
             while (reader.ready()) {
@@ -43,9 +47,12 @@ public class ImportPublishersFromCsvServlet extends HttpServlet {
                 publisher.setNames(names);
                 publisherDao.insert(connection, publisher);
             }
-            connection.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DBException e) {
+            // TODO handle DBException
+        } finally {
+            if (dataSource != null) {
+                dataSource.release(connection);
+            }
         }
         response.sendRedirect("publishers");
     }
