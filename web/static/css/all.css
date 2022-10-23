@@ -81,3 +81,25 @@ table, th, td {
     display: flex;
     justify-content: space-around;
 }
+
+.details {
+    display: none;
+}
+
+.status {
+    height: 30px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px;
+}
+
+
+
+.row-center {
+    text-align: center;
+}
+.row-right {
+    text-align: right;
+    padding-right: 10px;
+}

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderDao {
-    int count(Connection connection, Map<String, String> parameters) throws DBException, BadRequestException;
+    int count(Connection connection, Map<String, String> parameters) throws DBException;
 
     int insert(Connection connection, Order order) throws DBException;
 
@@ -18,5 +18,7 @@ public interface OrderDao {
     void updateStatus(Connection connection, int orderId, int statusId) throws DBException;
 
     List<Order> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException;
+
+    List<Order> getAllByUser(Connection connection, int limit, int offset, int userId) throws DBException;
 
 }

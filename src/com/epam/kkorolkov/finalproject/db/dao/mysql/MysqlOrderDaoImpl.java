@@ -15,29 +15,18 @@ import java.util.List;
 import java.util.Map;
 
 public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
-    private int count(Connection connection) throws DBException {
-        int c;
-        Statement statement = null;
-        ResultSet resultSet = null;
+
+
+    @Override
+    public int count(Connection connection, Map<String, String> parameters) throws DBException {
         try {
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.orders.select.count"));
-            resultSet.next();
-            c = resultSet.getInt(1);
-            LOGGER.info(String.format("There are %d orders in the table.", c));
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.orders.count") + setClause(parameters));
+            return count(preparedStatement);
         } catch (SQLException e) {
             LOGGER.info("Could not count orders.");
             LOGGER.error(e.getMessage());
             throw new DBException(e);
-        } finally {
-            DBUtils.release(resultSet, statement);
         }
-        return c;
-    }
-
-    @Override
-    public int count(Connection connection, Map<String, String> parameters) throws DBException, BadRequestException {
-        return count(connection);
     }
 
     @Override
@@ -134,10 +123,9 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
 
     @Override
     public List<Order> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException {
-        PreparedStatement preparedStatement = null;
-        String query = SQL_STATEMENTS.getProperty("mysql.orders.select.all") + setClause(parameters) + " limit ? offset ?";
+        String query = String.format("%s%s limit ? offset ?", SQL_STATEMENTS.getProperty("mysql.orders.select.all"), setClause(parameters));
         try {
-            preparedStatement = connection.prepareStatement(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, limit);
             preparedStatement.setInt(2, offset);
             return getAll(connection, preparedStatement);
@@ -145,12 +133,28 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
             LOGGER.info("Could not load orders.");
             LOGGER.error(e.getMessage());
             throw new DBException(e);
-        } finally {
-            DBUtils.release(preparedStatement);
+        }
+    }
+
+    @Override
+    public List<Order> getAllByUser(Connection connection, int limit, int offset, int userId) throws DBException {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.orders.select.by.customer"));
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, limit);
+            preparedStatement.setInt(3, offset);
+            return getAll(connection, preparedStatement);
+        } catch (SQLException e) {
+            LOGGER.info("Could not load orders.");
+            LOGGER.error(e.getMessage());
+            throw new DBException(e);
         }
     }
 
     private String setClause(Map<String, String> parameters) {
+        if (parameters.containsKey("user_id")) {
+            return " where customer_id = " + parameters.get("user_id");
+        }
         return "";
     }
 
@@ -193,6 +197,18 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
                 order.getDetails().put(book, resultSet.getInt("quantity"));
             }
             LOGGER.info("Order details were successfully loaded.");
+        } finally {
+            DBUtils.release(resultSet, preparedStatement);
+        }
+    }
+
+    private int count(PreparedStatement preparedStatement) throws SQLException{
+        ResultSet resultSet = null;
+        try {
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            LOGGER.info("Orders were successfully counted.");
+            return resultSet.getInt(1);
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }

@@ -5,7 +5,10 @@
 <%@ page isELIgnored="false" %>
 <fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="admin-labels"/>
-
+<c:forEach items="${sessionScope.languages}" var="entry">
+    <c:if test="${entry.value.locale == sessionScope.locale}"><c:set var="languageId" scope ="request" value="${entry.key}"/></c:if>
+    <c:if test="${entry.value.locale != sessionScope.locale}"><c:set var="languageId" scope ="request" value="1"/></c:if>
+</c:forEach>
 <html>
 <head>
     <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />

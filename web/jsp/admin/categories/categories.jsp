@@ -6,13 +6,13 @@
             <tbody>
             <tr>
                 <th><fmt:message key="admin.categories.header.id"/></th>
-                <th><fmt:message key="admin.categories.header.tag"/></th>
+                <th><fmt:message key="admin.categories.header.title"/></th>
                 <th><fmt:message key="admin.categories.header.actions"/></th>
             </tr>
             <c:forEach items="${requestScope.categories}" var="category">
             <tr>
                 <td class="row-center">${category.id}</td>
-                <td>${category.tag}</td>
+                <td><c:forEach items="${category.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach></td>
                 <td class="td-control">
                     <div class="row-control">
                         <a class="edit-link" href="${pageContext.request.contextPath}/admin/edit-category?id=${category.id}">

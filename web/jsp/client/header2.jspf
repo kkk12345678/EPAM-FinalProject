@@ -26,7 +26,7 @@
                     <li><a href="${pageContext.request.contextPath}/signup"><fmt:message key="user.signup.title"/></a></li>
                 </c:if>
                 <c:if test="${sessionScope.user != null}">
-                    <li>${sessionScope.user.firstName} ${sessionScope.user.lastName}</li>
+                    <li><a href="${pageContext.request.contextPath}/profile">${sessionScope.user.firstName} ${sessionScope.user.lastName}</a></li>
                     <li><a href="${pageContext.request.contextPath}/logout"><fmt:message key="user.logout.title"/></a></li>
                 </c:if>
             </ul>

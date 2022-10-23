@@ -31,19 +31,9 @@
     margin-right: 50px;
 }
 
-/* admin data table div */
+
 #data {
     width: 800px;
-}
-
-
-
-.row-center {
-    text-align: center;
-}
-.row-right {
-    text-align: right;
-    padding-right: 10px;
 }
 
 #add-publisher, #add-category, #add-book, #add-user {
@@ -135,13 +125,3 @@
     justify-content: left;
 }
 
-.details {
-    display: none;
-}
-
-.status {
-    height: 30px;
-    align-items: center;
-    display: flex;
-    justify-content: space-around;
-}

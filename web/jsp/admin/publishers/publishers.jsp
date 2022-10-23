@@ -7,13 +7,13 @@
             <tbody>
             <tr>
                 <th><fmt:message key="admin.publishers.header.id"/></th>
-                <th><fmt:message key="admin.publishers.header.tag"/></th>
+                <th><fmt:message key="admin.publishers.header.title"/></th>
                 <th><fmt:message key="admin.publishers.header.actions"/></th>
             </tr>
             <c:forEach items="${requestScope.publishers}" var="publisher">
             <tr>
                 <td class="row-center">${publisher.id}</td>
-                <td>${publisher.tag}</td>
+                <td><c:forEach items="${publisher.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach></td>
                 <td class="td-control">
                     <div class="row-control">
                         <a class="edit-link" href="${pageContext.request.contextPath}/admin/edit-publisher?id=${publisher.id}">

@@ -28,7 +28,8 @@ for (let i = 0; i < btnsPage.length; i++) {
         if (index > -1) {
             params = url.substr(index);
         }
-        window.location.href = "./orders?page=" + page + params;
+        const pathArray = location.pathname.split('/');
+        window.location.href = "./" + pathArray[2].split("?")[0] + "?page=" + page + params;
     }
 }
 

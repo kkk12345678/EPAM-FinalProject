@@ -151,3 +151,7 @@ h2 {
     text-align: right;
     margin-right: 170px;
 }
+#data {
+    width: 800px;
+    margin: 0 auto;
+}

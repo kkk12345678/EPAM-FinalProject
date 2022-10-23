@@ -40,10 +40,7 @@ public class BooksLazyLoadingServlet extends HttpServlet {
                     writer.println(json);
                 }
             }
-        } catch (BadRequestException e) {
-            // TODO handle BadRequestException
-        }
-        catch (DBException e) {
+        } catch (DBException e) {
             // TODO handle DBException
         } finally {
             if (dataSource != null) {

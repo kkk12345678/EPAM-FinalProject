@@ -36,10 +36,10 @@ public class AdminServlet extends HttpServlet {
                 request.setAttribute("user", request.getSession().getAttribute("user"));
             }
             request.getRequestDispatcher("./jsp/admin/welcome.jsp").include(request, response);
-        } catch (BadRequestException e) {
-            // TODO handle BadRequestException
         } catch (DBException e) {
             // TODO handle DBException
+        } catch (BadRequestException e) {
+            // TODO handle BadRequestException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

@@ -39,7 +39,7 @@
             <table>
                 <tbody>
                 <tr>
-                    <th><fmt:message key="admin.orders.header.id"/></th>
+                    <th><fmt:message key="admin.orders.header.number"/></th>
                     <th><fmt:message key="admin.orders.header.client"/></th>
                     <th><fmt:message key="admin.orders.header.total"/></th>
                     <th><fmt:message key="admin.orders.header.status"/></th>
@@ -51,7 +51,7 @@
                     <td class="row-center">${order.id}</td>
                     <td>${order.user.firstName} ${order.user.lastName}</td>
                     <td class="row-right">${order.total}</td>
-                    <td class="row-center">
+                    <td class="row-right">
                         <form action="${pageContext.request.contextPath}/update-status" method="post">
                             <input type="hidden" name="order_id" value="${order.id}">
                             <input type="hidden" name="page" value="${pageContext.request.contextPath}/admin/orders?<c:forEach items="${param}" var="entry">${entry.key}=${entry.value}&</c:forEach>">
@@ -68,16 +68,25 @@
                     </td>
                     <td class="row-center">${order.dateAdded}</td>
                 </tr>
-                <tr class="details" id="details-${order.id}"><td colspan="5">
+                <tr class="details" id="details-${order.id}">
+                    <td colspan="5">
                     <table>
                         <tbody>
                         <tr><th><fmt:message key="admin.orders.label.title"/></th><th><fmt:message key="admin.orders.label.quantity"/></th></tr>
                         <c:forEach items="${order.details}" var="entry">
-                        <tr><td>${entry.key.tag}</td><td class="row-center">${entry.value}</td></tr>
+                        <tr>
+                            <td>
+                            <c:forEach items="${entry.key.titles}" var="title">
+                                <c:if test="${title.key == languageId}">${title.value}</c:if>
+                            </c:forEach>
+                            </td>
+                            <td class="row-center">${entry.value}</td>
+                        </tr>
                         </c:forEach>
                         </tbody>
                     </table>
-                </td></tr>
+                    </td>
+                </tr>
                 </c:forEach>
                 </tbody>
             </table>
