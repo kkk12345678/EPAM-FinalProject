@@ -1,7 +1,7 @@
-package com.epam.kkorolkov.finalproject.admin.book;
+package com.epam.kkorolkov.finalproject.admin.order;
 
 import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
-import com.epam.kkorolkov.finalproject.db.dao.BookDao;
+import com.epam.kkorolkov.finalproject.db.dao.OrderDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.exception.DBException;
@@ -14,35 +14,26 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 
-/**
- * The {@code DeleteBookServlet} is a servlet which task is to
- * delete from the database record of product
- *
- */
-
-@WebServlet("/admin/delete-book")
-public class DeleteBookServlet extends HttpServlet {
+@WebServlet("/update-status")
+public class UpdateOrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Connection connection = null;
-        DataSource dataSource = null;
+        int orderId = Integer.parseInt(request.getParameter("order_id"));
+        int statusId = Integer.parseInt(request.getParameter("status_id"));
         String page = request.getParameter("page");
+        DataSource dataSource = null;
+        Connection connection = null;
         try {
-            int id = Integer.parseInt(request.getParameter("id"));
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
-            if (connection != null) {
-                BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
-                bookDao.delete(connection, id);
-            }
+            OrderDao orderDao = AbstractDaoFactory.getInstance().getOrderDao();
+            orderDao.updateStatus(connection, orderId, statusId);
         } catch (DBException e) {
-            //TODO handle exception
-        } catch (NumberFormatException e) {
-            //TODO Handle NumberFormatException
+            // TODO handle DBException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);
             }
         }
-        response.sendRedirect("books?page=" + page);
+        response.sendRedirect(page);
     }
 }

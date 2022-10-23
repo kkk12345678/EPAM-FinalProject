@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/admin/books")
@@ -26,7 +25,7 @@ public class GetBooksServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pageParameter = request.getParameter("page");
-        Map<String, String> parameters = CatalogueUtils.setParameters(request);
+        Map<String, String> parameters = CatalogueUtils.setBookParameters(request);
         if (pageParameter == null || "".equals(pageParameter)) {
             response.sendRedirect("./books?page=1");
         } else {

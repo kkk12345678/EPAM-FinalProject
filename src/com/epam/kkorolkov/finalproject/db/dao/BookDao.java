@@ -15,7 +15,7 @@ public interface BookDao {
     Optional<Book> get(Connection connection, int id) throws DBException;
     Optional<Book> get(Connection connection, String tag) throws DBException;
 
-    List<Book> getAll(Connection connection, int limit, int page, Map<String, String> parameters) throws DBException;
+    List<Book> getAll(Connection connection, int limit, int page, Map<String, String> parameters) throws DBException, BadRequestException;
 
     void update(Connection connection, Book book) throws DBException;
     void delete(Connection connection, int id) throws DBException;

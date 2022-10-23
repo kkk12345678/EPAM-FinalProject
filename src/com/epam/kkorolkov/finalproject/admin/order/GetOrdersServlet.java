@@ -1,13 +1,13 @@
 package com.epam.kkorolkov.finalproject.admin.order;
 
 import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
-import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
 import com.epam.kkorolkov.finalproject.db.dao.OrderDao;
+import com.epam.kkorolkov.finalproject.db.dao.StatusDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.db.entity.Category;
-import com.epam.kkorolkov.finalproject.db.entity.Order;
+import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,27 +16,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.List;
+import java.util.Map;
 
 @WebServlet("/admin/orders")
 public class GetOrdersServlet extends HttpServlet {
+    private static final int LIMIT = 20;
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DataSource dataSource = null;
-        Connection connection = null;
-        try {
-            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
-            connection = dataSource.getConnection();
-            OrderDao orderDao = AbstractDaoFactory.getInstance().getOrderDao();
-            if (connection != null) {
-                List<Order> orders = orderDao.getAll(connection);
-                request.setAttribute("orders", orders);
-            }
-            request.getRequestDispatcher("../jsp/admin/orders/orders.jsp").include(request, response);
-        } catch (DBException e) {
-            // TODO handle DBException
-        } finally {
-            if (dataSource != null) {
-                dataSource.release(connection);
+        String pageParameter = request.getParameter("page");
+        Map<String, String> parameters = CatalogueUtils.setOrderParameters(request);
+        if (pageParameter == null || "".equals(pageParameter)) {
+            response.sendRedirect("./orders?page=1");
+        } else {
+            int page = Integer.parseInt(pageParameter);
+            DataSource dataSource = null;
+            Connection connection = null;
+            try {
+                dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
+                connection = dataSource.getConnection();
+                OrderDao orderDao = AbstractDaoFactory.getInstance().getOrderDao();
+                StatusDao statusDao = AbstractDaoFactory.getInstance().getStatusDao();
+                if (connection != null) {
+                    int totalPages = (orderDao.count(connection, parameters) - 1) / LIMIT + 1;
+                    if (page > totalPages) {
+                        page = totalPages;
+                    }
+                    request.setAttribute("orders", orderDao.getAll(connection, LIMIT, LIMIT * (page - 1), parameters));
+                    request.setAttribute("statuses", statusDao.getAll(connection));
+                    request.setAttribute("totalPages", totalPages);
+                    request.setAttribute("currentPage", page);
+                }
+                request.getRequestDispatcher("../jsp/admin/orders/orders.jsp").include(request, response);
+            } catch (DBException e) {
+                // TODO handle DBException
+            } catch (BadRequestException e) {
+                // TODO handle BadRequestException
+            } finally {
+                if (dataSource != null) {
+                    dataSource.release(connection);
+                }
             }
         }
     }

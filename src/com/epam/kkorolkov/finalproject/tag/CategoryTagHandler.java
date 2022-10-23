@@ -2,7 +2,6 @@ package com.epam.kkorolkov.finalproject.tag;
 
 import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
 import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
-import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
@@ -25,11 +24,10 @@ public class CategoryTagHandler extends SimpleTagSupport {
     }
 
     public void doTag() throws JspException {
-
         DataSource dataSource = null;
         Connection connection = null;
+        JspWriter out = getJspContext().getOut();
         try {
-            JspWriter out = getJspContext().getOut();
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
             CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
@@ -49,6 +47,7 @@ public class CategoryTagHandler extends SimpleTagSupport {
                     }
                 }
             }
+            out.flush();
         } catch (IOException | DBException e) {
             // TODO handle DBException
         } finally {

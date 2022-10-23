@@ -36,28 +36,14 @@
     width: 800px;
 }
 
-table {
-    margin-top: 50px;
-    width: 100%;
-    border-collapse: collapse;
-}
 
-table, th, td {
-    border: 1px solid;
-    padding: 5px;
-}
-
-.row-control {
-    display: flex;
-    justify-content: space-around;
-}
-
-.td-control {
-    width: 10%;
-}
 
 .row-center {
     text-align: center;
+}
+.row-right {
+    text-align: right;
+    padding-right: 10px;
 }
 
 #add-publisher, #add-category, #add-book, #add-user {
@@ -147,4 +133,15 @@ table, th, td {
     margin: 0 auto;
     display: flex;
     justify-content: left;
+}
+
+.details {
+    display: none;
+}
+
+.status {
+    height: 30px;
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
 }

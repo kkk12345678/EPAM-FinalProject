@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="<c:url value="/static/css/user.css"/>">
+<link rel="stylesheet" href="<c:url value="/static/css/all.css"/>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap">
+<link rel="icon" href="<c:url value="/static/img/favicon.ico"/>" type="image/x-icon">
+</head>
+<body>
+<header>
+    <div id="locale">
+        <select id="select-locale" name="locale">
+            <option disabled selected><fmt:message key="products.nav.language"/></option>
+            <c:forEach items="${sessionScope.languages}" var="language">
+            <option value="${language.value.locale}">${language.value.name}</option>
+            </c:forEach>
+        </select>
+    </div>
+    <div id="cart-img">
+        <a href="${pageContext.request.contextPath}/cart"><img src="<c:url value="/static/img/cart.jpg"/>" width="64" alt=""></a>
+        <span id="badge">${sessionScope.cart.size()}</span>
+    </div>
+    <div class="user-control">
+        <img src="<c:url value="/static/img/user.png"/>" alt="" width="64">
+        <div class="dropdown-content">
+            <ul id="auth-ul">
+                <c:if test="${sessionScope.user == null}">
+                    <li><a href="${pageContext.request.contextPath}/login"><fmt:message key="user.login.title"/></a></li>
+                    <li><a href="${pageContext.request.contextPath}/signup"><fmt:message key="user.signup.title"/></a></li>
+                </c:if>
+                <c:if test="${sessionScope.user != null}">
+                    <li>${sessionScope.user.firstName} ${sessionScope.user.lastName}</li>
+                    <li><a href="${pageContext.request.contextPath}/logout"><fmt:message key="user.logout.title"/></a></li>
+                </c:if>
+            </ul>
+        </div>
+    </div>
+</header>

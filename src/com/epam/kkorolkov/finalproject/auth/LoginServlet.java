@@ -53,11 +53,11 @@ public class LoginServlet extends HttpServlet {
 
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
         LOGGER.info("User is " + user);
         if (user == null) {
-            request.getRequestDispatcher("./jsp/user/auth/login.jsp").include(request, response);
+            request.getRequestDispatcher("./jsp/auth/login.jsp").include(request, response);
         } else {
             String page = (!user.getIsAdmin()) ? "/shop" : "/admin";
             LOGGER.info(String.format("User with id = %d has already logged in. Redirecting to %s." , user.getId(), page));

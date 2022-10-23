@@ -1,4 +1,4 @@
-package com.epam.kkorolkov.finalproject.servlet;
+package com.epam.kkorolkov.finalproject.util;
 
 import com.epam.kkorolkov.finalproject.db.dao.*;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;

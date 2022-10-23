@@ -53,6 +53,6 @@ public class SingupServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("./jsp/user/auth/signup.jsp").include(request, response);
+        request.getRequestDispatcher("./jsp/auth/signup.jsp").include(request, response);
     }
 }

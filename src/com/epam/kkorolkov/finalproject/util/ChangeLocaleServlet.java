@@ -1,4 +1,4 @@
-package com.epam.kkorolkov.finalproject.servlet;
+package com.epam.kkorolkov.finalproject.util;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,6 +16,7 @@ public class ChangeLocaleServlet extends HttpServlet {
         String page = request.getParameter("page");
         HttpSession session = request.getSession();
         session.setAttribute("locale", locale);
-        response.sendRedirect(page);
+        response.sendRedirect(page.replaceAll("ggg", "&"));
+
     }
 }

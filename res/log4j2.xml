@@ -5,6 +5,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
+        <!--
         <RollingFile name="fileLogger"
                      fileName="${sys:logFolder}/app.log"
                      filePattern="${sys:logFolder}/app-%d{yyyy-MM-dd}.log">
@@ -15,16 +16,16 @@
             </Policies>
             <DefaultRolloverStrategy max="10">
                 <Delete basePath="${sys:logFolder}" maxDepth="10">
-                    <!-- Delete all files older than 30 days -->
                     <IfLastModified age="30d" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
+-->
     </Appenders>
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="fileLogger"/>
+            <!--<AppenderRef ref="fileLogger"/>-->
         </Root>
     </Loggers>
 </Configuration>

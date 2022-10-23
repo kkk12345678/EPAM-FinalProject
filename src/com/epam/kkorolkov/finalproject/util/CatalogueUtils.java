@@ -70,7 +70,8 @@ public class CatalogueUtils {
         }
         return s % 10 == 0;
     }
-    public static Map<String, String> setParameters(HttpServletRequest request) {
+
+    public static Map<String, String> setBookParameters(HttpServletRequest request) {
         Map<String, String> parameters = new HashMap<>();
         String categoryId = request.getParameter("category");
         String publisherId = request.getParameter("publisher");
@@ -103,5 +104,9 @@ public class CatalogueUtils {
             parameters.put("price_max", pricesMax);
         }
         return parameters;
+    }
+
+    public static Map<String, String> setOrderParameters(HttpServletRequest request) {
+        return null;
     }
 }

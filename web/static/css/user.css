@@ -1,6 +1,7 @@
 header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 .user-control {
     margin-right: 100px;
@@ -41,7 +42,20 @@ header {
 
 #control {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+}
+
+#add-to-cart {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#quantity {
+    height: fit-content;
+    text-align: center;
+    width: 50px;
+    margin: 20px 50px 10px 0;
 }
 
 #book-image {
@@ -51,6 +65,7 @@ header {
 #book-details {
     margin: 50px;
 }
+
 img {
     border-radius: 3px;
     display: block;
@@ -77,12 +92,62 @@ img {
 
 .book-details {
     display: flex;
-    justify-content: center;
+    height: 170px;
+    /*justify-content: center;*/
 }
 
 .book-text-details {
-    margin-top: 70px;
+    /*margin-top: 70px;*/
     padding-left: 20px;
     font-size: small;
     text-align: left;
+}
+
+#cart-img {
+    counter-reset: section;
+}
+
+.count:before {
+    counter-increment: section;
+    content: counter(section);
+}
+#badge {
+    border-radius:50%;
+    color:#fff;
+    background-color:#f44336;
+    display:inline-block;
+    padding-left:8px;
+    padding-right:8px;
+    text-align:center;
+    position:relative;
+    top:-55px;
+    right: 0;
+}
+
+.number, .quantity {
+    text-align: center;
+}
+
+.price, .sum {
+    text-align: right;
+    margin-right: 10px;
+}
+
+h2 {
+    text-align: center;
+    margin: 50px auto;
+}
+
+
+.delete, .plus, .minus {
+    cursor: pointer;
+}
+
+#cart {
+    width: 1200px;
+    margin: 0 auto;
+}
+#total {
+    text-align: right;
+    margin-right: 170px;
 }

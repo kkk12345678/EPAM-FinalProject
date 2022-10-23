@@ -25,3 +25,13 @@
 #login {
     height: 310px;
 }
+
+#signup-link {
+    display: block;
+    margin: 10px auto 0;
+}
+
+#signup-div {
+    display: flex;
+    justify-content: center;
+}

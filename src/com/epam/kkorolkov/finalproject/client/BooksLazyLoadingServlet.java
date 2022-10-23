@@ -5,6 +5,7 @@ import com.epam.kkorolkov.finalproject.db.dao.BookDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Book;
+import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import com.google.gson.Gson;
@@ -25,7 +26,7 @@ public class BooksLazyLoadingServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int page = Integer.parseInt(request.getParameter("page"));
-        Map<String, String> parameters = CatalogueUtils.setParameters(request);
+        Map<String, String> parameters = CatalogueUtils.setBookParameters(request);
         DataSource dataSource = null;
         Connection connection = null;
         try {
@@ -39,9 +40,11 @@ public class BooksLazyLoadingServlet extends HttpServlet {
                     writer.println(json);
                 }
             }
-        } catch (DBException e) {
+        } catch (BadRequestException e) {
+            // TODO handle BadRequestException
+        }
+        catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

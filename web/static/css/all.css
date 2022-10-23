@@ -24,6 +24,17 @@ a + form {
     margin-left: 20px;
 }
 
+table {
+    margin-top: 50px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid;
+    padding: 5px;
+}
+
 .control-img {
     cursor: pointer;
 }
@@ -60,3 +71,13 @@ a + form {
     border-radius: 5px;
 }
 
+
+
+.td-control {
+    width: 10%;
+}
+
+.row-control {
+    display: flex;
+    justify-content: space-around;
+}

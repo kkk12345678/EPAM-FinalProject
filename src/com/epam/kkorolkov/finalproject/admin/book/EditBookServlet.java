@@ -48,8 +48,6 @@ public class EditBookServlet extends HttpServlet {
         } catch (DBException e) {
             //TODO Handle DBException
             request.setAttribute("book", Book.create());
-        } catch (NumberFormatException e) {
-            //TODO Handle NumberFormatException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);
@@ -75,14 +73,12 @@ public class EditBookServlet extends HttpServlet {
             }
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } catch (NullPointerException e) {
             // TODO handle NullPointerException
-            e.printStackTrace();
         } catch (ParseException e) {
-            e.printStackTrace();
+            // TODO handle ParseException
         } catch (IOException e) {
-            e.printStackTrace();
+            // TODO handle IOException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

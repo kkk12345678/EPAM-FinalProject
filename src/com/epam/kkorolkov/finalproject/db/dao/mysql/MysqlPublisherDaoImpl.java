@@ -142,13 +142,13 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         PreparedStatement preparedStatement = null;
         try {
             connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(
+                    SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.update"));
             for (int languageId : publisher.getDescriptions().keySet()) {
-                preparedStatement = connection.prepareStatement(
-                        SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.update"));
-                preparedStatement.setInt(3, publisher.getId());
-                preparedStatement.setInt(4, languageId);
                 preparedStatement.setString(1, publisher.getNames().get(languageId));
                 preparedStatement.setString(2, publisher.getDescriptions().get(languageId));
+                preparedStatement.setInt(3, publisher.getId());
+                preparedStatement.setInt(4, languageId);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
@@ -209,9 +209,9 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
             PreparedStatement preparedStatement = null;
             try {
                 connection.setAutoCommit(false);
+                preparedStatement = connection.prepareStatement(
+                        SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.insert"));
                 for (int languageId : publisher.getDescriptions().keySet()) {
-                    preparedStatement = connection.prepareStatement(
-                            SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.insert"));
                     preparedStatement.setInt(1, publisher.getId());
                     preparedStatement.setInt(2, languageId);
                     preparedStatement.setString(3, publisher.getNames().get(languageId));

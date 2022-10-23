@@ -26,20 +26,19 @@ public class ProductServlet extends HttpServlet {
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
             BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
-            LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();
+            //LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();
             if (connection != null) {
                 Optional<Book> optional = bookDao.get(connection, request.getPathInfo().substring(1));
                 if (optional.isPresent()) {
                     request.setAttribute("book", optional.get());
-                    request.setAttribute("languages", languageDao.getAll(connection));
-                    request.getRequestDispatcher( "../jsp/user/product.jsp").include(request, response);
+                    //request.setAttribute("languages", languageDao.getAll(connection));
+                    request.getRequestDispatcher( "../jsp/client/product.jsp").include(request, response);
                 } else {
                     response.sendRedirect(request.getServletContext().getContextPath() + "/shop");
                 }
             }
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

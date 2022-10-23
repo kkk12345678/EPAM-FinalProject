@@ -6,5 +6,8 @@
             <button class="control-button"><fmt:message key="user.button.login"/></button>
         </form>
         <button id="cancel" class="control-button"><fmt:message key="user.button.cancel"/></button>
+        <div id="signup-div">
+            <a id="signup-link" href="signup"><fmt:message key="user.label.signup"/></a>
+        </div>
     </div>
 <%@ include file="auth-footer.jspf"%>

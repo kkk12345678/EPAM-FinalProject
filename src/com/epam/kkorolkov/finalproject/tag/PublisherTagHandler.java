@@ -24,9 +24,9 @@ public class PublisherTagHandler extends SimpleTagSupport {
     }
 
     public void doTag() throws JspException {
-        JspWriter out = getJspContext().getOut();
         DataSource dataSource = null;
         Connection connection = null;
+        JspWriter out = getJspContext().getOut();
         try {
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
@@ -46,9 +46,10 @@ public class PublisherTagHandler extends SimpleTagSupport {
                         out.println("<option value=\"" + p.getId() + "\">" + p.getTag() + "</option>");
                     }
                 }
+
             }
         } catch (IOException | DBException e) {
-            // TODO handle IOException
+            // TODO handle DBException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

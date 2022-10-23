@@ -1,47 +1,7 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib uri="/WEB-INF/mytags.tld" prefix="m" %>
-<%@ page isELIgnored="false" %>
-<fmt:setLocale value="${sessionScope.locale}"/>
-<c:if test="${sessionScope.locale == null}"><fmt:setLocale value="en"/></c:if>
-<fmt:setBundle basename="user-labels"/>
-<html>
-<head>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-    <title><fmt:message key="products.title"/></title>
-    <link rel="stylesheet" href="<c:url value="/static/css/user.css"/>">
-    <link rel="stylesheet" href="<c:url value="/static/css/all.css"/>">
-    <link rel="stylesheet" href="<c:url value="/static/css/slider.css"/>">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap">
-</head>
-<body>
-<header>
-    <div id="locale">
-        <select id="select-locale" name="locale">
-            <option disabled selected><fmt:message key="products.nav.language"/></option>
-            <option value="ua">Українська</option>
-            <option value="en">English</option>
-        </select>
-    </div>
-    <div class="user-control">
-        <img src="<c:url value="/static/img/user.png"/>" alt="" width="64">
-        <div class="dropdown-content">
-            <ul id="auth-ul">
-                <li><a href="login"><fmt:message key="products.login"/></a></li>
-                <li><a href="signup"><fmt:message key="products.signup"/></a></li>
-            </ul>
-        </div>
-    </div>
-</header>
-<c:forEach items="${requestScope.languages}" var="entry">
-<c:if test="${entry.value.locale == sessionScope.locale}">
-    <c:set var="languageId" scope ="request" value="${entry.key}"/>
-</c:if>
-<c:if test="${entry.value.locale != sessionScope.locale}">
-    <c:set var="languageId" scope ="request" value="1"/>
-</c:if>
-</c:forEach>
+<%@ include file="header1.jspf"%>
+<link rel="stylesheet" href="<c:url value="/static/css/slider.css"/>">
+<title><fmt:message key="products.title"/></title>
+<%@ include file="header2.jspf"%>
 <div id="sort">
     <label>
         <select id="select-sort">
@@ -66,11 +26,9 @@
                         <fmt:message key="user.label.filter.choose.category"/>
                     </option>
                     <c:forEach items="${requestScope.categories}" var="category">
-                    <option label="${category.tag}" value="${category.id}" name="category">
+                    <option label="${category.tag}" value="${category.id}" name="category" <c:if test="${category.id == param.category}">selected</c:if>>
                     <c:forEach items="${category.names}" var="entry">
-                    <c:if test="${entry.key == languageId}">
-                        ${entry.value}
-                    </c:if>
+                        <c:if test="${entry.key == languageId}">${entry.value}</c:if>
                     </c:forEach>
                     </option>
                     </c:forEach>
@@ -85,7 +43,7 @@
                         <fmt:message key="user.label.filter.choose.publisher"/>
                     </option>
                     <c:forEach items="${requestScope.publishers}" var="publisher">
-                    <option label="${publisher.tag}" value="${publisher.id}" name="publisher">
+                    <option label="${publisher.tag}" value="${publisher.id}" name="publisher" <c:if test="${publisher.id == param.publisher}">selected</c:if>>
                     <c:forEach items="${publisher.names}" var="entry">
                     <c:if test="${entry.key == languageId}">
                         ${entry.value}
@@ -128,8 +86,9 @@
                     <img class="book-img" id="${book.isbn}" alt="" width="100px" src="${pageContext.request.contextPath}/static/img/product/no-image.jpg">
                 </div>
                 <div class="book-text-details">
-                    <p class="isbn">ISBN: ${book.isbn}</p>
-                    <p class="price"><fmt:message key="user.label.price"/>: ${book.price}</p>
+                    <p><fmt:message key="user.label.quantity"/>: ${book.quantity}</p>
+                    <p>ISBN: ${book.isbn}</p>
+                    <p><fmt:message key="user.label.price"/>: ${book.price}</p>
                 </div>
             </div>
             <div class="book-link">
@@ -145,10 +104,8 @@
         </c:forEach>
     </div>
 </div>
-<button class="control-button" onclick="loadBooks('<fmt:message key="user.label.price"/>')"><fmt:message key="products.button.load.more"/></button>
+<button class="control-button" onclick="loadBooks('<fmt:message key="user.label.price"/>', '<fmt:message key="user.label.quantity"/>')"><fmt:message key="products.button.load.more"/></button>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/load.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/slider.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/locale.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/sort.js"></script>
-</body>
-</html>
+<%@ include file="footer.jspf"%>

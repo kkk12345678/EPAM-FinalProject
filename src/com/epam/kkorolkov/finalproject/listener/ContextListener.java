@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebListener;
 public class ContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+
         String path = sce.getServletContext().getRealPath("/logs");
         System.setProperty("logFolder", path);
         final Logger LOGGER = LogManager.getLogger("INIT");

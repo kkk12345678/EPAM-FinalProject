@@ -1,0 +1,15 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/mytags.tld" prefix="m" %>
+<%@ page isELIgnored="false" %>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<c:if test="${sessionScope.locale == null}"><fmt:setLocale value="en"/></c:if>
+<fmt:setBundle basename="user-labels"/>
+<c:forEach items="${sessionScope.languages}" var="entry">
+    <c:if test="${entry.value.locale == sessionScope.locale}"><c:set var="languageId" scope ="request" value="${entry.key}"/></c:if>
+    <c:if test="${entry.value.locale != sessionScope.locale}"><c:set var="languageId" scope ="request" value="1"/></c:if>
+</c:forEach>
+<html>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />

@@ -99,15 +99,9 @@ CREATE TABLE `orders` (
                           `id` INT AUTO_INCREMENT PRIMARY KEY,
                           `customer_id` INT NOT NULL,
                           `status_id` INT NOT NULL DEFAULT '1',
-                          `language_id` INT NOT NULL,
                           `date_added` DATE NOT NULL,
                           `total` DECIMAL(10,00) NOT NULL,
-                          `shipping_lastname` VARCHAR(96) NOT NULL,
-                          `shipping_firstname` VARCHAR(96) NOT NULL,
-                          `shipping_address` VARCHAR(256) NOT NULL,
-                          `shipping_phone` VARCHAR(15) NOT NULL,
                           FOREIGN KEY (`customer_id`) REFERENCES `users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT,
-                          FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT,
                           FOREIGN KEY (`status_id`) REFERENCES `statuses` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
 ) ENGINE=INNODB;
 

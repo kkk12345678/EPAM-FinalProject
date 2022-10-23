@@ -31,7 +31,7 @@
         </div>
         <div class="admin-item">
             <h3><fmt:message key="admin.orders.count"/>:</h3>
-            <p class="counter">${requestScope.publishersCount}</p>
+            <p class="counter">${requestScope.ordersCount}</p>
             <a href="${pageContext.request.contextPath}/admin/orders"><fmt:message key="admin.nav.orders"/></a>
         </div>
     </div>

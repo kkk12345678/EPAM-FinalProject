@@ -32,7 +32,7 @@ public class AdminServlet extends HttpServlet {
                 request.setAttribute("categoriesCount", categoryDao.count(connection));
                 request.setAttribute("publishersCount", publisherDao.count(connection));
                 request.setAttribute("booksCount", bookDao.count(connection, null));
-                request.setAttribute("ordersCount", orderDao.count(connection));
+                request.setAttribute("ordersCount", orderDao.count(connection, null));
                 request.setAttribute("user", request.getSession().getAttribute("user"));
             }
             request.getRequestDispatcher("./jsp/admin/welcome.jsp").include(request, response);

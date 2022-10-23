@@ -168,12 +168,12 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
     }
 
     private void updateCategoryDetails(Connection connection, Category category) throws SQLException {
-        connection.setAutoCommit(false);
         PreparedStatement preparedStatement = null;
         try {
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(
+                    SQL_STATEMENTS.getProperty("mysql.categories.descriptions.update"));
             for (int languageId : category.getDescriptions().keySet()) {
-                preparedStatement = connection.prepareStatement(
-                        SQL_STATEMENTS.getProperty("mysql.categories.descriptions.update"));
                 preparedStatement.setInt(3, category.getId());
                 preparedStatement.setInt(4, languageId);
                 preparedStatement.setString(1, category.getNames().get(languageId));
@@ -248,7 +248,6 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 PreparedStatement preparedStatement = connection.prepareStatement(
                         SQL_STATEMENTS.getProperty("mysql.categories.descriptions.insert"));
                 for (int languageId : category.getDescriptions().keySet()) {
-
                     preparedStatement.setInt(1, category.getId());
                     preparedStatement.setInt(2, languageId);
                     preparedStatement.setString(3, category.getNames().get(languageId));

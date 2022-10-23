@@ -31,7 +31,7 @@ const cancelFilter = function () {
     window.location = "./shop?page=1";
 }
 
-const loadBooks = function (labelPrice) {
+const loadBooks = function (labelPrice, labelQuantity) {
     page++;
     const url = new URL(document.URL);
     url.searchParams.set("page", page.toString());
@@ -40,7 +40,7 @@ const loadBooks = function (labelPrice) {
     const xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", "./load-books?" + urlParts[1], false);
     xmlHttp.send();
-    document.getElementById("books").innerHTML += bookHtml(xmlHttp.responseText, labelPrice);
+    document.getElementById("books").innerHTML += bookHtml(xmlHttp.responseText, labelPrice, labelQuantity);
 }
 
 const imageSrc = function(isbn) {
@@ -54,18 +54,18 @@ const imageSrc = function(isbn) {
     return "./static/img/product/no-image.jpg";
 }
 
-const bookHtml = function (bookJson, labelPrice) {
+const bookHtml = function (bookJson, labelPrice, labelQuantity) {
     const languageId = getLanguageId();
     const books = JSON.parse(bookJson);
     let result = "";
     for (const i in books) {
         const src = imageSrc(books[i]["isbn"]);
         result +=
-            '<div class="book-img"><div class="book-details">' +
-            '<img class="book-img" id="' + books[i]["isbn"] + '" alt="" width="100px" src="' + src + '">' +
-            '<div class="book-text-details"><p class="isbn">ISBN: ' + books[i]["isbn"] + '</p>' +
-            '<p class="price">' + labelPrice + ': ' + Number(books[i]["price"]).toFixed(1) + '</p></div></div>' +
-            '<a href="./product/' + books[i]["tag"] + '">' + books[i]["titles"][languageId] + '</a></div>';
+            '<div class="book"><div class="book-details"><div class="book-img">' +
+            '<img class="book-img" id="' + books[i]["isbn"] + '" alt="" width="100px" src="' + src + '"></div>' +
+            '<div class="book-text-details"><p>' + labelQuantity + ': ' + books[i]["quantity"] + '</p><p>ISBN: ' + books[i]["isbn"] + '</p>' +
+            '<p>' + labelPrice + ': ' + Number(books[i]["price"]).toFixed(1) + '</p></div></div>' +
+            '<div class="book-link"><a href="./product/' + books[i]["tag"] + '">' + books[i]["titles"][languageId] + '</a></div></div></div>';
     }
     return result;
 }

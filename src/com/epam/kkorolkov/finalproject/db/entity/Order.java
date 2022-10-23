@@ -7,20 +7,15 @@ import java.util.Map;
 public class Order extends Entity {
     private Status status;
     private User user;
-    private Language language;
-    private String shippingAddress;
-    private String shippingFirstName;
-    private String shippingLastName;
-    private String shippingPhoneNumber;
     private Double total;
     private Date dateAdded;
-    private List<Map<Book, Integer>> details;
+    private Map<Book, Integer> details;
 
-    public List<Map<Book, Integer>> getDetails() {
+    public Map<Book, Integer> getDetails() {
         return details;
     }
 
-    public void setDetails(List<Map<Book, Integer>> details) {
+    public void setDetails(Map<Book, Integer> details) {
         this.details = details;
     }
 
@@ -38,46 +33,6 @@ public class Order extends Entity {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
-    }
-
-    public String getShippingAddress() {
-        return shippingAddress;
-    }
-
-    public void setShippingAddress(String shippingAddress) {
-        this.shippingAddress = shippingAddress;
-    }
-
-    public String getShippingFirstName() {
-        return shippingFirstName;
-    }
-
-    public void setShippingFirstName(String shippingFirstName) {
-        this.shippingFirstName = shippingFirstName;
-    }
-
-    public String getShippingLastName() {
-        return shippingLastName;
-    }
-
-    public void setShippingLastName(String shippingLastName) {
-        this.shippingLastName = shippingLastName;
-    }
-
-    public String getShippingPhoneNumber() {
-        return shippingPhoneNumber;
-    }
-
-    public void setShippingPhoneNumber(String shippingPhoneNumber) {
-        this.shippingPhoneNumber = shippingPhoneNumber;
     }
 
     public Double getTotal() {

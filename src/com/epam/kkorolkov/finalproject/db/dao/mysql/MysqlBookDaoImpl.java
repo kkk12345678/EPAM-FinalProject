@@ -294,9 +294,10 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         if (book.getId() != 0) {
             try {
                 connection.setAutoCommit(false);
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        SQL_STATEMENTS.getProperty("mysql.books.descriptions.insert"));
                 for (int languageId : book.getDescriptions().keySet()) {
-                    PreparedStatement preparedStatement = connection.prepareStatement(
-                            SQL_STATEMENTS.getProperty("mysql.books.descriptions.insert"));
+
                     preparedStatement.setInt(1, book.getId());
                     preparedStatement.setInt(2, languageId);
                     preparedStatement.setString(3, book.getTitles().get(languageId));
@@ -314,11 +315,11 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     private void updateBooksDetails(Connection connection, Book book) throws SQLException {
-        connection.setAutoCommit(false);
         try {
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    SQL_STATEMENTS.getProperty("mysql.books.descriptions.update"));
             for (int languageId : book.getDescriptions().keySet()) {
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        SQL_STATEMENTS.getProperty("mysql.books.descriptions.update"));
                 preparedStatement.setInt(3, book.getId());
                 preparedStatement.setInt(4, languageId);
                 preparedStatement.setString(1, book.getTitles().get(languageId));
