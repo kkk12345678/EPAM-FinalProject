@@ -1,5 +1,5 @@
 <%@ include file="header1.jspf"%>
-<c:forEach items="${requestScope.book.titles}" var="entry">
+<c:forEach items="${requestScope.book.names}" var="entry">
     <c:if test="${entry.key == languageId}"><c:set var="title" value="${entry.value}"/></c:if>
 </c:forEach>
 <c:forEach items="${requestScope.book.descriptions}" var="entry">
@@ -33,4 +33,5 @@
     </div>
 </div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/book-front.js"></script>
+
 <%@ include file="footer.jspf"%>

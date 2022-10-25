@@ -7,7 +7,6 @@ import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Book;
-import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 
 import javax.servlet.ServletException;
@@ -55,7 +54,7 @@ public class ImportBooksFromCsvServlet extends HttpServlet {
                 book.setQuantity(Integer.parseInt(data[5]));
                 book.setPrice(Double.parseDouble(data[6]));
                 book.setDescriptions(descriptions);
-                book.setTitles(titles);
+                book.setNames(titles);
                 bookDao.insert(connection, book);
             }
         } catch (DBException e) {

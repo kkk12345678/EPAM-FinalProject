@@ -2,18 +2,15 @@ package com.epam.kkorolkov.finalproject.db.entity;
 
 import java.sql.Date;
 import java.util.HashMap;
-import java.util.Map;
 
-public class Book extends Entity {
+public class Book extends CatalogueEntity {
     private String isbn;
     private int quantity;
     private Publisher publisher;
     private Category category;
     private Date date;
     private Double price;
-    private String tag;
-    private Map<Integer, String> descriptions;
-    private Map<Integer, String> titles;
+
 
     public static Book create() {
         Book book = new Book();
@@ -25,7 +22,7 @@ public class Book extends Entity {
         book.setDate(null);
         book.setTag("");
         book.setPrice(0.0);
-        book.setTitles(new HashMap<>());
+        book.setNames(new HashMap<>());
         book.setDescriptions(new HashMap<>());
         return book;
     }
@@ -78,27 +75,4 @@ public class Book extends Entity {
         this.price = price;
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public Map<Integer, String> getDescriptions() {
-        return descriptions;
-    }
-
-    public void setDescriptions(Map<Integer, String> descriptions) {
-        this.descriptions = descriptions;
-    }
-
-    public Map<Integer, String> getTitles() {
-        return titles;
-    }
-
-    public void setTitles(Map<Integer, String> titles) {
-        this.titles = titles;
-    }
 }

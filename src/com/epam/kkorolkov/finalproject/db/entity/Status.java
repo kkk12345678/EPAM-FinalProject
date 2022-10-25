@@ -14,7 +14,7 @@ public class Status extends Entity {
     @Override
     public String toString() {
         return "Status{" +
-                "id=" + id +
+                "id=" + this.getId() +
                 ", name='" + name + '\'' +
                 '}';
     }

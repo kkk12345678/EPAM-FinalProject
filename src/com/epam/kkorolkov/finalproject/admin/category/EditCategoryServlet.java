@@ -28,38 +28,20 @@ public class EditCategoryServlet extends HttpServlet {
     protected static final Logger LOGGER = LogManager.getLogger("Edit category");
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id;
-        try {
-            id = Integer.parseInt(request.getParameter("id"));
-        } catch (NumberFormatException e) {
-            id = 0;
-        }
-
         DataSource dataSource = null;
         Connection connection = null;
         try {
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
-            String tag = request.getParameter("tag");
-            Map<Integer, Language> languages = getLanguages(connection);
-            Map<Integer, String> descriptions = new HashMap<>();
-            Map<Integer, String> names = new HashMap<>();
-            for (int languageId : languages.keySet()) {
-                descriptions.put(languageId, request.getParameter("description" + languageId));
-                names.put(languageId, request.getParameter("name" + languageId));
-            }
-            CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
             Category category = new Category();
-            category.setId(id);
-            category.setTag(tag.toLowerCase().replaceAll("[^a-z0-9]+", "-"));
-            category.setNames(names);
-            category.setDescriptions(descriptions);
+            CatalogueUtils.setDetailsFromRequest(request, category, getLanguages(connection));
             if (!CatalogueUtils.validate(category)) {
-                request.setAttribute("message", String.format("Category with tag %s already exists.", tag));
-                request.setAttribute("page", "./edit-category?id=" + id);
+                request.setAttribute("message", String.format("Category with tag %s already exists.", category.getTag()));
+                request.setAttribute("page", "./edit-category?id=" + category.getId());
                 request.getRequestDispatcher("../jsp/error/400.jsp").include(request, response);
             } else {
-                if (id == 0) {
+                CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
+                if (category.getId() == 0) {
                     categoryDao.insert(connection, category);
                 } else {
                     categoryDao.update(connection, category);
@@ -68,14 +50,13 @@ public class EditCategoryServlet extends HttpServlet {
             }
         } catch (DBException e) {
             // TODO handle DBException
-        } catch (NullPointerException e) {
-            // TODO handle NullPointerException
+        } catch (NumberFormatException e) {
+            // TODO handle NumberFormatException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);
             }
         }
-
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -95,13 +76,10 @@ public class EditCategoryServlet extends HttpServlet {
             request.getRequestDispatcher("../jsp/admin/categories/edit-category.jsp").include(request, response);
         } catch (DBException e) {
             // TODO handle DBException
-            e.printStackTrace();
         } catch (NumberFormatException e) {
             // TODO handle NumberFormatException
-            e.printStackTrace();
         } catch (NoSuchElementException e) {
             // TODO handle NoSuchElementException
-            e.printStackTrace();
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

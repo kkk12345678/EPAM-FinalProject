@@ -267,7 +267,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         book.setPublisher(publisherDao.get(connection, resultSet.getInt("publisher_id")).get());
         book.setCategory(categoryDao.get(connection, resultSet.getInt("category_id")).get());
         book.setPrice(resultSet.getDouble("price"));
-        book.setTitles(new HashMap<>());
+        book.setNames(new HashMap<>());
         book.setDescriptions(new HashMap<>());
     }
 
@@ -279,7 +279,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
             preparedStatement.setInt(1, book.getId());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                book.getTitles().put(resultSet.getInt("language_id"), resultSet.getString("title"));
+                book.getNames().put(resultSet.getInt("language_id"), resultSet.getString("title"));
                 book.getDescriptions().put(resultSet.getInt("language_id"), resultSet.getString("description"));
             }
         } catch (SQLException e) {
@@ -300,7 +300,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
 
                     preparedStatement.setInt(1, book.getId());
                     preparedStatement.setInt(2, languageId);
-                    preparedStatement.setString(3, book.getTitles().get(languageId));
+                    preparedStatement.setString(3, book.getNames().get(languageId));
                     preparedStatement.setString(4, book.getDescriptions().get(languageId));
                     preparedStatement.execute();
                 }
@@ -322,7 +322,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
             for (int languageId : book.getDescriptions().keySet()) {
                 preparedStatement.setInt(3, book.getId());
                 preparedStatement.setInt(4, languageId);
-                preparedStatement.setString(1, book.getTitles().get(languageId));
+                preparedStatement.setString(1, book.getNames().get(languageId));
                 preparedStatement.setString(2, book.getDescriptions().get(languageId));
                 preparedStatement.execute();
             }
@@ -336,44 +336,46 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     private String setClause(Map<String, String> parameters) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (parameters != null && !parameters.isEmpty()) {
-            String categoryId = parameters.get("category_id");
-            String publisherId = parameters.get("publisher_id");
-            String tag = parameters.get("tag");
-            String isbn = parameters.get("isbn");
-            String sortBy = parameters.get("sort_by");
-            String sortType = parameters.get("sort_type");
-            String priceMin = parameters.get("price_min");
-            String priceMax = parameters.get("price_max");
-            final boolean isPricesSet = priceMin != null && priceMax != null && !"".equals(priceMin) && !"".equals(priceMax);
-            if ((categoryId != null && !"".equals(categoryId)) ||
-                    (publisherId != null && !"".equals(publisherId)) ||
-                    (tag != null && !"".equals(tag)) ||
-                    (isbn != null && !"".equals(isbn)) ||
-                    isPricesSet) {
-                stringBuilder.append(" where ");
-                List<String> parts = new ArrayList<>();
-                if (categoryId != null && !"".equals(categoryId)) {
-                    parts.add("category_id = " + categoryId);
-                }
-                if (publisherId != null && !"".equals(publisherId)) {
-                    parts.add("publisher_id = " + publisherId);
-                }
-                if (tag != null && !"".equals(tag)) {
-                    parts.add("tag like '%" + tag + "%'");
-                }
-                if (isbn != null && !"".equals(isbn)) {
-                    parts.add("isbn like '%" + isbn + "%'");
-                }
-                if (isPricesSet) {
-                    parts.add("price >= " + priceMin + " and price <= " + priceMax);
-                }
-                stringBuilder.append(String.join(" and ", parts));
+        if (parameters == null || parameters.isEmpty()) {
+            return "";
+        }
+
+        String categoryId = parameters.get("category_id");
+        String publisherId = parameters.get("publisher_id");
+        String tag = parameters.get("tag");
+        String isbn = parameters.get("isbn");
+        String sortBy = parameters.get("sort_by");
+        String sortType = parameters.get("sort_type");
+        String priceMin = parameters.get("price_min");
+        String priceMax = parameters.get("price_max");
+        final boolean isPricesSet = priceMin != null && priceMax != null && !"".equals(priceMin) && !"".equals(priceMax);
+        StringBuilder stringBuilder = new StringBuilder("");
+        if ((categoryId != null && !"".equals(categoryId)) ||
+                (publisherId != null && !"".equals(publisherId)) ||
+                (tag != null && !"".equals(tag)) ||
+                (isbn != null && !"".equals(isbn)) ||
+                isPricesSet) {
+            stringBuilder.append(" where ");
+            List<String> parts = new ArrayList<>();
+            if (categoryId != null && !"".equals(categoryId)) {
+                parts.add("category_id = " + categoryId);
             }
-            if (sortBy != null && sortType != null) {
-                stringBuilder.append(" order by ").append(sortBy).append(" ").append(sortType);
+            if (publisherId != null && !"".equals(publisherId)) {
+                parts.add("publisher_id = " + publisherId);
             }
+            if (tag != null && !"".equals(tag)) {
+                parts.add("tag like '%" + tag + "%'");
+            }
+            if (isbn != null && !"".equals(isbn)) {
+                parts.add("isbn like '%" + isbn + "%'");
+            }
+            if (isPricesSet) {
+                parts.add("price >= " + priceMin + " and price <= " + priceMax);
+            }
+            stringBuilder.append(String.join(" and ", parts));
+        }
+        if (sortBy != null && sortType != null) {
+            stringBuilder.append(" order by ").append(sortBy).append(" ").append(sortType);
         }
         return stringBuilder.toString();
     }

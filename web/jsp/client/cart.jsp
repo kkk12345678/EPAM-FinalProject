@@ -1,13 +1,13 @@
 <%@ include file="header1.jspf"%>
 <title><fmt:message key="user.cart.title"/></title>
 <%@ include file="header2.jspf"%>
-<c:if test="${cart.size() == 0}">
+<c:if test="${sessionScope.cart.size() == 0}">
 <div id="empty-cart">
     <h2><fmt:message key="cart.empty.message"/></h2>
     <button class="control-button" onclick="window.location.href = '${pageContext.request.contextPath}/shop'"><fmt:message key="cart.button.continue"/></button>
 </div>
 </c:if>
-<c:if test="${cart.size() > 0}">
+<c:if test="${sessionScope.cart.size() > 0}">
 <div id="cart">
     <table id="cart-table">
         <tbody>
@@ -21,11 +21,7 @@
         </tr>
         <c:forEach items="${requestScope.cart}" var="line">
             <tr>
-                <td>
-                <c:forEach items="${line.key.titles}" var="entry">
-                    <c:if test="${entry.key == languageId}">${entry.value}</c:if>
-                </c:forEach>
-                </td>
+                <td><c:forEach items="${line.key.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach></td>
                 <td class="price">${line.key.price}</td>
                 <td class="quantity">${line.value}</td>
                 <td class="sum"></td>
@@ -47,7 +43,8 @@
         </div>
         <div id="add-to-cart">
             <c:if test="${sessionScope.user == null}"><button class="control-button" onclick="window.location.href='${pageContext.request.contextPath}/login'"><fmt:message key="cart.button.login"/></button></c:if>
-            <c:if test="${sessionScope.user != null}"><button class="control-button" onclick="placeOrder()"><fmt:message key="cart.button.place.order"/></button></c:if>
+            <c:if test="${sessionScope.user != null && sessionScope.user.isBlocked == false}"><button class="control-button" onclick="placeOrder()"><fmt:message key="cart.button.place.order"/></button></c:if>
+            <c:if test="${sessionScope.user != null && sessionScope.user.isBlocked == true}"><button class="control-button" onclick="alert('<fmt:message key="user.message.user.blocked"/>')"><fmt:message key="cart.button.place.order"/></button></c:if>
         </div>
     </div>
 </div>

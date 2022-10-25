@@ -7,6 +7,7 @@ import com.epam.kkorolkov.finalproject.db.entity.Book;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
 import com.epam.kkorolkov.finalproject.db.entity.Language;
 import com.epam.kkorolkov.finalproject.db.entity.Publisher;
+import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,12 +28,40 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 
 @WebServlet("/admin/edit-book")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class EditBookServlet extends HttpServlet {
-    protected static final Logger LOGGER = LogManager.getLogger("Edit book");
+    private static final Logger LOGGER = LogManager.getLogger("EDIT BOOK");
+    private static final String MESSAGE_ERROR_ID = "ID is not a valid integer.";
+
+    private static final String REGEX_TAG = "[^a-z0-9]+";
+    private static final String REPLACE_TAG = "-";
+
     private static final String UPLOAD_DIRECTORY = "static/img/product/";
+
+    private static final String ATTR_BOOK = "book";
+    private static final String ATTR_CATEGORIES = "categories";
+    private static final String ATTR_PUBLISHERS = "publishers";
+    private static final String ATTR_LANGUAGES = "languages";
+    private static final String ATTR_TODAY = "today";
+
+    private static final String INCLUDE_JSP = "../jsp/admin/books/edit-book.jsp";
+    private static final String REDIRECT_PAGE = "./books";
+
+    private static final String PARAM_ISBN = "isbn";
+    private static final String PARAM_ID = "id";
+    private static final String PARAM_TAG = "tag";
+    private static final String PARAM_CATEGORY = "category";
+    private static final String PARAM_PUBLISHER = "publisher";
+
+    private static final String PARAM_DATE = "date";
+    private static final String PARAM_QUANTITY = "quantity";
+    private static final String PARAM_PRICE = "price";
+    private static final String PARAM_NAME = "name";
+    private static final String PARAM_DESCRIPTION = "description";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         DataSource dataSource = null;
@@ -41,20 +70,21 @@ public class EditBookServlet extends HttpServlet {
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
             Book book = getBook(request, connection);
-            request.setAttribute("book", book);
-            request.setAttribute("categories", getCategories(connection));
-            request.setAttribute("publishers", getPublishers( connection));
-            request.setAttribute("languages", getLanguages(connection));
+            request.setAttribute(ATTR_BOOK, book);
+            request.setAttribute(ATTR_CATEGORIES, getCategories(connection));
+            request.setAttribute(ATTR_PUBLISHERS, getPublishers( connection));
+            request.setAttribute(ATTR_LANGUAGES, getLanguages(connection));
+            request.setAttribute(ATTR_TODAY, new Date(System.currentTimeMillis()));
+            request.getRequestDispatcher(INCLUDE_JSP).include(request, response);
         } catch (DBException e) {
-            //TODO Handle DBException
-            request.setAttribute("book", Book.create());
-        } finally {
+            //TODO handle DBException
+        } catch (BadRequestException e) {
+            //TODO handle BadRequestException
+        }finally {
             if (dataSource != null) {
                 dataSource.release(connection);
             }
         }
-
-        request.getRequestDispatcher("../jsp/admin/books/edit-book.jsp").include(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -71,25 +101,25 @@ public class EditBookServlet extends HttpServlet {
             } else {
                 bookDao.update(connection, book);
             }
+            response.sendRedirect(REDIRECT_PAGE);
         } catch (DBException e) {
             // TODO handle DBException
         } catch (NullPointerException e) {
             // TODO handle NullPointerException
-        } catch (ParseException e) {
-            // TODO handle ParseException
-        } catch (IOException e) {
-            // TODO handle IOException
+        } catch (NumberFormatException e) {
+            // TODO handle NumberFormatException
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);
             }
-
         }
-        response.sendRedirect("./books");
     }
 
     private void saveImage(HttpServletRequest request) throws IOException, ServletException {
-        String isbn = request.getParameter("isbn");
+        if (request.getPart("image").getSize() == 0) {
+            return;
+        }
+        String isbn = request.getParameter(PARAM_ISBN);
         if (!CatalogueUtils.validateIsbn(isbn)) {
             throw new NumberFormatException("Incorrect ISBN.");
         }
@@ -100,46 +130,49 @@ public class EditBookServlet extends HttpServlet {
         }
     }
 
-    private Book setBook(HttpServletRequest request, Connection connection) throws ParseException, DBException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        String tag = request.getParameter("tag");
-        Date date = Date.valueOf(request.getParameter("date"));
-        String isbn = request.getParameter("isbn");
-        double price = Double.parseDouble(request.getParameter("price"));
-        int quantity = Integer.parseInt(request.getParameter("quantity"));
-        int categoryId = Integer.parseInt(request.getParameter("category"));
-        int publisherId = Integer.parseInt(request.getParameter("publisher"));
+    private Book setBook(HttpServletRequest request, Connection connection) throws DBException, NumberFormatException {
+        int id = Integer.parseInt(request.getParameter(PARAM_ID));
+        String tag = request.getParameter(PARAM_TAG);
+        Date date = Date.valueOf(request.getParameter(PARAM_DATE));
+        String isbn = request.getParameter(PARAM_ISBN);
+        double price = Double.parseDouble(request.getParameter(PARAM_PRICE));
+        int quantity = Integer.parseInt(request.getParameter(PARAM_QUANTITY));
+        int categoryId = Integer.parseInt(request.getParameter(PARAM_CATEGORY));
+        int publisherId = Integer.parseInt(request.getParameter(PARAM_PUBLISHER));
         Map<Integer, Language> languages = getLanguages(connection);
         Map<Integer, String> descriptions = new HashMap<>();
         Map<Integer, String> titles = new HashMap<>();
         for (int languageId : languages.keySet()) {
-            descriptions.put(languageId, request.getParameter("description" + languageId));
-            titles.put(languageId, request.getParameter("name" + languageId));
+            descriptions.put(languageId, request.getParameter(PARAM_DESCRIPTION + languageId));
+            titles.put(languageId, request.getParameter(PARAM_NAME + languageId));
         }
         Book book = new Book();
         book.setId(id);
-        book.setTag(tag.toLowerCase().replaceAll("[^a-z0-9]+", "-"));
+        book.setTag(tag.toLowerCase().replaceAll(REGEX_TAG, REPLACE_TAG));
         book.setIsbn(isbn);
         book.setDate(date);
         book.setPrice(price);
         book.setQuantity(quantity);
         book.setCategory(getCategory(connection, categoryId));
         book.setPublisher(getPublisher(connection, publisherId));
-        book.setTitles(titles);
+        book.setNames(titles);
         book.setDescriptions(descriptions);
         return book;
     }
 
-    private Book getBook(HttpServletRequest request, Connection connection) throws DBException {
-        Book book;
-        int id = Integer.parseInt(request.getParameter("id"));
-        if (id != 0) {
-            BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
-            book = bookDao.get(connection, id).get();
-        } else {
-            book = Book.create();
+    private Book getBook(HttpServletRequest request, Connection connection) throws DBException, BadRequestException {
+        try {
+            int id = Integer.parseInt(request.getParameter(PARAM_ID));
+            if (id != 0) {
+                BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
+                return bookDao.get(connection, id).orElseThrow(NoSuchElementException::new);
+            }
+            return Book.create();
+        } catch (NumberFormatException | NoSuchElementException e) {
+            LOGGER.info(MESSAGE_ERROR_ID);
+            LOGGER.error(e.getMessage());
+            throw new BadRequestException();
         }
-        return book;
     }
 
     private List<Category> getCategories(Connection connection) throws DBException {

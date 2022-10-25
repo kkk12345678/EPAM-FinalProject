@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
-
-
     @Override
     public int count(Connection connection, Map<String, String> parameters) throws DBException {
         try {
@@ -124,6 +122,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
     @Override
     public List<Order> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException {
         String query = String.format("%s%s limit ? offset ?", SQL_STATEMENTS.getProperty("mysql.orders.select.all"), setClause(parameters));
+        System.out.println(query);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, limit);
@@ -152,10 +151,37 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
     }
 
     private String setClause(Map<String, String> parameters) {
+        if (parameters == null || parameters.keySet().size() == 0) {
+            return "";
+        }
         if (parameters.containsKey("user_id")) {
             return " where customer_id = " + parameters.get("user_id");
         }
-        return "";
+        String user = parameters.get("user");
+        String sum = parameters.get("sum");
+        String date = parameters.get("date");
+        String status = parameters.get("status");
+        StringBuilder stringBuilder = new StringBuilder("");
+        if (user != null && !"".equals(user) || sum != null && !"".equals(sum) ||
+                date != null && !"".equals(date) || status != null && !"".equals(status)) {
+            stringBuilder.append(" where ");
+            List<String> parts = new ArrayList<>();
+            if (user != null && !"".equals(user)) {
+                parts.add("customer_id = " + user);
+            }
+            if (sum != null && !"".equals(sum)) {
+                parts.add("total = " + sum);
+            }
+            if (date != null && !"".equals(date)) {
+                parts.add("date_added = '" + date + "'");
+            }
+            if (status != null && !"".equals(status)) {
+                parts.add("status_id = " + status);
+            }
+            stringBuilder.append(String.join(" and ", parts));
+            System.out.println(stringBuilder.toString());
+        }
+        return stringBuilder.toString();
     }
 
     private List<Order> getAll(Connection connection, PreparedStatement preparedStatement) throws SQLException {

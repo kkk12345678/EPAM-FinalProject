@@ -49,36 +49,20 @@ btnAdd.onclick = function () {
     window.location.href = "./edit-book?id=0";
 }
 
-const btnsPage = document.getElementsByClassName("button-page");
-const current = parseInt(new URLSearchParams(window.location.search).get("page"));
-const total = parseInt(document.getElementById("total").textContent);
-for (let i = 0; i < btnsPage.length; i++) {
-    if (btnsPage[i].textContent === current.toString()) {
-        btnsPage[i].setAttribute("style", "background: yellow; font-weight: bold")
+const imageSrc = function(isbn) {
+    const xmlHttp = new XMLHttpRequest();
+    const url = "../static/img/product/" + isbn + ".jpg";
+    xmlHttp.open("GET", url, false);
+    xmlHttp.send();
+    if (xmlHttp.status === 200) {
+        return "../static/img/product/" + isbn + ".jpg";
     }
+    return "../static/img/product/no-image.jpg";
+}
 
-    btnsPage[i].onclick = function () {
-        let page = btnsPage[i].textContent;
-        if (page === ">") {
-            if (current < total) {
-                page = current + 1;
-            } else {
-                page = total;
-            }
-        }
-        if (page === "<") {
-            if (current === 1) {
-                page = 1;
-            } else {
-                page = current - 1;
-            }
-        }
-        const url = window.location.search;
-        const index = url.indexOf("&");
-        let params = "";
-        if (index > -1) {
-            params = url.substr(index);
-        }
-        window.location.href = "./books?page=" + page + params;
+const bookImages = document.getElementsByClassName("book-img");
+for (let i = 0; i < bookImages.length; i++) {
+    if (bookImages[i].id) {
+        bookImages[i].setAttribute("src", imageSrc(bookImages[i].id));
     }
 }

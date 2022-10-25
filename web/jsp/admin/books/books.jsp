@@ -17,7 +17,7 @@
                     <select id="category" name="category">
                         <option selected value=""><fmt:message key="admin.books.all.categories"/></option>
                         <c:forEach items="${requestScope.categories}" var="category">
-                        <option value="${category.id}">${category.tag}</option>
+                        <option value="${category.id}"><c:forEach items="${category.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach></option>
                         </c:forEach>
                     </select>
                 </label>
@@ -25,12 +25,12 @@
                     <select id="publisher" name="publisher">
                         <option selected value=""><fmt:message key="admin.books.all.publishers"/></option>
                         <c:forEach items="${requestScope.publishers}" var="publisher">
-                        <option value="${publisher.id}">${publisher.tag}</option>
+                        <option value="${publisher.id}"><c:forEach items="${publisher.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach></option>
                         </c:forEach>
                     </select>
                 </label>
             </div>
-            <button id="button-filter" class="control-button"><fmt:message key="admin.books.button.filter"/></button>
+            <button id="button-filter" class="control-button"><fmt:message key="admin.button.filter"/></button>
         </div>
     <div id="pages">
         <m:pages current="${requestScope.currentPage}" total="${requestScope.totalPages}"/>
@@ -50,8 +50,8 @@
             <c:forEach items="${requestScope.books}" var="book">
             <tr>
                 <td class="row-center">${book.id}</td>
-                <td class="row-center"><img src="${pageContext.request.contextPath}/static/img/product/${book.isbn}.jpg" width="40px" alt="${book.tag}"></td>
-                <td>${book.tag}</td>
+                <td class="row-center"><img id="${book.isbn}" class="book-img" src="" width="40px" alt="${book.tag}"></td>
+                <td><c:forEach items="${book.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach></td>
                 <td>${book.isbn}</td>
                 <td class="row-right"><fmt:formatNumber value="${book.price}" minFractionDigits = "2" pattern="### ###.##"/></td>
                 <td class="row-center">${book.quantity}</td>
@@ -90,5 +90,6 @@
     </div>
 </div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/book.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/pagination.js"></script>
 <%@ include file="../footer.jspf"%>
 

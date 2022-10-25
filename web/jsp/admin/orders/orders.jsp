@@ -6,31 +6,26 @@
         <div id="filter">
             <div class="filter-group">
                 <label><fmt:message key="admin.orders.filter.label.user"/>:
-                    <input id="user" name="user" type="text">
+                    <input id="user" name="user" type="text" <c:if test="${param.user != null}">value="${param.user}"</c:if>>
                 </label>
                 <label><fmt:message key="admin.orders.filter.label.sum"/>:
-                    <input id="sum" name="sum" type="number">
+                    <input id="sum" name="sum" type="number" <c:if test="${param.sum != null}">value="${param.sum}"</c:if>>
                 </label>
             </div>
             <div class="filter-group">
-                <label><fmt:message key="admin.orders.filter.label.date"/>
-                    <select id="category" name="category">
-                        <option selected value=""><fmt:message key="admin.books.all.categories"/></option>
-                        <c:forEach items="${requestScope.categories}" var="category">
-                        <option value="${category.id}">${category.tag}</option>
-                        </c:forEach>
-                    </select>
+                <label><fmt:message key="admin.orders.filter.label.date"/>:
+                    <input id="date" type="date" name="date" <c:if test="${param.date != null}">value="${param.date.toString()}"</c:if>>
                 </label>
-                <label><fmt:message key="admin.orders.filter.label.status"/>
-                    <select id="publisher" name="publisher">
-                        <option selected value=""><fmt:message key="admin.books.all.publishers"/></option>
-                        <c:forEach items="${requestScope.publishers}" var="publisher">
-                            <option value="${publisher.id}">${publisher.tag}</option>
+                <label><fmt:message key="admin.orders.filter.label.status"/>:
+                    <select id="status" name="status">
+                        <option selected value=""><fmt:message key="admin.orders.all.statuses"/></option>
+                        <c:forEach items="${requestScope.statuses}" var="status">
+                        <option value="${status.id}" <c:if test="${status.id == param.status}">selected</c:if>>${status.name}</option>
                         </c:forEach>
                     </select>
                 </label>
             </div>
-            <button id="button-filter" class="control-button"><fmt:message key="admin.books.button.filter"/></button>
+            <button id="button-filter" class="control-button"><fmt:message key="admin.button.filter"/></button>
         </div>
         <div id="pages">
             <m:pages current="${requestScope.currentPage}" total="${requestScope.totalPages}"/>
@@ -76,7 +71,7 @@
                         <c:forEach items="${order.details}" var="entry">
                         <tr>
                             <td>
-                            <c:forEach items="${entry.key.titles}" var="title">
+                            <c:forEach items="${entry.key.names}" var="title">
                                 <c:if test="${title.key == languageId}">${title.value}</c:if>
                             </c:forEach>
                             </td>
@@ -93,5 +88,6 @@
     </div>
 </div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/order.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/pagination.js"></script>
 <%@ include file="../footer.jspf"%>
 

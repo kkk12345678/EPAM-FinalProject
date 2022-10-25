@@ -32,7 +32,7 @@
                             <c:forEach items="${order.details}" var="entry">
                                 <tr>
                                     <td>
-                                        <c:forEach items="${entry.key.titles}" var="title">
+                                        <c:forEach items="${entry.key.names}" var="title">
                                             <c:if test="${title.key == languageId}">${title.value}</c:if>
                                         </c:forEach>
                                     </td>
@@ -49,4 +49,5 @@
     </div>
 </div>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/order.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/pagination.js"></script>
 <%@ include file="footer.jspf"%>

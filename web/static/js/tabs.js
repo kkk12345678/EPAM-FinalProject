@@ -14,4 +14,4 @@ show = function (tab) {
             languageTabs[i].style.borderStyle = "none";
         }
     }
-};
+}

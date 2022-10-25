@@ -25,41 +25,40 @@ public class GetBooksServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pageParameter = request.getParameter("page");
-        Map<String, String> parameters = CatalogueUtils.setBookParameters(request);
         if (pageParameter == null || "".equals(pageParameter)) {
             response.sendRedirect("./books?page=1");
-        } else {
+            return;
+        }
+        DataSource dataSource = null;
+        Connection connection = null;
+        try {
+            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
+            connection = dataSource.getConnection();
+            BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
+            CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
+            PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
+            Map<String, String> parameters = CatalogueUtils.setBookParameters(request);
+            int totalPages = (bookDao.count(connection, parameters) - 1) / LIMIT + 1;
             int page = Integer.parseInt(pageParameter);
-            DataSource dataSource = null;
-            Connection connection = null;
-            try {
-                dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
-                connection = dataSource.getConnection();
-                BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
-                CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
-                PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
-                if (connection != null) {
-                    int totalPages = (bookDao.count(connection, parameters) - 1) / LIMIT + 1;
-                    if (page > totalPages) {
-                        page = totalPages;
-                    }
-                    request.setAttribute("books", bookDao.getAll(connection, LIMIT, LIMIT * (page - 1), parameters));
-                    request.setAttribute("categories", categoryDao.getAll(connection));
-                    request.setAttribute("publishers", publisherDao.getAll(connection));
-                    request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("currentPage", page);
-                }
-                request.getRequestDispatcher("../jsp/admin/books/books.jsp").include(request, response);
-            } catch (BadRequestException e) {
-                // TODO handle BadRequestException
-            } catch (DBException e) {
-                // TODO handle DBException
-            } finally {
-                if (dataSource != null) {
-                    dataSource.release(connection);
-                }
+            if (page > totalPages) {
+                page = totalPages;
+            }
+            request.setAttribute("books", bookDao.getAll(connection, LIMIT, LIMIT * (page - 1), parameters));
+            request.setAttribute("categories", categoryDao.getAll(connection));
+            request.setAttribute("publishers", publisherDao.getAll(connection));
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+            request.getRequestDispatcher("../jsp/admin/books/books.jsp").include(request, response);
+        } catch (BadRequestException | NumberFormatException e) {
+            // TODO handle BadRequestException
+        } catch (DBException e) {
+            // TODO handle DBException
+        } finally {
+            if (dataSource != null) {
+                dataSource.release(connection);
             }
         }
     }
-
 }
+
+

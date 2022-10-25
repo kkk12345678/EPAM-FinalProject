@@ -5,9 +5,7 @@ import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
 import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.db.entity.Book;
-import com.epam.kkorolkov.finalproject.db.entity.Category;
-import com.epam.kkorolkov.finalproject.db.entity.Publisher;
+import com.epam.kkorolkov.finalproject.db.entity.*;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -107,6 +105,38 @@ public class CatalogueUtils {
     }
 
     public static Map<String, String> setOrderParameters(HttpServletRequest request) {
-        return null;
+        Map<String, String> parameters = new HashMap<>();
+        String userName = request.getParameter("user");
+        String sum = request.getParameter("sum");
+        String date = request.getParameter("date");
+        String status = request.getParameter("status");
+        if (userName != null && !"".equals(userName)) {
+            parameters.put("user", userName);
+        }
+        if (sum != null && !"".equals(sum)) {
+            parameters.put("sum", sum);
+        }
+        if (date != null && !"".equals(date)) {
+            parameters.put("date", date);
+        }
+        if (status != null && !"".equals(status)) {
+            parameters.put("status", status);
+        }
+        return parameters;
+    }
+
+    public static void setDetailsFromRequest(HttpServletRequest request,CatalogueEntity catalogueEntity, Map<Integer, Language> languages) throws NumberFormatException {
+        Map<Integer, String> names = new HashMap<>();
+        Map<Integer, String> descriptions = new HashMap<>();
+        String tag = request.getParameter("tag");
+        int id = Integer.parseInt(request.getParameter("id"));
+        for (int languageId : languages.keySet()) {
+            descriptions.put(languageId, request.getParameter("description" + languageId));
+            names.put(languageId, request.getParameter("name" + languageId));
+        }
+        catalogueEntity.setId(id);
+        catalogueEntity.setTag(tag.toLowerCase().replaceAll("[^a-z0-9]+", "-"));
+        catalogueEntity.setNames(names);
+        catalogueEntity.setDescriptions(descriptions);
     }
 }

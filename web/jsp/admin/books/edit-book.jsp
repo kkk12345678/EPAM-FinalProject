@@ -3,7 +3,7 @@
 <div id="content">
     <%@ include file="../menu.jspf"%>
     <div id="data">
-    <form action="${pageContext.request.contextPath}/admin/edit-book" method="post" enctype="multipart/form-data">
+    <form id="form-book" action="${pageContext.request.contextPath}/admin/edit-book" method="post" enctype="multipart/form-data">
         <input name="id" type="hidden" value="${requestScope.book.id}">
         <div class="div-input">
             <p class="edit-label">Tag:</p>
@@ -16,17 +16,17 @@
             </span>
             <span class="div-input">
                 <p class="edit-label"><fmt:message key="admin.books.edit.date"/>:</p>
-                <input class="text-input" type="date" name="date" value="${requestScope.book.date}" required>
+                <input class="text-input" type="date" name="date" value="${requestScope.book.date}" required max="${requestScope.today}">
             </span>
         </div>
         <div class="input-group">
             <span class="div-input">
                 <p class="edit-label"><fmt:message key="admin.books.edit.price"/>:</p>
-                <input class="text-input" type="text" name="price" value="${requestScope.book.price}" required>
+                <input class="text-input" type="text" name="price" value="${requestScope.book.price}" required min="0">
             </span>
             <span class="div-input">
                 <p class="edit-label"><fmt:message key="admin.books.edit.quantity"/>:</p>
-                <input class="text-input" type="number" name="quantity" value="${requestScope.book.quantity}" required>
+                <input class="text-input" type="number" name="quantity" value="${requestScope.book.quantity}" required min="0">
             </span>
         </div>
         <div class="input-group">
@@ -63,7 +63,7 @@
             <div id="tab${language.key}" style="display:<c:choose><c:when test="${language.key == 1}"> block</c:when><c:otherwise> none</c:otherwise></c:choose>">
                 <div class=div-input>
                     <p class="edit-label"><fmt:message key="admin.books.edit.title"/> :</p>
-                    <input class=text-input type=text name="name${language.key}" value="<c:out value="${requestScope.book.titles[language.key]}"/>" required/>
+                    <input class=text-input type=text name="name${language.key}" value="<c:out value="${requestScope.book.names[language.key]}"/>" required/>
                 </div>
                 <div class=div-input>
                     <p class="edit-label"><fmt:message key="admin.books.edit.description"/> :</p>

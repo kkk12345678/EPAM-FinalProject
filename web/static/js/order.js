@@ -1,38 +1,3 @@
-const btnsPage = document.getElementsByClassName("button-page");
-const current = parseInt(new URLSearchParams(window.location.search).get("page"));
-const total = parseInt(document.getElementById("total").textContent);
-for (let i = 0; i < btnsPage.length; i++) {
-    if (btnsPage[i].textContent === current.toString()) {
-        btnsPage[i].setAttribute("style", "background: yellow; font-weight: bold")
-    }
-
-    btnsPage[i].onclick = function () {
-        let page = btnsPage[i].textContent;
-        if (page === ">") {
-            if (current < total) {
-                page = current + 1;
-            } else {
-                page = total;
-            }
-        }
-        if (page === "<") {
-            if (current === 1) {
-                page = 1;
-            } else {
-                page = current - 1;
-            }
-        }
-        const url = window.location.search;
-        const index = url.indexOf("&");
-        let params = "";
-        if (index > -1) {
-            params = url.substr(index);
-        }
-        const pathArray = location.pathname.split('/');
-        window.location.href = "./" + pathArray[2].split("?")[0] + "?page=" + page + params;
-    }
-}
-
 const orders = document.getElementsByClassName("order");
 
 function makeVisible(id) {
@@ -43,3 +8,28 @@ function makeVisible(id) {
     document.getElementById("details-" + id).style.display = "contents";
 }
 
+const btnFilter = document.getElementById("button-filter");
+
+btnFilter.onclick = function () {
+    let queryString = "./orders?page=1";
+    const user = document.getElementById("user").value;
+    if (user) {
+        queryString += "&user=" + user;
+    }
+    const sum = document.getElementById("sum").value;
+    if (sum) {
+        queryString += "&sum=" + sum;
+    }
+    const dateValue = document.getElementById("date").value;
+    if (dateValue) {
+        const date = new Date(dateValue);
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        queryString += "&date=" + [date.getFullYear(),month, day].join('-');
+    }
+    const status = document.getElementById("status").value;
+    if (status) {
+        queryString += "&status=" + status;
+    }
+    window.location.href = queryString;
+}

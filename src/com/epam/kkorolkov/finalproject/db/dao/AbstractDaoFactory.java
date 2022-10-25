@@ -11,17 +11,17 @@ public abstract class AbstractDaoFactory {
     private static AbstractDaoFactory instance;
 
 
-    public static synchronized AbstractDaoFactory getInstance() {
+    public static synchronized AbstractDaoFactory getInstance() throws IllegalStateException {
         if (instance == null) {
             try (InputStream dbSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream(DB_PROPERTIES_FILE)) {
                 Properties dbProperties = new Properties();
                 dbProperties.load(dbSettings);
                 String daoFQN = dbProperties.getProperty("dao.fqn");
                 Class<?> c = Class.forName(daoFQN);
-                Constructor<?> constr = c.getDeclaredConstructor();
-                instance = (AbstractDaoFactory) constr.newInstance();
+                Constructor<?> constructor = c.getDeclaredConstructor();
+                instance = (AbstractDaoFactory) constructor.newInstance();
             } catch (IOException | ReflectiveOperationException e) {
-                throw new IllegalStateException("Cannot obtain an instance of dao", e);
+                throw new IllegalStateException(e);
             }
         }
         return instance;

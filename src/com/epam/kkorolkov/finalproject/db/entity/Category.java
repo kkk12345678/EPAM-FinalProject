@@ -1,14 +1,9 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-public class Category extends Entity {
-    private String tag;
-    private Map<Integer, String> names;
-    private Map<Integer, String> descriptions;
-
+public class Category extends CatalogueEntity {
     public static Category create() {
         Category category = new Category();
         category.setId(0);
@@ -17,43 +12,20 @@ public class Category extends Entity {
         category.setDescriptions(new HashMap<>());
         return category;
     }
-    public Map<Integer, String> getNames() {
-        return names;
-    }
-
-    public void setNames(Map<Integer, String> names) {
-        this.names = names;
-    }
-
-    public Map<Integer, String> getDescriptions() {
-        return descriptions;
-    }
-
-    public void setDescriptions(Map<Integer, String> descriptions) {
-        this.descriptions = descriptions;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Category)) return false;
         Category category = (Category) o;
-        return id == category.id &&
-                tag.equals(category.tag) &&
-                names.equals(category.names) &&
-                Objects.equals(descriptions, category.descriptions);
+        return this.getId() == category.getId() &&
+                this.getTag().equals(category.getTag()) &&
+                this.getNames().equals(category.getNames()) &&
+                Objects.equals(this.getDescriptions(), category.getDescriptions());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tag, names, descriptions);
+        return Objects.hash(this.getId(), this.getTag(), this.getNames(), this.getDescriptions());
     }
 }

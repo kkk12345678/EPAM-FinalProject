@@ -6,6 +6,7 @@ import com.epam.kkorolkov.finalproject.db.dao.StatusDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
+import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 
@@ -37,18 +38,19 @@ public class GetOrdersServlet extends HttpServlet {
             connection = dataSource.getConnection();
             OrderDao orderDao = AbstractDaoFactory.getInstance().getOrderDao();
             StatusDao statusDao = AbstractDaoFactory.getInstance().getStatusDao();
-            if (connection != null) {
-                int totalPages = (orderDao.count(connection, parameters) - 1) / LIMIT + 1;
-                if (page > totalPages) {
-                    page = totalPages;
-                }
-                request.setAttribute("orders", orderDao.getAll(connection, LIMIT, LIMIT * (page - 1), parameters));
-                request.setAttribute("statuses", statusDao.getAll(connection));
-                request.setAttribute("totalPages", totalPages);
-                request.setAttribute("currentPage", page);
+            int totalPages = (orderDao.count(connection, parameters) - 1) / LIMIT + 1;
+            if (page > totalPages) {
+                page = totalPages;
             }
+            request.setAttribute("orders", orderDao.getAll(connection, LIMIT, LIMIT * (page - 1), parameters));
+            request.setAttribute("statuses", statusDao.getAll(connection));
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+
             request.getRequestDispatcher("../jsp/admin/orders/orders.jsp").include(request, response);
-        } catch (DBException e) {
+        } catch (DBConnectionException e) {
+            // TODO handle DBConnectionException
+        }catch (DBException e) {
             // TODO handle DBException
         } catch (NumberFormatException e) {
             // TODO handle BadRequestException

@@ -93,7 +93,7 @@
             </div>
             <div class="book-link">
                 <a href="./product/${book.tag}">
-                    <c:forEach items="${book.titles}" var="entry">
+                    <c:forEach items="${book.names}" var="entry">
                     <c:if test="${entry.key == languageId}">
                     ${entry.value}
                     </c:if>
