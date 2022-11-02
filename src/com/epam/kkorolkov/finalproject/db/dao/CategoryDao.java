@@ -1,5 +1,6 @@
 package com.epam.kkorolkov.finalproject.db.dao;
 
+import com.epam.kkorolkov.finalproject.db.entity.CatalogueEntity;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
 import com.epam.kkorolkov.finalproject.exception.DBException;
 
@@ -7,7 +8,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
-public interface CategoryDao {
+public interface CategoryDao extends Dao {
     int count(Connection connection) throws DBException;
     Optional<Category> get(Connection connection, int id) throws DBException;
     Optional<Category> get(Connection connection, String tag) throws DBException;

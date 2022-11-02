@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 public class OneConnectionDataSource implements DataSource {
     private static final Logger LOGGER = LogManager.getLogger("DB");
+
     private final String dbUrl;
     private final String dbUser;
     private final String dbPassword;
@@ -33,9 +34,9 @@ public class OneConnectionDataSource implements DataSource {
             LOGGER.info("Connection successful.");
             return connection;
         } catch (SQLException | ClassNotFoundException e) {
+            LOGGER.info("Unable to connect to the database.");
             LOGGER.error(e.getMessage());
-            e.printStackTrace();
-            throw new DBConnectionException("Unable to connect to the database", e);
+            throw new DBConnectionException();
         }
     }
 

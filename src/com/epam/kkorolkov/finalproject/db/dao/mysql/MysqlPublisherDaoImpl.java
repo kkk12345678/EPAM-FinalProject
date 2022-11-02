@@ -3,6 +3,7 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.entity.Publisher;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
@@ -23,7 +24,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         } catch (SQLException e) {
             LOGGER.info("Could not count publishers.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
@@ -56,7 +57,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         } catch (SQLException e) {
             LOGGER.info("Could not load publisher with id = " + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -84,7 +85,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         } catch (SQLException e) {
             LOGGER.info("Could not load publisher with tag = " + tag);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -112,7 +113,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         } catch (SQLException e) {
             LOGGER.info("Could not load publishers.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
@@ -125,14 +126,14 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         try {
             preparedStatement = connection.prepareStatement(
                     SQL_STATEMENTS.getProperty("mysql.publishers.update"));
-            preparedStatement.setInt(2, publisher.getId());
             preparedStatement.setString(1, publisher.getTag());
+            preparedStatement.setInt(2, publisher.getId());
             preparedStatement.execute();
             updatePublisherDetails(connection, publisher);
         } catch (SQLException e) {
             LOGGER.info("Could not update publisher with id=" + publisher.getId());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -144,20 +145,14 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
             connection.setAutoCommit(false);
             preparedStatement = connection.prepareStatement(
                     SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.update"));
-            for (int languageId : publisher.getDescriptions().keySet()) {
-                preparedStatement.setString(1, publisher.getNames().get(languageId));
-                preparedStatement.setString(2, publisher.getDescriptions().get(languageId));
-                preparedStatement.setInt(3, publisher.getId());
-                preparedStatement.setInt(4, languageId);
-                preparedStatement.execute();
-            }
+            CatalogueUtils.setDetailsFromEntity(preparedStatement, publisher);
+            connection.commit();
         } catch (SQLException e) {
             connection.rollback();
-            LOGGER.error(e.getMessage());
-            throw new SQLException(e);
+            throw e;
         } finally {
             DBUtils.release(preparedStatement);
-            connection.setAutoCommit(true);
+            DBUtils.release(connection);
         }
     }
 
@@ -172,7 +167,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         } catch (SQLException e) {
             LOGGER.info("Could not delete publisher with id " + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -197,7 +192,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
         } catch (SQLException e) {
             LOGGER.info("Could not insert publisher " + publisher.getTag());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -211,19 +206,13 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
                 connection.setAutoCommit(false);
                 preparedStatement = connection.prepareStatement(
                         SQL_STATEMENTS.getProperty("mysql.publishers.descriptions.insert"));
-                for (int languageId : publisher.getDescriptions().keySet()) {
-                    preparedStatement.setInt(1, publisher.getId());
-                    preparedStatement.setInt(2, languageId);
-                    preparedStatement.setString(3, publisher.getNames().get(languageId));
-                    preparedStatement.setString(4, publisher.getDescriptions().get(languageId));
-                    preparedStatement.execute();
-                }
+                CatalogueUtils.setDetailsFromEntity(preparedStatement, publisher);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                LOGGER.error(e.getMessage());
+                throw e;
             } finally {
-                connection.setAutoCommit(true);
+                DBUtils.release(connection);
                 DBUtils.release(preparedStatement);
             }
         }
@@ -241,8 +230,9 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
                 publisher.getDescriptions().put(resultSet.getInt("language_id"), resultSet.getString("description"));
             }
         } catch (SQLException e) {
+            LOGGER.info("Could not load publisher details.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e.getMessage(), e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }

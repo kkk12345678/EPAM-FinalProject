@@ -1,27 +1,28 @@
 package com.epam.kkorolkov.finalproject.db.dao;
 
+import com.epam.kkorolkov.finalproject.exception.DaoException;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 public abstract class AbstractDaoFactory {
-    private static final String DB_PROPERTIES_FILE = "db/mysql/db.properties";
-
     private static AbstractDaoFactory instance;
 
-
-    public static synchronized AbstractDaoFactory getInstance() throws IllegalStateException {
+    public static synchronized AbstractDaoFactory getInstance() throws DaoException {
         if (instance == null) {
-            try (InputStream dbSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream(DB_PROPERTIES_FILE)) {
+            try (InputStream dbSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream("db/mysql/db.properties")) {
                 Properties dbProperties = new Properties();
                 dbProperties.load(dbSettings);
-                String daoFQN = dbProperties.getProperty("dao.fqn");
-                Class<?> c = Class.forName(daoFQN);
+                Class<?> c = Class.forName(dbProperties.getProperty("dao.fqn"));
                 Constructor<?> constructor = c.getDeclaredConstructor();
                 instance = (AbstractDaoFactory) constructor.newInstance();
             } catch (IOException | ReflectiveOperationException e) {
-                throw new IllegalStateException(e);
+                LogManager.getLogger("DAO").info("Could not instantiate DAO.");
+                LogManager.getLogger("DAO").error(e.getMessage());
+                throw new DaoException();
             }
         }
         return instance;

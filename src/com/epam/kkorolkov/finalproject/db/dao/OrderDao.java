@@ -3,6 +3,7 @@ package com.epam.kkorolkov.finalproject.db.dao;
 import com.epam.kkorolkov.finalproject.db.entity.Order;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DaoException;
 
 import java.sql.Connection;
 import java.util.List;
@@ -17,8 +18,8 @@ public interface OrderDao {
 
     void updateStatus(Connection connection, int orderId, int statusId) throws DBException;
 
-    List<Order> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException;
+    List<Order> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException, DaoException;
 
-    List<Order> getAllByUser(Connection connection, int limit, int offset, int userId) throws DBException;
+    List<Order> getAllByUser(Connection connection, int limit, int offset, int userId) throws DBException, DaoException;
 
 }

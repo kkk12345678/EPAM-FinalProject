@@ -1,5 +1,7 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
+import java.util.Objects;
+
 public class User extends Entity {
     private String email;
     private String password;
@@ -66,5 +68,24 @@ public class User extends Entity {
                 ", isAdmin=" + isAdmin +
                 ", isBlocked=" + isBlocked +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return this.getId() == user.getId() &&
+                isAdmin == user.isAdmin &&
+                isBlocked == user.isBlocked &&
+                getEmail().equals(user.getEmail()) &&
+                getPassword().equals(user.getPassword()) &&
+                getFirstName().equals(user.getFirstName()) &&
+                getLastName().equals(user.getLastName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getId(), getEmail(), getPassword(), getFirstName(), getLastName(), isAdmin, isBlocked);
     }
 }

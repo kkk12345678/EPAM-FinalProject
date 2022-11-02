@@ -28,8 +28,9 @@ public class MysqlLanguageDaoImpl extends MysqlAbstractDao implements LanguageDa
             }
             LOGGER.info("All languages were successfully loaded.");
         } catch (SQLException e) {
+            LOGGER.info("Could not load languages");
             LOGGER.error(e.getMessage());
-            throw new DBException(e.getMessage(), e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
@@ -60,7 +61,7 @@ public class MysqlLanguageDaoImpl extends MysqlAbstractDao implements LanguageDa
         } catch (SQLException e) {
             LOGGER.info("Could not load language with locale = " + locale);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }

@@ -14,6 +14,7 @@ public class Language extends Entity {
         this.name = name;
     }
 
+
     public String getImage() {
         return image;
     }

@@ -6,6 +6,7 @@ import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,15 +29,23 @@ import java.sql.Connection;
 public class DeleteBookServlet extends HttpServlet {
     private static final Logger LOGGER = LogManager.getLogger("DELETE BOOK");
 
-    /* Logger messages */
-    private static final String MESSAGE_DATABASE_UNAVAILABLE = "";
+    /** Page to redirect after successful request processing */
+    private static final String REDIRECT_FORMAT = "/admin/books?page=%s";
+
+    /** Page to redirect after exception is thrown */
+    private static final String REDIRECT_ERROR_CONNECTION =
+            "/error?code=500&message=Unable to connect to the database. Try again later.";
+    private static final String REDIRECT_ERROR_DAO =
+            "/error?code=500&message=Cannot instantiate DAO. See server logs for details.";
+    private static final String REDIRECT_ERROR_DB =
+            "/error?code=500&message=Database error occurred. See server logs for details.";
+    private static final String REDIRECT_ERROR_REQUEST =
+            "/error?code=500&message=POST request parameter ID is not a positive integer. See server logs for details.";
+
+    /** Logger messages */
     private static final String MESSAGE_ID_INVALID = "POST book_id (%s) parameter is not integer.";
-    private static final String MESSAGE_DAO_INVALID = "Cannot obtain an instance of DAO.";
 
-    /* Page to redirect after successful request processing */
-    private static final String REDIRECT_FORMAT = "books?page=%s";
-
-    /* Keys of request parameters */
+    /** Keys of request parameters */
     private static final String PARAM_ID = "id";
     private static final String PARAM_PAGE = "page";
 
@@ -44,29 +53,30 @@ public class DeleteBookServlet extends HttpServlet {
      * {@code doPost} method handles POST request with two parameters:<br><ul>
      *     <li><i>id</i> - id of a book to be deleted</li>
      *     <li><i>page</i> - number of a page to which it is necessary to
-     *     be redirected after successful deletion.</li></ul><br>
+     *     be redirected after successful deletion.</li></ul>
      *
      * In order to implement the behavior method gets {@code DataSource} from the factory
      * and then gets {@code Connection} on the provided datasource. These operations may
      * produce {@code DBConnectionException} which indicates that database is unreachable.<br><br>
      *
      * The next step is to get {@code BookDao} from the factory. This may produce
-     * {@code IllegalStateException} if DAO is cannot be instantiated.<br><br>
+     * {@code DaoException} if DAO is cannot be instantiated.<br><br>
      *
      * Finally, method {@code delete} is invoked on obtained DAO. This may produce
-     * {@code NumberFormatException} if POST parameter <i>id</i> is not integer, or
-     * {@code DBException} if in the database there is no record with <i>id</i> or
-     * during communication some {@code SQLException} is thrown.
+     * {@code NumberFormatException} if POST parameter <i>id</i> is not a positive integer,
+     * or {@code DBException} if in the database there is no record with <i>id</i>
+     * or during communication some {@code SQLException} is thrown.<br><br>
      *
-     * @param request - HttpServletRequest object provided by Tomcat.
-     * @param response - HttpServletResponse object provided by Tomcat.
+     * @param request - {@code HttpServletRequest} object provided by Tomcat.
+     * @param response - {@code HttpServletResponse} object provided by Tomcat.
      * @throws IOException is thrown if an input or output exception occurs.
      *
      * @see AbstractDataSourceFactory#getDataSource()
      * @see AbstractDaoFactory#getBookDao()
      * @see BookDao#delete(Connection, int)
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String context = request.getServletContext().getContextPath();
         Connection connection = null;
         DataSource dataSource = null;
         String idParameter = request.getParameter(PARAM_ID);
@@ -75,21 +85,17 @@ public class DeleteBookServlet extends HttpServlet {
             connection = dataSource.getConnection();
             BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
             bookDao.delete(connection, Integer.parseInt(idParameter));
-            response.sendRedirect(String.format(REDIRECT_FORMAT,  request.getParameter(PARAM_PAGE)));
+            response.sendRedirect(context + String.format(REDIRECT_FORMAT,  request.getParameter(PARAM_PAGE)));
         } catch (DBConnectionException e) {
-            //TODO handle DBConnectionException
-            LOGGER.info(MESSAGE_DATABASE_UNAVAILABLE);
-            LOGGER.error(e.getMessage());
-            //response.sendRedirect();
+            response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
         } catch (DBException e) {
-            //TODO handle DBException
-        } catch (IllegalStateException e) {
-            LOGGER.info(MESSAGE_DAO_INVALID);
-            LOGGER.error(e.getMessage());
-            //TODO handle IllegalStateException
+            response.sendRedirect(context + REDIRECT_ERROR_DB);
+        } catch (DaoException e) {
+            response.sendRedirect(context + REDIRECT_ERROR_DAO);
         } catch (NumberFormatException e) {
             LOGGER.info(String.format(MESSAGE_ID_INVALID, idParameter));
-            //TODO Handle NumberFormatException
+            LOGGER.error(e.getMessage());
+            response.sendRedirect(context + REDIRECT_ERROR_REQUEST);
         } finally {
             if (dataSource != null) {
                 dataSource.release(connection);

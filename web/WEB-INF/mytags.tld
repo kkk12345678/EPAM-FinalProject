@@ -11,31 +11,9 @@
     <uri>http://tomcat.apache.org/example-taglib</uri>
 
     <tag>
-        <name>select-publisher</name>
-        <tag-class>com.epam.kkorolkov.finalproject.tag.PublisherTagHandler</tag-class>
-        <body-content>scriptless</body-content>
-        <attribute>
-            <name>publisher</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
-    <tag>
         <name>auth-title</name>
         <tag-class>com.epam.kkorolkov.finalproject.tag.TitleTagHandler</tag-class>
         <body-content>scriptless</body-content>
-    </tag>
-
-    <tag>
-        <name>select-category</name>
-        <tag-class>com.epam.kkorolkov.finalproject.tag.CategoryTagHandler</tag-class>
-        <body-content>scriptless</body-content>
-        <attribute>
-            <name>category</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
     </tag>
 
     <tag>

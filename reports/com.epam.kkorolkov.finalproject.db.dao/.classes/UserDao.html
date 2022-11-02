@@ -1,0 +1,66 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserDao</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.dao</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserDao (com.epam.kkorolkov.finalproject.db.dao)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserDao</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.dao;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.User;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.ValidationException;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.sql.Connection;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public interface UserDao {
+<i>12</i>&nbsp;    Optional&lt;User&gt; get(Connection connection, int id) throws DBException;
+<i>13</i>&nbsp;    Optional&lt;User&gt; get(Connection connection, String email) throws DBException;
+<i>14</i>&nbsp;    List&lt;User&gt; getAll(Connection connection) throws DBException;
+<i>15</i>&nbsp;    void update(Connection connection, User user) throws DBException;
+<i>16</i>&nbsp;    void delete(Connection connection, int id) throws DBException;
+<i>17</i>&nbsp;    int insert(Connection connection, User user) throws DBException, ValidationException;
+<i>18</i>&nbsp;    int count(Connection connection) throws DBException;
+<i>19</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

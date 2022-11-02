@@ -1,0 +1,108 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Status</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.entity</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Status (com.epam.kkorolkov.finalproject.db.entity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Status</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.entity;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * {@code Entity} that represents records in &lt;i&gt;statuses&lt;/i&gt; table.
+<i>5</i>&nbsp; * There is only one non-key field &lt;i&gt;name&lt;/i&gt;;
+<i>6</i>&nbsp; */
+<b class="nc"><i>7</i>&nbsp;public class Status extends Entity {</b>
+<i>8</i>&nbsp;    private String name;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    public String getName() {
+<b class="nc"><i>11</i>&nbsp;        return name;</b>
+<i>12</i>&nbsp;    }
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    public void setName(String name) {
+<b class="nc"><i>15</i>&nbsp;        this.name = name;</b>
+<b class="nc"><i>16</i>&nbsp;    }</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    @Override
+<i>19</i>&nbsp;    public String toString() {
+<b class="nc"><i>20</i>&nbsp;        return &quot;Status{&quot; +</b>
+<b class="nc"><i>21</i>&nbsp;                &quot;id=&quot; + this.getId() +</b>
+<i>22</i>&nbsp;                &quot;, name=&#39;&quot; + name + &#39;\&#39;&#39; +
+<i>23</i>&nbsp;                &#39;}&#39;;
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

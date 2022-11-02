@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CartServlet</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.client</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CartServlet (com.epam.kkorolkov.finalproject.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CartServlet</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 67)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.client;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.BookDao;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.LanguageDao;
+<i>6</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
+<i>7</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
+<i>8</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Book;
+<i>9</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.BadRequestException;
+<i>10</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
+<i>11</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>12</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DaoException;
+<i>13</i>&nbsp;import com.epam.kkorolkov.finalproject.util.DBUtils;
+<i>14</i>&nbsp;import org.apache.logging.log4j.LogManager;
+<i>15</i>&nbsp;import org.apache.logging.log4j.Logger;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;import javax.servlet.ServletException;
+<i>18</i>&nbsp;import javax.servlet.annotation.WebServlet;
+<i>19</i>&nbsp;import javax.servlet.http.HttpServlet;
+<i>20</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>21</i>&nbsp;import javax.servlet.http.HttpServletResponse;
+<i>22</i>&nbsp;import javax.servlet.http.HttpSession;
+<i>23</i>&nbsp;import java.io.IOException;
+<i>24</i>&nbsp;import java.io.PrintWriter;
+<i>25</i>&nbsp;import java.sql.Connection;
+<i>26</i>&nbsp;import java.util.HashMap;
+<i>27</i>&nbsp;import java.util.Map;
+<i>28</i>&nbsp;import java.util.Optional;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;@WebServlet(&quot;/cart&quot;)
+<b class="nc"><i>31</i>&nbsp;public class CartServlet extends HttpServlet {</b>
+<b class="nc"><i>32</i>&nbsp;    private static final Logger LOGGER = LogManager.getLogger(&quot;CART&quot;);</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /** Page to redirect after successful request processing */
+<i>35</i>&nbsp;    private static final String REDIRECT_SUCCESS = &quot;/cart&quot;;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;        /** Page to redirect after exception is thrown */
+<i>38</i>&nbsp;    private static final String REDIRECT_ERROR_CONNECTION =
+<i>39</i>&nbsp;            &quot;/error?code=500&amp;message=Unable to connect to the database. Try again later.&quot;;
+<i>40</i>&nbsp;    private static final String REDIRECT_ERROR_DAO =
+<i>41</i>&nbsp;            &quot;/error?code=500&amp;message=Cannot instantiate DAO. See server logs for details.&quot;;
+<i>42</i>&nbsp;    private static final String REDIRECT_ERROR_DB =
+<i>43</i>&nbsp;            &quot;/error?code=500&amp;message=Database error occurred. See server logs for details.&quot;;
+<i>44</i>&nbsp;    private static final String REDIRECT_ERROR_REQUEST =
+<i>45</i>&nbsp;            &quot;/error?code=500&amp;message=Unable to update cart. See server logs for details.&quot;;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /** Logger messages */
+<i>48</i>&nbsp;    private static final String MESSAGE_ID_INVALID = &quot;POST book_id (%s) parameter is not valid integer.&quot;;
+<i>49</i>&nbsp;    private static final String MESSAGE_NOT_FOUND = &quot;Book not found with id = &quot;;
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    /** Request parameters */
+<i>52</i>&nbsp;    private static final String PARAM_ACTION = &quot;action&quot;;
+<i>53</i>&nbsp;    private static final String PARAM_ID = &quot;id&quot;;
+<i>54</i>&nbsp;    private static final String PARAM_QUANTITY = &quot;quantity&quot;;
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /** Commands */
+<i>57</i>&nbsp;    private static final String COMMAND_ADD = &quot;add&quot;;
+<i>58</i>&nbsp;    private static final String COMMAND_DELETE = &quot;delete&quot;;
+<i>59</i>&nbsp;    private static final String COMMAND_INCREASE = &quot;increase&quot;;
+<i>60</i>&nbsp;    private static final String COMMAND_DECREASE = &quot;decrease&quot;;
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /** Session attributes */
+<i>63</i>&nbsp;    private static final String ATTR_CART = &quot;cart&quot;;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    /** JSP page to include */
+<i>66</i>&nbsp;    private static final String INCLUDE_JSP = &quot;./jsp/client/cart.jsp&quot;;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+<i>70</i>&nbsp;    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<b class="nc"><i>71</i>&nbsp;        String context = request.getServletContext().getContextPath();</b>
+<b class="nc"><i>72</i>&nbsp;        String action = request.getParameter(PARAM_ACTION);</b>
+<b class="nc"><i>73</i>&nbsp;        String idParameter = request.getParameter(PARAM_ID);</b>
+<b class="nc"><i>74</i>&nbsp;        HttpSession session = request.getSession();</b>
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        Map&lt;Integer, Integer&gt; cart = (Map&lt;Integer, Integer&gt;) session.getAttribute(ATTR_CART);</b>
+<i>77</i>&nbsp;        try {
+<b class="nc"><i>78</i>&nbsp;            if (action == null) {</b>
+<b class="nc"><i>79</i>&nbsp;                prepareRequest(request, cart);</b>
+<b class="nc"><i>80</i>&nbsp;                request.getRequestDispatcher(INCLUDE_JSP).include(request, response);</b>
+<b class="nc"><i>81</i>&nbsp;                return;</b>
+<i>82</i>&nbsp;            }
+<b class="nc"><i>83</i>&nbsp;            int id = Integer.parseInt(idParameter);</b>
+<b class="nc"><i>84</i>&nbsp;            if (COMMAND_ADD.equals(action)) {</b>
+<b class="nc"><i>85</i>&nbsp;                if (cart == null) {</b>
+<b class="nc"><i>86</i>&nbsp;                    cart = new HashMap&lt;&gt;();</b>
+<i>87</i>&nbsp;                }
+<b class="nc"><i>88</i>&nbsp;                int quantity = Integer.parseInt(request.getParameter(PARAM_QUANTITY));</b>
+<b class="nc"><i>89</i>&nbsp;                cart.put(id, cart.containsKey(id) ? quantity + cart.get(id) : quantity);</b>
+<b class="nc"><i>90</i>&nbsp;                session.setAttribute(ATTR_CART, cart);</b>
+<b class="nc"><i>91</i>&nbsp;                try (PrintWriter printWriter = response.getWriter()) {</b>
+<b class="nc"><i>92</i>&nbsp;                    printWriter.print(cart.keySet().size());</b>
+<b class="nc"><i>93</i>&nbsp;                }</b>
+<b class="nc"><i>94</i>&nbsp;                return;</b>
+<i>95</i>&nbsp;            }
+<b class="nc"><i>96</i>&nbsp;            if (COMMAND_DELETE.equals(action)) {</b>
+<b class="nc"><i>97</i>&nbsp;                cart.remove(id);</b>
+<i>98</i>&nbsp;            }
+<b class="nc"><i>99</i>&nbsp;            if (COMMAND_INCREASE.equals(action)) {</b>
+<b class="nc"><i>100</i>&nbsp;                cart.put(id, cart.get(id) + 1);</b>
+<i>101</i>&nbsp;            }
+<b class="nc"><i>102</i>&nbsp;            if (COMMAND_DECREASE.equals(action)) {</b>
+<b class="nc"><i>103</i>&nbsp;                int n = cart.get(id) - 1;</b>
+<b class="nc"><i>104</i>&nbsp;                if (n &gt; 0) {</b>
+<b class="nc"><i>105</i>&nbsp;                    cart.put(id, n);</b>
+<i>106</i>&nbsp;                } else {
+<b class="nc"><i>107</i>&nbsp;                    cart.remove(id);</b>
+<i>108</i>&nbsp;                }
+<i>109</i>&nbsp;            }
+<b class="nc"><i>110</i>&nbsp;            if (cart.keySet().size() &gt; 0) {</b>
+<b class="nc"><i>111</i>&nbsp;                session.setAttribute(ATTR_CART, cart);</b>
+<i>112</i>&nbsp;            } else {
+<b class="nc"><i>113</i>&nbsp;                session.removeAttribute(ATTR_CART);</b>
+<i>114</i>&nbsp;            }
+<b class="nc"><i>115</i>&nbsp;            response.sendRedirect(context + REDIRECT_SUCCESS);</b>
+<b class="nc"><i>116</i>&nbsp;        } catch (DBConnectionException e) {</b>
+<b class="nc"><i>117</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);</b>
+<b class="nc"><i>118</i>&nbsp;        } catch (DBException e) {</b>
+<b class="nc"><i>119</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DB);</b>
+<b class="nc"><i>120</i>&nbsp;        } catch (DaoException e) {</b>
+<b class="nc"><i>121</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DAO);</b>
+<b class="nc"><i>122</i>&nbsp;        } catch (BadRequestException e) {</b>
+<b class="nc"><i>123</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_REQUEST);</b>
+<b class="nc"><i>124</i>&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc"><i>125</i>&nbsp;            LOGGER.info(String.format(MESSAGE_ID_INVALID, idParameter));</b>
+<b class="nc"><i>126</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>127</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_REQUEST);</b>
+<b class="nc"><i>128</i>&nbsp;        }</b>
+<b class="nc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    private void prepareRequest(HttpServletRequest request, Map&lt;Integer, Integer&gt; cart) throws DBException, DaoException, BadRequestException {
+<b class="nc"><i>132</i>&nbsp;        Map&lt;Book, Integer&gt; detailedCart = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>133</i>&nbsp;        DataSource dataSource = null;</b>
+<b class="nc"><i>134</i>&nbsp;        Connection connection = null;</b>
+<i>135</i>&nbsp;        try {
+<b class="nc"><i>136</i>&nbsp;            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();</b>
+<b class="nc"><i>137</i>&nbsp;            connection = dataSource.getConnection();</b>
+<b class="nc"><i>138</i>&nbsp;            BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();</b>
+<i>139</i>&nbsp;            Optional&lt;Book&gt; optional;
+<b class="nc"><i>140</i>&nbsp;            for (int id : cart.keySet()) {</b>
+<b class="nc"><i>141</i>&nbsp;                optional = bookDao.get(connection, id);</b>
+<b class="nc"><i>142</i>&nbsp;                if (optional.isPresent()) {</b>
+<b class="nc"><i>143</i>&nbsp;                    detailedCart.put(optional.get(), cart.get(id));</b>
+<i>144</i>&nbsp;                } else {
+<b class="nc"><i>145</i>&nbsp;                    LOGGER.error(MESSAGE_NOT_FOUND + id);</b>
+<b class="nc"><i>146</i>&nbsp;                    throw new BadRequestException();</b>
+<i>147</i>&nbsp;                }
+<b class="nc"><i>148</i>&nbsp;            }</b>
+<b class="nc"><i>149</i>&nbsp;            request.setAttribute(ATTR_CART, detailedCart);</b>
+<i>150</i>&nbsp;        } finally {
+<b class="nc"><i>151</i>&nbsp;            if (dataSource != null) {</b>
+<b class="nc"><i>152</i>&nbsp;                dataSource.release(connection);</b>
+<i>153</i>&nbsp;            }
+<b class="nc"><i>154</i>&nbsp;        }</b>
+<b class="nc"><i>155</i>&nbsp;    }</b>
+<i>156</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

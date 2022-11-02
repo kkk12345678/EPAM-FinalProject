@@ -3,7 +3,10 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 import com.epam.kkorolkov.finalproject.db.dao.UserDao;
 import com.epam.kkorolkov.finalproject.db.entity.User;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.ValidationException;
 import com.epam.kkorolkov.finalproject.util.DBUtils;
+import com.epam.kkorolkov.finalproject.util.UserUtils;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,9 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
             }
             LOGGER.info("All users were successfully loaded.");
         } catch (SQLException e) {
+            LOGGER.info("Could not load users.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e.getMessage(), e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
@@ -44,7 +48,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         } catch (SQLException e) {
             LOGGER.info("Could not update user " + user.getFirstName() + " " + user.getLastName());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -61,18 +65,19 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         } catch (SQLException e) {
             LOGGER.info("Could not delete user with id " + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
     }
 
     @Override
-    public int insert(Connection connection, User user) throws DBException {
+    public int insert(Connection connection, User user) throws DBException, ValidationException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         int id;
         try {
+            UserUtils.validateEmail(user.getEmail());
             preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.users.insert"), Statement.RETURN_GENERATED_KEYS);
             prepareStatement(preparedStatement, user);
             preparedStatement.execute();
@@ -84,7 +89,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         } catch (SQLException e) {
             LOGGER.info("Could not insert user " + user.getFirstName() + " " + user.getLastName());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -105,7 +110,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         } catch (SQLException e) {
             LOGGER.info("Could not count users.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
@@ -129,7 +134,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -152,7 +157,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }

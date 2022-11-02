@@ -1,15 +1,14 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page isELIgnored="false" %>
-<fmt:setLocale value="${sessionScope.locale}"/>
-<fmt:setBundle basename="user-labels"/>
-<html>
-<head>
-    <title><fmt:message key="error.400.title"/></title>
-</head>
-<body>
-<h2>400 <fmt:message key="error.400.title"/></h2>
-<p>${param.message}</p>
-<button><a href="login">Login</a></button><button><a href="signup">Sign up</a></button>
+<%@ include file="header.jspf"%>
+
+<h3>${param.message}</h3>
+<div id="buttons">
+    <div class="button">
+        <button class="control-button" onclick="window.history.back()"><fmt:message key="error.button.back"/></button>
+    </div>
+    <div class="button">
+        <button class="control-button" onclick="home()"><fmt:message key="error.button.home"/></button>
+    </div>
+</div>
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/js/success.js"></script>
 </body>
 </html>

@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserUtils</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserUtils (com.epam.kkorolkov.finalproject.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (3/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    37,5%
+  </span>
+  <span class="absValue">
+    (9/ 24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.UserDao;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
+<i>6</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
+<i>7</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.User;
+<i>8</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>9</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DaoException;
+<i>10</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.ValidationException;
+<i>11</i>&nbsp;import org.apache.logging.log4j.LogManager;
+<i>12</i>&nbsp;import org.apache.logging.log4j.Logger;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.security.MessageDigest;
+<i>15</i>&nbsp;import java.security.NoSuchAlgorithmException;
+<i>16</i>&nbsp;import java.sql.Connection;
+<i>17</i>&nbsp;import java.util.Optional;
+<i>18</i>&nbsp;import java.util.regex.Pattern;
+<i>19</i>&nbsp;
+<b class="nc"><i>20</i>&nbsp;public class UserUtils {</b>
+<b class="fc"><i>21</i>&nbsp;    private static final Logger LOGGER = LogManager.getLogger(&quot;UTILS&quot;);</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /** Logger messages */
+<i>24</i>&nbsp;    private static final String MESSAGE_EMAIL_INVALID = &quot;Email is invalid.&quot;;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /** Hashing parameters */
+<i>27</i>&nbsp;    private static final String ALGORITHM = &quot;SHA3-256&quot;;
+<i>28</i>&nbsp;    private static final String SALT = &quot;someSecretString&quot;;
+<i>29</i>&nbsp;    private static final String FORMAT = &quot;%02x&quot;;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /** Regular expressions */
+<i>32</i>&nbsp;    private static final String REGEX_EMAIL =
+<i>33</i>&nbsp;            &quot;^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$&quot;;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public static String hash(String password) throws NoSuchAlgorithmException {
+<b class="fc"><i>36</i>&nbsp;        MessageDigest md = MessageDigest.getInstance(ALGORITHM);</b>
+<b class="fc"><i>37</i>&nbsp;        byte[] bytes = md.digest((SALT + password).getBytes());</b>
+<b class="fc"><i>38</i>&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="fc"><i>39</i>&nbsp;        for (byte b : bytes) {</b>
+<b class="fc"><i>40</i>&nbsp;            sb.append(String.format(FORMAT, b));</b>
+<i>41</i>&nbsp;        }
+<b class="fc"><i>42</i>&nbsp;        return sb.toString();</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    public static Optional&lt;User&gt; validate(String email, String password) throws DBException, DaoException, NoSuchAlgorithmException {
+<b class="nc"><i>46</i>&nbsp;        DataSource dataSource = null;</b>
+<b class="nc"><i>47</i>&nbsp;        Connection connection = null;</b>
+<i>48</i>&nbsp;        try {
+<b class="nc"><i>49</i>&nbsp;            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();</b>
+<b class="nc"><i>50</i>&nbsp;            connection = dataSource.getConnection();</b>
+<b class="nc"><i>51</i>&nbsp;            UserDao userDao = AbstractDaoFactory.getInstance().getUserDao();</b>
+<b class="nc"><i>52</i>&nbsp;            Optional&lt;User&gt; optional = userDao.get(connection, email);</b>
+<b class="nc"><i>53</i>&nbsp;            if (optional.isPresent() &amp;&amp; !optional.get().getPassword().equals(hash(password))) {</b>
+<b class="nc"><i>54</i>&nbsp;                return Optional.empty();</b>
+<i>55</i>&nbsp;            }
+<b class="nc"><i>56</i>&nbsp;            return optional;</b>
+<i>57</i>&nbsp;        } finally {
+<b class="nc"><i>58</i>&nbsp;            if (dataSource != null) {</b>
+<b class="nc"><i>59</i>&nbsp;                dataSource.release(connection);</b>
+<i>60</i>&nbsp;            }
+<b class="nc"><i>61</i>&nbsp;        }</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    public static void validateEmail(String email) throws ValidationException {
+<b class="fc"><i>65</i>&nbsp;        if (!Pattern.matches(REGEX_EMAIL, email)) {</b>
+<b class="nc"><i>66</i>&nbsp;            LOGGER.info(MESSAGE_EMAIL_INVALID + &quot;: &quot; + email);</b>
+<b class="nc"><i>67</i>&nbsp;            throw new ValidationException(MESSAGE_EMAIL_INVALID);</b>
+<i>68</i>&nbsp;        }
+<b class="fc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

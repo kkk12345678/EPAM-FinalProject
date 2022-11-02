@@ -1,0 +1,133 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CatalogueEntity</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.entity</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CatalogueEntity (com.epam.kkorolkov.finalproject.db.entity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CatalogueEntity</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.entity;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Map;
+<i>4</i>&nbsp;/**
+<i>5</i>&nbsp; * Represents a record in the database table
+<i>6</i>&nbsp; * which represents entities in the catalogue.
+<i>7</i>&nbsp; * Essentially includes following tables:
+<i>8</i>&nbsp; * &lt;i&gt;publishers&lt;/i&gt;, &lt;i&gt;categories&lt;/i&gt;, &lt;i&gt;books&lt;/i&gt;.
+<i>9</i>&nbsp; */
+<b class="fc"><i>10</i>&nbsp;public abstract class CatalogueEntity extends Entity {</b>
+<i>11</i>&nbsp;    /**
+<i>12</i>&nbsp;     * {@code tag} represents &#39;SEO url&#39; and must be unique.
+<i>13</i>&nbsp;     * It is added to &lt;i&gt;context path&lt;/i&gt; to render entity
+<i>14</i>&nbsp;     * information to a user.
+<i>15</i>&nbsp;     */
+<i>16</i>&nbsp;    private String tag;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * Each entity has &lt;i&gt;names&lt;/i&gt; and &lt;i&gt;descriptions&lt;/i&gt; records
+<i>19</i>&nbsp;     * in different languages. These maps are to represent information
+<i>20</i>&nbsp;     * in the following tables: &lt;i&gt;category_descriptions&lt;/i&gt;,
+<i>21</i>&nbsp;     * &lt;i&gt;publisher_descriptions&lt;/i&gt;, and &lt;i&gt;book_descriptions&lt;/i&gt;.
+<i>22</i>&nbsp;     * Key is &lt;i&gt;language_id&lt;/i&gt;.
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    private Map&lt;Integer, String&gt; names;
+<i>25</i>&nbsp;    private Map&lt;Integer, String&gt; descriptions;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    public String getTag() {
+<b class="fc"><i>28</i>&nbsp;        return tag;</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    public void setTag(String tag) {
+<b class="fc"><i>32</i>&nbsp;        this.tag = tag;</b>
+<b class="fc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public Map&lt;Integer, String&gt; getNames() {
+<b class="fc"><i>36</i>&nbsp;        return names;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public void setNames(Map&lt;Integer, String&gt; names) {
+<b class="fc"><i>40</i>&nbsp;        this.names = names;</b>
+<b class="fc"><i>41</i>&nbsp;    }</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    public Map&lt;Integer, String&gt; getDescriptions() {
+<b class="fc"><i>44</i>&nbsp;        return descriptions;</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    public void setDescriptions(Map&lt;Integer, String&gt; descriptions) {
+<b class="fc"><i>48</i>&nbsp;        this.descriptions = descriptions;</b>
+<b class="fc"><i>49</i>&nbsp;    }</b>
+<i>50</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

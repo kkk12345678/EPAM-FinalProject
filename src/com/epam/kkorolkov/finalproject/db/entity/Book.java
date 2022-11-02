@@ -2,6 +2,7 @@ package com.epam.kkorolkov.finalproject.db.entity;
 
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Book extends CatalogueEntity {
     private String isbn;
@@ -75,4 +76,41 @@ public class Book extends CatalogueEntity {
         this.price = price;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Book)) return false;
+        Book book = (Book) o;
+        return this.getId() == book.getId() &&
+                this.getTag().equals(book.getTag()) &&
+                quantity == book.quantity &&
+                isbn.equals(book.isbn) &&
+                publisher.equals(book.publisher) &&
+                category.equals(book.category) &&
+                date.equals(book.date) &&
+                price.equals(book.price) &&
+                this.getNames().equals(book.getNames()) &&
+                Objects.equals(this.getDescriptions(), book.getDescriptions());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getId(), this.getTag(), isbn, quantity, publisher, category, date, price, this.getNames(), this.getDescriptions());
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + this.getId() +
+                ", tag='" + this.getTag() + '\'' +
+                ", isbn=" + isbn +
+                ", quantity=" + quantity +
+                ", publisher=" + publisher +
+                ", category=" + category +
+                ", date=" + date +
+                ", price=" + price +
+                ", names=" + this.getNames() +
+                ", descriptions=" + this.getDescriptions() +
+                "} ";
+    }
 }

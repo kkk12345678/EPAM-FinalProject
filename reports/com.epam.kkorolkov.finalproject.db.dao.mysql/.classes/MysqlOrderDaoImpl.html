@@ -1,0 +1,326 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MysqlOrderDaoImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.dao.mysql</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MysqlOrderDaoImpl (com.epam.kkorolkov.finalproject.db.dao.mysql)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MysqlOrderDaoImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 160)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.dao.mysql;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.*;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Book;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Order;
+<i>6</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.User;
+<i>7</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.BadRequestException;
+<i>8</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>9</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DaoException;
+<i>10</i>&nbsp;import com.epam.kkorolkov.finalproject.util.DBUtils;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.sql.*;
+<i>13</i>&nbsp;import java.util.ArrayList;
+<i>14</i>&nbsp;import java.util.HashMap;
+<i>15</i>&nbsp;import java.util.List;
+<i>16</i>&nbsp;import java.util.Map;
+<i>17</i>&nbsp;
+<b class="nc"><i>18</i>&nbsp;public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {</b>
+<i>19</i>&nbsp;    @Override
+<i>20</i>&nbsp;    public int count(Connection connection, Map&lt;String, String&gt; parameters) throws DBException {
+<i>21</i>&nbsp;        try {
+<b class="nc"><i>22</i>&nbsp;            PreparedStatement preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty(&quot;mysql.orders.count&quot;) + setClause(parameters));</b>
+<b class="nc"><i>23</i>&nbsp;            return count(preparedStatement);</b>
+<b class="nc"><i>24</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>25</i>&nbsp;            LOGGER.info(&quot;Could not count orders.&quot;);</b>
+<b class="nc"><i>26</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>27</i>&nbsp;            throw new DBException();</b>
+<i>28</i>&nbsp;        }
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Override
+<i>32</i>&nbsp;    public int insert(Connection connection, Order order) throws DBException {
+<b class="nc"><i>33</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<b class="nc"><i>34</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>35</i>&nbsp;        try {
+<b class="nc"><i>36</i>&nbsp;            preparedStatement = connection.prepareStatement(</b>
+<b class="nc"><i>37</i>&nbsp;                    SQL_STATEMENTS.getProperty(&quot;mysql.orders.insert&quot;), Statement.RETURN_GENERATED_KEYS);</b>
+<b class="nc"><i>38</i>&nbsp;            preparedStatement.setInt(1, order.getUser().getId());</b>
+<b class="nc"><i>39</i>&nbsp;            preparedStatement.setInt(2, 1);</b>
+<b class="nc"><i>40</i>&nbsp;            preparedStatement.setDate(3, new Date(System.currentTimeMillis()));</b>
+<b class="nc"><i>41</i>&nbsp;            preparedStatement.setDouble(4, order.getTotal());</b>
+<b class="nc"><i>42</i>&nbsp;            preparedStatement.execute();</b>
+<b class="nc"><i>43</i>&nbsp;            resultSet = preparedStatement.getGeneratedKeys();</b>
+<b class="nc"><i>44</i>&nbsp;            resultSet.next();</b>
+<b class="nc"><i>45</i>&nbsp;            int id = resultSet.getInt(1);</b>
+<b class="nc"><i>46</i>&nbsp;            LOGGER.info(String.format(&quot;Order (id=%d) successfully inserted.&quot;, id));</b>
+<b class="nc"><i>47</i>&nbsp;            order.setId(id);</b>
+<i>48</i>&nbsp;            try {
+<b class="nc"><i>49</i>&nbsp;                insertDetails(connection, order);</b>
+<b class="nc"><i>50</i>&nbsp;                LOGGER.info(String.format(&quot;Order (id=%d) details successfully inserted.&quot;, id));</b>
+<b class="nc"><i>51</i>&nbsp;            } catch (SQLException e) {</b>
+<b class="nc"><i>52</i>&nbsp;                LOGGER.info(&quot;Could not insert order details.&quot;);</b>
+<b class="nc"><i>53</i>&nbsp;                delete(connection, id);</b>
+<b class="nc"><i>54</i>&nbsp;                throw e;</b>
+<b class="nc"><i>55</i>&nbsp;            }</b>
+<b class="nc"><i>56</i>&nbsp;            return id;</b>
+<b class="nc"><i>57</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>58</i>&nbsp;            LOGGER.info(&quot;Could not insert order.&quot;);</b>
+<b class="nc"><i>59</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>60</i>&nbsp;            throw new DBException();</b>
+<i>61</i>&nbsp;        } finally {
+<b class="nc"><i>62</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="nc"><i>63</i>&nbsp;        }</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    private void insertDetails(Connection connection, Order order) throws SQLException {
+<b class="nc"><i>67</i>&nbsp;        if (order != null &amp;&amp; order.getId() != 0) {</b>
+<b class="nc"><i>68</i>&nbsp;            PreparedStatement preparedStatement = connection.prepareStatement(</b>
+<b class="nc"><i>69</i>&nbsp;                    SQL_STATEMENTS.getProperty(&quot;mysql.orders.details.insert&quot;));</b>
+<i>70</i>&nbsp;            try {
+<b class="nc"><i>71</i>&nbsp;                connection.setAutoCommit(false);</b>
+<b class="nc"><i>72</i>&nbsp;                for (Book book : order.getDetails().keySet()) {</b>
+<b class="nc"><i>73</i>&nbsp;                    preparedStatement.setInt(1, order.getId());</b>
+<b class="nc"><i>74</i>&nbsp;                    preparedStatement.setInt(2, book.getId());</b>
+<b class="nc"><i>75</i>&nbsp;                    preparedStatement.setInt(3, order.getDetails().get(book));</b>
+<b class="nc"><i>76</i>&nbsp;                    preparedStatement.execute();</b>
+<b class="nc"><i>77</i>&nbsp;                }</b>
+<b class="nc"><i>78</i>&nbsp;                connection.commit();</b>
+<b class="nc"><i>79</i>&nbsp;            } catch (SQLException e) {</b>
+<b class="nc"><i>80</i>&nbsp;                connection.rollback();</b>
+<i>81</i>&nbsp;            } finally {
+<b class="nc"><i>82</i>&nbsp;                DBUtils.release(preparedStatement);</b>
+<b class="nc"><i>83</i>&nbsp;                connection.setAutoCommit(true);</b>
+<b class="nc"><i>84</i>&nbsp;            }</b>
+<i>85</i>&nbsp;        }
+<b class="nc"><i>86</i>&nbsp;    }</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    @Override
+<i>89</i>&nbsp;    public void delete(Connection connection, int id) throws DBException {
+<b class="nc"><i>90</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<i>91</i>&nbsp;        try {
+<b class="nc"><i>92</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty(&quot;mysql.orders.delete&quot;));</b>
+<b class="nc"><i>93</i>&nbsp;            preparedStatement.setInt(1, id);</b>
+<b class="nc"><i>94</i>&nbsp;            preparedStatement.execute();</b>
+<b class="nc"><i>95</i>&nbsp;            LOGGER.info(String.format(&quot;Order with id = %d successfully deleted.&quot;, id));</b>
+<b class="nc"><i>96</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>97</i>&nbsp;            LOGGER.info(&quot;Could not delete order with id &quot; + id);</b>
+<b class="nc"><i>98</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>99</i>&nbsp;            throw new DBException();</b>
+<i>100</i>&nbsp;        } finally {
+<b class="nc"><i>101</i>&nbsp;            DBUtils.release(preparedStatement);</b>
+<b class="nc"><i>102</i>&nbsp;        }</b>
+<b class="nc"><i>103</i>&nbsp;    }</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    @Override
+<i>106</i>&nbsp;    public void updateStatus(Connection connection, int orderId, int statusId) throws DBException {
+<b class="nc"><i>107</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<i>108</i>&nbsp;        try {
+<b class="nc"><i>109</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty(&quot;mysql.orders.update.status&quot;));</b>
+<b class="nc"><i>110</i>&nbsp;            preparedStatement.setInt(1, statusId);</b>
+<b class="nc"><i>111</i>&nbsp;            preparedStatement.setInt(2, orderId);</b>
+<b class="nc"><i>112</i>&nbsp;            preparedStatement.execute();</b>
+<b class="nc"><i>113</i>&nbsp;            LOGGER.info(&quot;Status has been successfully changed.&quot;);</b>
+<b class="nc"><i>114</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>115</i>&nbsp;            LOGGER.info(&quot;Could not change status.&quot;);</b>
+<b class="nc"><i>116</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>117</i>&nbsp;            throw new DBException();</b>
+<i>118</i>&nbsp;        } finally {
+<b class="nc"><i>119</i>&nbsp;            DBUtils.release(preparedStatement);</b>
+<b class="nc"><i>120</i>&nbsp;        }</b>
+<b class="nc"><i>121</i>&nbsp;    }</b>
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    @Override
+<i>124</i>&nbsp;    public List&lt;Order&gt; getAll(Connection connection, int limit, int offset, Map&lt;String, String&gt; parameters) throws DBException, DaoException {
+<b class="nc"><i>125</i>&nbsp;        String query = String.format(&quot;%s%s limit ? offset ?&quot;, SQL_STATEMENTS.getProperty(&quot;mysql.orders.select.all&quot;), setClause(parameters));</b>
+<b class="nc"><i>126</i>&nbsp;        System.out.println(query);</b>
+<i>127</i>&nbsp;        try {
+<b class="nc"><i>128</i>&nbsp;            PreparedStatement preparedStatement = connection.prepareStatement(query);</b>
+<b class="nc"><i>129</i>&nbsp;            preparedStatement.setInt(1, limit);</b>
+<b class="nc"><i>130</i>&nbsp;            preparedStatement.setInt(2, offset);</b>
+<b class="nc"><i>131</i>&nbsp;            return getAll(connection, preparedStatement);</b>
+<b class="nc"><i>132</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>133</i>&nbsp;            LOGGER.info(&quot;Could not load orders.&quot;);</b>
+<b class="nc"><i>134</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>135</i>&nbsp;            throw new DBException();</b>
+<i>136</i>&nbsp;        }
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    @Override
+<i>140</i>&nbsp;    public List&lt;Order&gt; getAllByUser(Connection connection, int limit, int offset, int userId) throws DBException, DaoException {
+<i>141</i>&nbsp;        try {
+<b class="nc"><i>142</i>&nbsp;            PreparedStatement preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty(&quot;mysql.orders.select.by.customer&quot;));</b>
+<b class="nc"><i>143</i>&nbsp;            preparedStatement.setInt(1, userId);</b>
+<b class="nc"><i>144</i>&nbsp;            preparedStatement.setInt(2, limit);</b>
+<b class="nc"><i>145</i>&nbsp;            preparedStatement.setInt(3, offset);</b>
+<b class="nc"><i>146</i>&nbsp;            return getAll(connection, preparedStatement);</b>
+<b class="nc"><i>147</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>148</i>&nbsp;            LOGGER.info(&quot;Could not load orders.&quot;);</b>
+<b class="nc"><i>149</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>150</i>&nbsp;            throw new DBException();</b>
+<i>151</i>&nbsp;        }
+<i>152</i>&nbsp;    }
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    private String setClause(Map&lt;String, String&gt; parameters) {
+<b class="nc"><i>155</i>&nbsp;        if (parameters == null || parameters.keySet().size() == 0) {</b>
+<b class="nc"><i>156</i>&nbsp;            return &quot;&quot;;</b>
+<i>157</i>&nbsp;        }
+<b class="nc"><i>158</i>&nbsp;        if (parameters.containsKey(&quot;user_id&quot;)) {</b>
+<b class="nc"><i>159</i>&nbsp;            return &quot; where customer_id = &quot; + parameters.get(&quot;user_id&quot;);</b>
+<i>160</i>&nbsp;        }
+<b class="nc"><i>161</i>&nbsp;        String user = parameters.get(&quot;user&quot;);</b>
+<b class="nc"><i>162</i>&nbsp;        String sum = parameters.get(&quot;sum&quot;);</b>
+<b class="nc"><i>163</i>&nbsp;        String date = parameters.get(&quot;date&quot;);</b>
+<b class="nc"><i>164</i>&nbsp;        String status = parameters.get(&quot;status&quot;);</b>
+<b class="nc"><i>165</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder(&quot;&quot;);</b>
+<b class="nc"><i>166</i>&nbsp;        if (user != null &amp;&amp; !&quot;&quot;.equals(user) || sum != null &amp;&amp; !&quot;&quot;.equals(sum) ||</b>
+<b class="nc"><i>167</i>&nbsp;                date != null &amp;&amp; !&quot;&quot;.equals(date) || status != null &amp;&amp; !&quot;&quot;.equals(status)) {</b>
+<b class="nc"><i>168</i>&nbsp;            stringBuilder.append(&quot; where &quot;);</b>
+<b class="nc"><i>169</i>&nbsp;            List&lt;String&gt; parts = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>170</i>&nbsp;            if (user != null &amp;&amp; !&quot;&quot;.equals(user)) {</b>
+<b class="nc"><i>171</i>&nbsp;                parts.add(&quot;customer_id = &quot; + user);</b>
+<i>172</i>&nbsp;            }
+<b class="nc"><i>173</i>&nbsp;            if (sum != null &amp;&amp; !&quot;&quot;.equals(sum)) {</b>
+<b class="nc"><i>174</i>&nbsp;                parts.add(&quot;total = &quot; + sum);</b>
+<i>175</i>&nbsp;            }
+<b class="nc"><i>176</i>&nbsp;            if (date != null &amp;&amp; !&quot;&quot;.equals(date)) {</b>
+<b class="nc"><i>177</i>&nbsp;                parts.add(&quot;date_added = &#39;&quot; + date + &quot;&#39;&quot;);</b>
+<i>178</i>&nbsp;            }
+<b class="nc"><i>179</i>&nbsp;            if (status != null &amp;&amp; !&quot;&quot;.equals(status)) {</b>
+<b class="nc"><i>180</i>&nbsp;                parts.add(&quot;status_id = &quot; + status);</b>
+<i>181</i>&nbsp;            }
+<b class="nc"><i>182</i>&nbsp;            stringBuilder.append(String.join(&quot; and &quot;, parts));</b>
+<b class="nc"><i>183</i>&nbsp;            System.out.println(stringBuilder.toString());</b>
+<i>184</i>&nbsp;        }
+<b class="nc"><i>185</i>&nbsp;        return stringBuilder.toString();</b>
+<i>186</i>&nbsp;    }
+<i>187</i>&nbsp;
+<i>188</i>&nbsp;    private List&lt;Order&gt; getAll(Connection connection, PreparedStatement preparedStatement) throws SQLException, DaoException {
+<b class="nc"><i>189</i>&nbsp;        List&lt;Order&gt; orders = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>190</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>191</i>&nbsp;        try {
+<b class="nc"><i>192</i>&nbsp;            resultSet = preparedStatement.executeQuery();</b>
+<b class="nc"><i>193</i>&nbsp;            UserDao userDao = AbstractDaoFactory.getInstance().getUserDao();</b>
+<b class="nc"><i>194</i>&nbsp;            StatusDao statusDao = AbstractDaoFactory.getInstance().getStatusDao();</b>
+<b class="nc"><i>195</i>&nbsp;            while (resultSet.next()) {</b>
+<b class="nc"><i>196</i>&nbsp;                Order order = new Order();</b>
+<b class="nc"><i>197</i>&nbsp;                order.setId(resultSet.getInt(&quot;id&quot;));</b>
+<b class="nc"><i>198</i>&nbsp;                order.setTotal(resultSet.getDouble(&quot;total&quot;));</b>
+<b class="nc"><i>199</i>&nbsp;                order.setUser(userDao.get(connection, resultSet.getInt(&quot;customer_id&quot;)).orElseThrow(SQLException::new));</b>
+<b class="nc"><i>200</i>&nbsp;                order.setDateAdded(resultSet.getDate(&quot;date_added&quot;));</b>
+<b class="nc"><i>201</i>&nbsp;                order.setStatus(statusDao.get(connection, resultSet.getInt(&quot;status_id&quot;)).orElseThrow(SQLException::new));</b>
+<b class="nc"><i>202</i>&nbsp;                order.setDetails(new HashMap&lt;&gt;());</b>
+<b class="nc"><i>203</i>&nbsp;                setOrderDetails(connection, order);</b>
+<b class="nc"><i>204</i>&nbsp;                orders.add(order);</b>
+<b class="nc"><i>205</i>&nbsp;            }</b>
+<b class="nc"><i>206</i>&nbsp;            LOGGER.info(&quot;Orders were successfully loaded.&quot;);</b>
+<i>207</i>&nbsp;        } finally {
+<b class="nc"><i>208</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="nc"><i>209</i>&nbsp;        }</b>
+<b class="nc"><i>210</i>&nbsp;        return orders;</b>
+<i>211</i>&nbsp;    }
+<i>212</i>&nbsp;
+<i>213</i>&nbsp;    private void setOrderDetails(Connection connection, Order order) throws SQLException, DaoException {
+<b class="nc"><i>214</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<b class="nc"><i>215</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>216</i>&nbsp;        try {
+<b class="nc"><i>217</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty(&quot;mysql.orders.details.select&quot;));</b>
+<b class="nc"><i>218</i>&nbsp;            preparedStatement.setInt(1, order.getId());</b>
+<b class="nc"><i>219</i>&nbsp;            resultSet = preparedStatement.executeQuery();</b>
+<b class="nc"><i>220</i>&nbsp;            BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();</b>
+<i>221</i>&nbsp;            Book book;
+<b class="nc"><i>222</i>&nbsp;            while (resultSet.next()) {</b>
+<b class="nc"><i>223</i>&nbsp;                book = bookDao.get(connection, resultSet.getInt(&quot;book_id&quot;)).orElseThrow(SQLException::new);</b>
+<b class="nc"><i>224</i>&nbsp;                order.getDetails().put(book, resultSet.getInt(&quot;quantity&quot;));</b>
+<i>225</i>&nbsp;            }
+<b class="nc"><i>226</i>&nbsp;            LOGGER.info(&quot;Order details were successfully loaded.&quot;);</b>
+<i>227</i>&nbsp;        } finally {
+<b class="nc"><i>228</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="nc"><i>229</i>&nbsp;        }</b>
+<b class="nc"><i>230</i>&nbsp;    }</b>
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;    private int count(PreparedStatement preparedStatement) throws SQLException{
+<b class="nc"><i>233</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>234</i>&nbsp;        try {
+<b class="nc"><i>235</i>&nbsp;            resultSet = preparedStatement.executeQuery();</b>
+<b class="nc"><i>236</i>&nbsp;            resultSet.next();</b>
+<b class="nc"><i>237</i>&nbsp;            LOGGER.info(&quot;Orders were successfully counted.&quot;);</b>
+<b class="nc"><i>238</i>&nbsp;            return resultSet.getInt(1);</b>
+<i>239</i>&nbsp;        } finally {
+<b class="nc"><i>240</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="nc"><i>241</i>&nbsp;        }</b>
+<i>242</i>&nbsp;    }
+<i>243</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

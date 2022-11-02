@@ -34,7 +34,7 @@ public class MysqlStatusDaoImpl extends MysqlAbstractDao implements StatusDao {
         } catch (SQLException e) {
             LOGGER.info("Could not load status with locale = " + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -59,7 +59,7 @@ public class MysqlStatusDaoImpl extends MysqlAbstractDao implements StatusDao {
         } catch (SQLException e) {
             LOGGER.info("Could not load statuses.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e.getMessage(), e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }

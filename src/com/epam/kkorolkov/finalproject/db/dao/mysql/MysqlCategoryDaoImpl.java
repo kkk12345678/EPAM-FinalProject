@@ -3,6 +3,7 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
@@ -15,23 +16,22 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
 
     @Override
     public int count(Connection connection) throws DBException {
-        int c;
         Statement statement = null;
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
             resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.categories.select.count"));
             resultSet.next();
-            c = resultSet.getInt(1);
+            int c = resultSet.getInt(1);
             LOGGER.info(String.format("There are %d categories in the table.", c));
+            return c;
         } catch (SQLException e) {
             LOGGER.info("Could not count categories.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
-        return c;
     }
 
     @Override
@@ -51,20 +51,18 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 category.setDescriptions(new HashMap<>());
                 getCategoryDetails(connection, category);
                 optional = Optional.of(category);
-            }
-            if (optional.isEmpty()) {
-                LOGGER.info("No category found with id = " + id);
-            } else {
                 LOGGER.info("Category was found with id = " + id);
+            } else {
+                LOGGER.info("No category found with id = " + id);
             }
+            return optional;
         } catch (SQLException e) {
             LOGGER.info("Could not load category with id = " + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return optional;
     }
 
     @Override
@@ -84,20 +82,19 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 category.setDescriptions(new HashMap<>());
                 getCategoryDetails(connection, category);
                 optional = Optional.of(category);
-            }
-            if (optional.isEmpty()) {
                 LOGGER.info("No category found with tag = " + tag);
             } else {
                 LOGGER.info("Category was found with tag = " + tag);
             }
+            return optional;
         } catch (SQLException e) {
             LOGGER.info("Could not load category with tag = " + tag);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return optional;
+
     }
 
     private void getCategoryDetails(Connection connection, Category category) throws DBException {
@@ -112,8 +109,9 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 category.getDescriptions().put(resultSet.getInt("language_id"), resultSet.getString("description"));
             }
         } catch (SQLException e) {
+            LOGGER.info("Could not load category details.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e.getMessage(), e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -137,14 +135,14 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
                 categories.add(category);
             }
             LOGGER.info("All categories were successfully loaded.");
+            return categories;
         } catch (SQLException e) {
             LOGGER.info("Could not load categories.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
-        return categories;
     }
 
     @Override
@@ -161,7 +159,7 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
         } catch (SQLException e) {
             LOGGER.info("Could not update category with id=" + category.getId());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -173,21 +171,15 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
             connection.setAutoCommit(false);
             preparedStatement = connection.prepareStatement(
                     SQL_STATEMENTS.getProperty("mysql.categories.descriptions.update"));
-            for (int languageId : category.getDescriptions().keySet()) {
-                preparedStatement.setInt(3, category.getId());
-                preparedStatement.setInt(4, languageId);
-                preparedStatement.setString(1, category.getNames().get(languageId));
-                preparedStatement.setString(2, category.getDescriptions().get(languageId));
-                preparedStatement.execute();
-            }
+            CatalogueUtils.setDetailsFromEntity(preparedStatement, category);
             connection.commit();
             LOGGER.info(String.format("Category details with id=%d successfully updated.", category.getId()));
         } catch (SQLException e) {
             connection.rollback();
-            LOGGER.error(e.getMessage());
+            throw e;
         } finally {
             DBUtils.release(preparedStatement);
-            connection.setAutoCommit(true);
+            DBUtils.release(connection);
         }
     }
 
@@ -202,7 +194,7 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
         } catch (SQLException e) {
             LOGGER.info("Could not delete category with id " + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -210,7 +202,6 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
 
     @Override
     public int insert(Connection connection, Category category) throws DBException {
-        int id;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
@@ -221,47 +212,42 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
             preparedStatement.execute();
             resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
-            id = resultSet.getInt(1);
+            int id = resultSet.getInt(1);
             category.setId(id);
             try {
                 insertCategoryDetails(connection, category);
             } catch (SQLException e) {
                 LOGGER.info("Could not insert category details for category " + category.getTag());
                 LOGGER.error(e.getMessage());
-                throw new DBException(e);
+                throw new DBException();
             }
             LOGGER.info(String.format("Category with id = %d successfully inserted" , id));
+            return id;
         } catch (SQLException e) {
             LOGGER.info("Could not insert category " + category.getTag());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return id;
+
     }
 
     private void insertCategoryDetails(Connection connection, Category category) throws SQLException {
         if (category.getId() != 0) {
+            PreparedStatement preparedStatement = null;
             try {
                 connection.setAutoCommit(false);
-                PreparedStatement preparedStatement = connection.prepareStatement(
+                preparedStatement = connection.prepareStatement(
                         SQL_STATEMENTS.getProperty("mysql.categories.descriptions.insert"));
-                for (int languageId : category.getDescriptions().keySet()) {
-                    preparedStatement.setInt(1, category.getId());
-                    preparedStatement.setInt(2, languageId);
-                    preparedStatement.setString(3, category.getNames().get(languageId));
-                    preparedStatement.setString(4, category.getDescriptions().get(languageId));
-                    preparedStatement.execute();
-                }
+                CatalogueUtils.setDetailsFromEntity(preparedStatement, category);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                LOGGER.error(e.getMessage());
-                e.printStackTrace();
-                throw new DBException();
+                throw e;
             } finally {
-                connection.setAutoCommit(true);
+                DBUtils.release(connection);
+                DBUtils.release(preparedStatement);
             }
         }
     }

@@ -1,0 +1,9 @@
+#buttons {
+    display: flex;
+    justify-content: left;
+    justify-items: left;
+}
+
+.button {
+    margin: 10px 20px;
+}

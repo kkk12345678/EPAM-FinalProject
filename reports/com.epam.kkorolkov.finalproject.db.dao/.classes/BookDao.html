@@ -1,0 +1,85 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BookDao</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.dao</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BookDao (com.epam.kkorolkov.finalproject.db.dao)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">BookDao</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.dao;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Book;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.BadRequestException;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>6</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DaoException;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.sql.Connection;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;import java.util.Map;
+<i>11</i>&nbsp;import java.util.Optional;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public interface BookDao {
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     *
+<i>19</i>&nbsp;     * @param connection
+<i>20</i>&nbsp;     * @param parameters
+<i>21</i>&nbsp;     * @return
+<i>22</i>&nbsp;     * @throws DBException
+<i>23</i>&nbsp;     * @throws BadRequestException
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    int count(Connection connection, Map&lt;String, String&gt; parameters) throws DBException, BadRequestException;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    Optional&lt;Book&gt; get(Connection connection, int id) throws DBException, DaoException;
+<i>28</i>&nbsp;    Optional&lt;Book&gt; get(Connection connection, String tag) throws DBException, DaoException;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    List&lt;Book&gt; getAll(Connection connection, int limit, int offset, Map&lt;String, String&gt; parameters) throws DBException, DaoException;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    void update(Connection connection, Book book) throws DBException;
+<i>33</i>&nbsp;    void delete(Connection connection, int id) throws DBException;
+<i>34</i>&nbsp;    int insert(Connection connection, Book book) throws DBException;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    int getMaxPrice(Connection connection, Map&lt;String, String&gt; parameters) throws DBException, BadRequestException;
+<i>37</i>&nbsp;    int getMinPrice(Connection connection, Map&lt;String, String&gt; parameters) throws DBException, BadRequestException;
+<i>38</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

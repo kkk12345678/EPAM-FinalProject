@@ -1,7 +1,7 @@
 package com.epam.kkorolkov.finalproject.db.datasource;
 
 import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +9,6 @@ import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 public abstract class AbstractDataSourceFactory {
-    protected static final String DB_PROPERTIES_FILE = "db/mysql/db.properties";
     protected static String dbUrl;
     protected static String dbUser;
     protected static String dbPassword;
@@ -21,7 +20,7 @@ public abstract class AbstractDataSourceFactory {
 
     public static synchronized AbstractDataSourceFactory getInstance() throws DBConnectionException {
         if (instance == null) {
-            try (InputStream dbSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream(DB_PROPERTIES_FILE)) {
+            try (InputStream dbSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream("db/mysql/db.properties")) {
                 Properties dbProperties = new Properties();
                 dbProperties.load(dbSettings);
                 String datasourceFQN = dbProperties.getProperty("datasource.fqn");
@@ -33,7 +32,9 @@ public abstract class AbstractDataSourceFactory {
                 Constructor<?> constr = c.getDeclaredConstructor();
                 instance = (AbstractDataSourceFactory) constr.newInstance();
             } catch (IOException | ReflectiveOperationException e) {
-                throw new DBConnectionException("Cannot obtain an instance of datasource", e);
+                LogManager.getLogger("DB").info("Cannot obtain an instance of datasource.");
+                LogManager.getLogger("DB").error(e.getMessage());
+                throw new DBConnectionException();
             }
         }
         return instance;

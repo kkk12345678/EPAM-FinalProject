@@ -1,0 +1,221 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: OrderServlet</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.client</a> ]
+</div>
+
+<h1>Coverage Summary for Class: OrderServlet (com.epam.kkorolkov.finalproject.client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OrderServlet</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 57)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.client;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.BookDao;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.LanguageDao;
+<i>6</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.OrderDao;
+<i>7</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
+<i>8</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
+<i>9</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Book;
+<i>10</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Order;
+<i>11</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.User;
+<i>12</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.BadRequestException;
+<i>13</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
+<i>14</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>15</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DaoException;
+<i>16</i>&nbsp;import com.epam.kkorolkov.finalproject.util.DBUtils;
+<i>17</i>&nbsp;import org.apache.logging.log4j.LogManager;
+<i>18</i>&nbsp;import org.apache.logging.log4j.Logger;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import javax.servlet.ServletException;
+<i>21</i>&nbsp;import javax.servlet.annotation.WebServlet;
+<i>22</i>&nbsp;import javax.servlet.http.HttpServlet;
+<i>23</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>24</i>&nbsp;import javax.servlet.http.HttpServletResponse;
+<i>25</i>&nbsp;import javax.servlet.http.HttpSession;
+<i>26</i>&nbsp;import java.io.IOException;
+<i>27</i>&nbsp;import java.sql.Connection;
+<i>28</i>&nbsp;import java.util.HashMap;
+<i>29</i>&nbsp;import java.util.Map;
+<i>30</i>&nbsp;import java.util.Optional;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;@WebServlet(&quot;/order&quot;)
+<b class="nc"><i>33</i>&nbsp;public class OrderServlet extends HttpServlet {</b>
+<i>34</i>&nbsp;    /** Logger */
+<b class="nc"><i>35</i>&nbsp;    private static final Logger LOGGER = LogManager.getLogger(&quot;ORDER&quot;);</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /** Page to redirect after successful request processing */
+<i>38</i>&nbsp;    private static final String REDIRECT_SUCCESS = &quot;/order?success=1&amp;id=&quot;;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /** Page to redirect after exception is thrown */
+<i>41</i>&nbsp;    private static final String REDIRECT_ERROR_CONNECTION =
+<i>42</i>&nbsp;            &quot;/error?code=500&amp;message=Unable to connect to the database. Try again later.&quot;;
+<i>43</i>&nbsp;    private static final String REDIRECT_ERROR_DAO =
+<i>44</i>&nbsp;            &quot;/error?code=500&amp;message=Cannot instantiate DAO. See server logs for details.&quot;;
+<i>45</i>&nbsp;    private static final String REDIRECT_ERROR_DB =
+<i>46</i>&nbsp;            &quot;/error?code=500&amp;message=Database error occurred. See server logs for details.&quot;;
+<i>47</i>&nbsp;    private static final String REDIRECT_ERROR_PARAMS =
+<i>48</i>&nbsp;            &quot;/error?code=400&amp;message=Some request parameters are incorrect. See server logs for details.&quot;;
+<i>49</i>&nbsp;    private static final String REDIRECT_ERROR_SESSION =
+<i>50</i>&nbsp;            &quot;/error?code=400&amp;message=Some session parameters are incorrect. See server logs for details.&quot;;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /** Logger messages */
+<i>53</i>&nbsp;    private static final String MESSAGE_ERROR_PARAMS = &quot;Some request parameters are incorrect.&quot;;
+<i>54</i>&nbsp;    private static final String MESSAGE_SUCCESS = &quot;Order # %d was successfully placed.&quot;;
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /** Session attributes */
+<i>57</i>&nbsp;    private static final String ATTR_CART = &quot;cart&quot;;
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    /** Request parameters */
+<i>60</i>&nbsp;    private static final String PARAM_ID = &quot;id&quot;;
+<i>61</i>&nbsp;    private static final String PARAM_USER = &quot;user&quot;;
+<i>62</i>&nbsp;    private static final String PARAM_TOTAL = &quot;total&quot;;
+<i>63</i>&nbsp;    private static final String PARAM_SUCCESS = &quot;success&quot;;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    /** JSP page to include */
+<i>66</i>&nbsp;    private static final String INCLUDE_JSP = &quot;./jsp/client/success.jsp&quot;;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+<i>69</i>&nbsp;    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+<b class="nc"><i>70</i>&nbsp;        String context = request.getServletContext().getContextPath();</b>
+<b class="nc"><i>71</i>&nbsp;        DataSource dataSource = null;</b>
+<b class="nc"><i>72</i>&nbsp;        Connection connection = null;</b>
+<i>73</i>&nbsp;        try {
+<b class="nc"><i>74</i>&nbsp;            HttpSession session = request.getSession();</b>
+<b class="nc"><i>75</i>&nbsp;            Map&lt;Integer, Integer&gt; cart = (Map&lt;Integer, Integer&gt;) session.getAttribute(ATTR_CART);</b>
+<b class="nc"><i>76</i>&nbsp;            User user = (User) session.getAttribute(PARAM_USER);</b>
+<b class="nc"><i>77</i>&nbsp;            if (cart == null || user == null) {</b>
+<b class="nc"><i>78</i>&nbsp;                response.sendRedirect(context + REDIRECT_ERROR_SESSION);</b>
+<b class="nc"><i>79</i>&nbsp;                return;</b>
+<i>80</i>&nbsp;            }
+<b class="nc"><i>81</i>&nbsp;            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();</b>
+<b class="nc"><i>82</i>&nbsp;            connection = dataSource.getConnection();</b>
+<b class="nc"><i>83</i>&nbsp;            OrderDao orderDao = AbstractDaoFactory.getInstance().getOrderDao();</b>
+<b class="nc"><i>84</i>&nbsp;            double total = Double.parseDouble(request.getParameter(PARAM_TOTAL));</b>
+<b class="nc"><i>85</i>&nbsp;            int id = orderDao.insert(connection, getOrder(connection, cart, user, total));</b>
+<b class="nc"><i>86</i>&nbsp;            session.removeAttribute(ATTR_CART);</b>
+<b class="nc"><i>87</i>&nbsp;            LOGGER.info(String.format(MESSAGE_SUCCESS, id));</b>
+<b class="nc"><i>88</i>&nbsp;            response.sendRedirect(context + REDIRECT_SUCCESS + id);</b>
+<b class="nc"><i>89</i>&nbsp;        } catch (DBConnectionException e) {</b>
+<b class="nc"><i>90</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);</b>
+<b class="nc"><i>91</i>&nbsp;        } catch (DBException e) {</b>
+<b class="nc"><i>92</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DB);</b>
+<b class="nc"><i>93</i>&nbsp;        } catch (DaoException e) {</b>
+<b class="nc"><i>94</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DAO);</b>
+<b class="nc"><i>95</i>&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc"><i>96</i>&nbsp;            LOGGER.info(MESSAGE_ERROR_PARAMS);</b>
+<b class="nc"><i>97</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>98</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_PARAMS);</b>
+<i>99</i>&nbsp;        } finally {
+<b class="nc"><i>100</i>&nbsp;            if (dataSource != null) {</b>
+<b class="nc"><i>101</i>&nbsp;                dataSource.release(connection);</b>
+<i>102</i>&nbsp;            }
+<b class="nc"><i>103</i>&nbsp;        }</b>
+<b class="nc"><i>104</i>&nbsp;    }</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<b class="nc"><i>107</i>&nbsp;        String context = request.getServletContext().getContextPath();</b>
+<i>108</i>&nbsp;        try {
+<b class="nc"><i>109</i>&nbsp;            if (Integer.parseInt(request.getParameter(PARAM_SUCCESS)) == 1) {</b>
+<b class="nc"><i>110</i>&nbsp;                request.setAttribute(PARAM_ID, request.getParameter(PARAM_ID));</b>
+<b class="nc"><i>111</i>&nbsp;                request.getRequestDispatcher(INCLUDE_JSP).include(request, response);</b>
+<i>112</i>&nbsp;            } else {
+<b class="nc"><i>113</i>&nbsp;                throw new BadRequestException();</b>
+<i>114</i>&nbsp;            }
+<b class="nc"><i>115</i>&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc"><i>116</i>&nbsp;            LOGGER.info(MESSAGE_ERROR_PARAMS);</b>
+<b class="nc"><i>117</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>118</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_PARAMS);</b>
+<b class="nc"><i>119</i>&nbsp;        } catch (BadRequestException e) {</b>
+<b class="nc"><i>120</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_PARAMS);</b>
+<b class="nc"><i>121</i>&nbsp;        }</b>
+<b class="nc"><i>122</i>&nbsp;    }</b>
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    private Order getOrder(Connection connection, Map&lt;Integer, Integer&gt; cart, User user, double total) throws DBException, DaoException {
+<b class="nc"><i>125</i>&nbsp;        Order order = new Order();</b>
+<b class="nc"><i>126</i>&nbsp;        order.setUser(user);</b>
+<b class="nc"><i>127</i>&nbsp;        order.setTotal(total);</b>
+<b class="nc"><i>128</i>&nbsp;        Map&lt;Book, Integer&gt; details = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>129</i>&nbsp;        BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();</b>
+<i>130</i>&nbsp;        Optional&lt;Book&gt; optional;
+<b class="nc"><i>131</i>&nbsp;        for (int bookId : cart.keySet()) {</b>
+<b class="nc"><i>132</i>&nbsp;            optional = bookDao.get(connection, bookId);</b>
+<b class="nc"><i>133</i>&nbsp;            details.put(optional.orElseThrow(DBException::new), cart.get(bookId));</b>
+<b class="nc"><i>134</i>&nbsp;        }</b>
+<b class="nc"><i>135</i>&nbsp;        order.setDetails(details);</b>
+<b class="nc"><i>136</i>&nbsp;        return order;</b>
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

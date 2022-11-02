@@ -1,0 +1,484 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MysqlBookDaoImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.dao.mysql</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MysqlBookDaoImpl (com.epam.kkorolkov.finalproject.db.dao.mysql)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MysqlBookDaoImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    52,6%
+  </span>
+  <span class="absValue">
+    (10/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    29,2%
+  </span>
+  <span class="absValue">
+    (71/ 243)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.dao.mysql;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.*;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Book;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.BadRequestException;
+<i>6</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>7</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DaoException;
+<i>8</i>&nbsp;import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
+<i>9</i>&nbsp;import com.epam.kkorolkov.finalproject.util.DBUtils;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.sql.*;
+<i>12</i>&nbsp;import java.util.*;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/** */
+<b class="fc"><i>15</i>&nbsp;public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {</b>
+<i>16</i>&nbsp;    /** SQL statements */
+<b class="fc"><i>17</i>&nbsp;    private static final String SQL_COUNT = SQL_STATEMENTS.getProperty(&quot;mysql.books.select.count&quot;);</b>
+<b class="fc"><i>18</i>&nbsp;    private static final String SQL_GET_ID = SQL_STATEMENTS.getProperty(&quot;mysql.books.select.by.id&quot;);</b>
+<b class="fc"><i>19</i>&nbsp;    private static final String SQL_GET_TAG = SQL_STATEMENTS.getProperty(&quot;mysql.books.select.by.tag&quot;);</b>
+<b class="fc"><i>20</i>&nbsp;    private static final String SQL_GET_ALL = SQL_STATEMENTS.getProperty(&quot;mysql.books.select.all&quot;);</b>
+<b class="fc"><i>21</i>&nbsp;    private static final String SQL_UPDATE = SQL_STATEMENTS.getProperty(&quot;mysql.books.update&quot;);</b>
+<b class="fc"><i>22</i>&nbsp;    private static final String SQL_DELETE = SQL_STATEMENTS.getProperty(&quot;mysql.books.delete&quot;);</b>
+<b class="fc"><i>23</i>&nbsp;    private static final String SQL_INSERT = SQL_STATEMENTS.getProperty(&quot;mysql.books.insert&quot;);</b>
+<b class="fc"><i>24</i>&nbsp;    private static final String SQL_MAX_PRICE = SQL_STATEMENTS.getProperty(&quot;mysql.books.select.max.price&quot;);</b>
+<b class="fc"><i>25</i>&nbsp;    private static final String SQL_MIN_PRICE = SQL_STATEMENTS.getProperty(&quot;mysql.books.select.min.price&quot;);</b>
+<b class="fc"><i>26</i>&nbsp;    private static final String SQL_GET_DETAILS = SQL_STATEMENTS.getProperty(&quot;mysql.books.descriptions.select&quot;);</b>
+<b class="fc"><i>27</i>&nbsp;    private static final String SQL_INSERT_DETAILS = SQL_STATEMENTS.getProperty(&quot;mysql.books.descriptions.insert&quot;);</b>
+<b class="fc"><i>28</i>&nbsp;    private static final String SQL_UPDATE_DETAILS = SQL_STATEMENTS.getProperty(&quot;mysql.books.descriptions.update&quot;);</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /** Logger success messages */
+<i>31</i>&nbsp;    private static final String MESSAGE_BOOKS_COUNTED = &quot;Found %d books.&quot;;
+<i>32</i>&nbsp;    private static final String MESSAGE_BOOKS_LOADED = &quot;Books were successfully loaded.&quot;;
+<i>33</i>&nbsp;    private static final String MESSAGE_BOOK_ID_FOUND = &quot;Book with id = %d is successfully found.&quot;;
+<i>34</i>&nbsp;    private static final String MESSAGE_BOOK_ID_NOT_FOUND = &quot;Book with id = %d is not found.&quot;;
+<i>35</i>&nbsp;    private static final String MESSAGE_BOOK_TAG_FOUND = &quot;Book with tag = %s is successfully found.&quot;;
+<i>36</i>&nbsp;    private static final String MESSAGE_BOOK_TAG_NOT_FOUND = &quot;Book with tag = %s is not found.&quot;;
+<i>37</i>&nbsp;    private static final String MESSAGE_BOOK_UPDATED = &quot;Successfully updated book with id=&quot;;
+<i>38</i>&nbsp;    private static final String MESSAGE_BOOK_DELETED = &quot;Successfully deleted book with id=&quot;;
+<i>39</i>&nbsp;    private static final String MESSAGE_BOOK_INSERTED = &quot;Successfully inserted book with id=&quot;;
+<i>40</i>&nbsp;    private static final String MESSAGE_MAX_PRICE = &quot;Max price is &quot;;
+<i>41</i>&nbsp;    private static final String MESSAGE_MIN_PRICE = &quot;Min price is &quot;;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /** Logger error messages */
+<i>44</i>&nbsp;    private static final String ERROR_BOOKS_NOT_COUNTED = &quot;Could not count books.&quot;;
+<i>45</i>&nbsp;    private static final String ERROR_BOOK_ID_NOT_LOADED = &quot;Book with id = %d could not be retrieved.&quot;;
+<i>46</i>&nbsp;    private static final String ERROR_BOOK_TAG_NOT_LOADED = &quot;Book with tag = %s could not be retrieved.&quot;;
+<i>47</i>&nbsp;    private static final String ERROR_BOOKS_NOT_LOADED = &quot;Books cou;d not be retrieved.&quot;;
+<i>48</i>&nbsp;    private static final String ERROR_BOOK_NOT_UPDATED = &quot;Could not update book with id=&quot;;
+<i>49</i>&nbsp;    private static final String ERROR_BOOK_NOT_DELETED = &quot;Could not delete book with id=&quot;;
+<i>50</i>&nbsp;    private static final String ERROR_BOOK_NOT_INSERTED = &quot;Could not insert book &quot;;
+<i>51</i>&nbsp;    private static final String ERROR_PRICE_NOT_LOADED = &quot;Could not load price.&quot;;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /** Table fields */
+<i>54</i>&nbsp;    private static final String FIELD_ID = &quot;id&quot;;
+<i>55</i>&nbsp;    private static final String FIELD_TAG = &quot;tag&quot;;
+<i>56</i>&nbsp;    private static final String FIELD_ISBN = &quot;isbn&quot;;
+<i>57</i>&nbsp;    private static final String FIELD_DATE = &quot;publishing_date&quot;;
+<i>58</i>&nbsp;    private static final String FIELD_QUANTITY = &quot;quantity&quot;;
+<i>59</i>&nbsp;    private static final String FIELD_PUBLISHER_ID = &quot;publisher_id&quot;;
+<i>60</i>&nbsp;    private static final String FIELD_CATEGORY_ID = &quot;category_id&quot;;
+<i>61</i>&nbsp;    private static final String FIELD_PRICE = &quot;price&quot;;
+<i>62</i>&nbsp;    private static final String FIELD_LANGUAGE_ID = &quot;language_id&quot;;
+<i>63</i>&nbsp;    private static final String FIELD_TITlE = &quot;title&quot;;
+<i>64</i>&nbsp;    private static final String FIELD_DESCRIPTION = &quot;description&quot;;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /** Request parameters */
+<i>67</i>&nbsp;    private static final String PARAM_CATEGORY = &quot;category&quot;;
+<i>68</i>&nbsp;    private static final String PARAM_PUBLISHER = &quot;publisher&quot;;
+<i>69</i>&nbsp;    private static final String PARAM_TAG = &quot;tag&quot;;
+<i>70</i>&nbsp;    private static final String PARAM_ISBN = &quot;isbn&quot;;
+<i>71</i>&nbsp;    private static final String PARAM_SORT_BY = &quot;sort_by&quot;;
+<i>72</i>&nbsp;    private static final String PARAM_SORT_TYPE = &quot;sort_type&quot;;
+<i>73</i>&nbsp;    private static final String PARAM_PRICE_MIN = &quot;price_min&quot;;
+<i>74</i>&nbsp;    private static final String PARAM_PRICE_MAX = &quot;price_max&quot;;
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    /**
+<i>77</i>&nbsp;     *
+<i>78</i>&nbsp;     * @param connection
+<i>79</i>&nbsp;     * @param parameters
+<i>80</i>&nbsp;     * @return
+<i>81</i>&nbsp;     * @throws DBException
+<i>82</i>&nbsp;     * @throws BadRequestException
+<i>83</i>&nbsp;     */
+<i>84</i>&nbsp;    @Override
+<i>85</i>&nbsp;    public int count(Connection connection, Map&lt;String, String&gt; parameters) throws DBException, BadRequestException {
+<b class="nc"><i>86</i>&nbsp;        return count(connection, SQL_COUNT + setClause(parameters));</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    @Override
+<i>90</i>&nbsp;    public Optional&lt;Book&gt; get(Connection connection, int id) throws DBException, DaoException {
+<b class="nc"><i>91</i>&nbsp;        Optional&lt;Book&gt; optional = Optional.empty();</b>
+<b class="nc"><i>92</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<b class="nc"><i>93</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>94</i>&nbsp;        try {
+<b class="nc"><i>95</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_GET_ID);</b>
+<b class="nc"><i>96</i>&nbsp;            preparedStatement.setInt(1, id);</b>
+<b class="nc"><i>97</i>&nbsp;            resultSet = preparedStatement.executeQuery();</b>
+<b class="nc"><i>98</i>&nbsp;            if (resultSet.next()) {</b>
+<b class="nc"><i>99</i>&nbsp;                Book book = new Book();</b>
+<b class="nc"><i>100</i>&nbsp;                setBook(connection, resultSet, book);</b>
+<b class="nc"><i>101</i>&nbsp;                setBookDetails(connection, book);</b>
+<b class="nc"><i>102</i>&nbsp;                optional = Optional.of(book);</b>
+<b class="nc"><i>103</i>&nbsp;                LOGGER.info(String.format(MESSAGE_BOOK_ID_FOUND, id));</b>
+<b class="nc"><i>104</i>&nbsp;            } else {</b>
+<b class="nc"><i>105</i>&nbsp;                LOGGER.info(String.format(MESSAGE_BOOK_ID_NOT_FOUND, id));</b>
+<i>106</i>&nbsp;            }
+<b class="nc"><i>107</i>&nbsp;            return optional;</b>
+<b class="nc"><i>108</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>109</i>&nbsp;            LOGGER.info(String.format(ERROR_BOOK_ID_NOT_LOADED, id));</b>
+<b class="nc"><i>110</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>111</i>&nbsp;            throw new DBException();</b>
+<i>112</i>&nbsp;        } finally {
+<b class="nc"><i>113</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="nc"><i>114</i>&nbsp;        }</b>
+<i>115</i>&nbsp;    }
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    @Override
+<i>118</i>&nbsp;    public Optional&lt;Book&gt; get(Connection connection, String tag) throws DBException, DaoException {
+<b class="nc"><i>119</i>&nbsp;        Optional&lt;Book&gt; optional = Optional.empty();</b>
+<b class="nc"><i>120</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<b class="nc"><i>121</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>122</i>&nbsp;        try {
+<b class="nc"><i>123</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_GET_TAG);</b>
+<b class="nc"><i>124</i>&nbsp;            preparedStatement.setString(1, tag);</b>
+<b class="nc"><i>125</i>&nbsp;            resultSet = preparedStatement.executeQuery();</b>
+<b class="nc"><i>126</i>&nbsp;            if (resultSet.next()) {</b>
+<b class="nc"><i>127</i>&nbsp;                Book book = new Book();</b>
+<b class="nc"><i>128</i>&nbsp;                setBook(connection, resultSet, book);</b>
+<b class="nc"><i>129</i>&nbsp;                setBookDetails(connection, book);</b>
+<b class="nc"><i>130</i>&nbsp;                optional = Optional.of(book);</b>
+<b class="nc"><i>131</i>&nbsp;                LOGGER.info(String.format(MESSAGE_BOOK_TAG_FOUND, tag));</b>
+<b class="nc"><i>132</i>&nbsp;            } else {</b>
+<b class="nc"><i>133</i>&nbsp;                LOGGER.info(String.format(MESSAGE_BOOK_TAG_NOT_FOUND, tag));</b>
+<i>134</i>&nbsp;            }
+<b class="nc"><i>135</i>&nbsp;            return optional;</b>
+<b class="nc"><i>136</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>137</i>&nbsp;            LOGGER.info(String.format(ERROR_BOOK_TAG_NOT_LOADED, tag));</b>
+<b class="nc"><i>138</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>139</i>&nbsp;            throw new DBException();</b>
+<i>140</i>&nbsp;        } finally {
+<b class="nc"><i>141</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="nc"><i>142</i>&nbsp;        }</b>
+<i>143</i>&nbsp;    }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    @Override
+<i>146</i>&nbsp;    public List&lt;Book&gt; getAll(Connection connection, int limit, int offset, Map&lt;String, String&gt; parameters) throws DBException, DaoException {
+<b class="fc"><i>147</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<i>148</i>&nbsp;        try {
+<b class="fc"><i>149</i>&nbsp;            preparedStatement = connection.prepareStatement(String.format(SQL_GET_ALL, setClause(parameters)));</b>
+<b class="fc"><i>150</i>&nbsp;            preparedStatement.setInt(1, limit);</b>
+<b class="fc"><i>151</i>&nbsp;            preparedStatement.setInt(2, offset);</b>
+<b class="fc"><i>152</i>&nbsp;            return getAll(connection, preparedStatement);</b>
+<b class="nc"><i>153</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>154</i>&nbsp;            LOGGER.info(ERROR_BOOKS_NOT_LOADED);</b>
+<b class="nc"><i>155</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>156</i>&nbsp;            throw new DBException();</b>
+<i>157</i>&nbsp;        } finally {
+<b class="fc"><i>158</i>&nbsp;            DBUtils.release(preparedStatement);</b>
+<b class="nc"><i>159</i>&nbsp;        }</b>
+<i>160</i>&nbsp;    }
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    @Override
+<i>163</i>&nbsp;    public void update(Connection connection, Book book) throws DBException {
+<b class="nc"><i>164</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<i>165</i>&nbsp;        try {
+<b class="nc"><i>166</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_UPDATE);</b>
+<b class="nc"><i>167</i>&nbsp;            prepareStatement(book, preparedStatement);</b>
+<b class="nc"><i>168</i>&nbsp;            preparedStatement.setInt(8, book.getId());</b>
+<b class="nc"><i>169</i>&nbsp;            preparedStatement.execute();</b>
+<b class="nc"><i>170</i>&nbsp;            processDetails(connection, SQL_UPDATE_DETAILS, book);</b>
+<b class="nc"><i>171</i>&nbsp;            LOGGER.info(MESSAGE_BOOK_UPDATED + book.getId());</b>
+<b class="nc"><i>172</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>173</i>&nbsp;            LOGGER.info(ERROR_BOOK_NOT_UPDATED + book.getId());</b>
+<b class="nc"><i>174</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>175</i>&nbsp;            throw new DBException();</b>
+<i>176</i>&nbsp;        } finally {
+<b class="nc"><i>177</i>&nbsp;            DBUtils.release(connection);</b>
+<b class="nc"><i>178</i>&nbsp;            DBUtils.release(preparedStatement);</b>
+<b class="nc"><i>179</i>&nbsp;        }</b>
+<b class="nc"><i>180</i>&nbsp;    }</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    @Override
+<i>183</i>&nbsp;    public void delete(Connection connection, int id) throws DBException {
+<b class="nc"><i>184</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<i>185</i>&nbsp;        try {
+<b class="nc"><i>186</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_DELETE);</b>
+<b class="nc"><i>187</i>&nbsp;            preparedStatement.setInt(1, id);</b>
+<b class="nc"><i>188</i>&nbsp;            preparedStatement.execute();</b>
+<b class="nc"><i>189</i>&nbsp;            LOGGER.info(MESSAGE_BOOK_DELETED + id);</b>
+<b class="nc"><i>190</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>191</i>&nbsp;            LOGGER.info(ERROR_BOOK_NOT_DELETED + id);</b>
+<b class="nc"><i>192</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>193</i>&nbsp;            throw new DBException();</b>
+<i>194</i>&nbsp;        } finally {
+<b class="nc"><i>195</i>&nbsp;            DBUtils.release(preparedStatement);</b>
+<b class="nc"><i>196</i>&nbsp;        }</b>
+<b class="nc"><i>197</i>&nbsp;    }</b>
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    @Override
+<i>200</i>&nbsp;    public int insert(Connection connection, Book book) throws DBException {
+<b class="nc"><i>201</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<b class="nc"><i>202</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>203</i>&nbsp;        try {
+<b class="nc"><i>204</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);</b>
+<b class="nc"><i>205</i>&nbsp;            prepareStatement(book, preparedStatement);</b>
+<b class="nc"><i>206</i>&nbsp;            preparedStatement.execute();</b>
+<b class="nc"><i>207</i>&nbsp;            resultSet = preparedStatement.getGeneratedKeys();</b>
+<b class="nc"><i>208</i>&nbsp;            resultSet.next();</b>
+<b class="nc"><i>209</i>&nbsp;            int id = resultSet.getInt(1);</b>
+<b class="nc"><i>210</i>&nbsp;            book.setId(id);</b>
+<b class="nc"><i>211</i>&nbsp;            processDetails(connection, SQL_INSERT_DETAILS, book);</b>
+<b class="nc"><i>212</i>&nbsp;            LOGGER.info(MESSAGE_BOOK_INSERTED + id);</b>
+<b class="nc"><i>213</i>&nbsp;            return id;</b>
+<b class="nc"><i>214</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>215</i>&nbsp;            LOGGER.info(ERROR_BOOK_NOT_INSERTED + book.getTag());</b>
+<b class="nc"><i>216</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>217</i>&nbsp;            throw new DBException();</b>
+<i>218</i>&nbsp;        } finally {
+<b class="nc"><i>219</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="nc"><i>220</i>&nbsp;        }</b>
+<i>221</i>&nbsp;    }
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;    @Override
+<i>224</i>&nbsp;    public int getMaxPrice(Connection connection, Map&lt;String, String&gt; parameters) throws DBException, BadRequestException {
+<b class="fc"><i>225</i>&nbsp;        int maxPrice = getPrice(connection, SQL_MAX_PRICE + setClause(parameters));</b>
+<b class="fc"><i>226</i>&nbsp;        LOGGER.info(MESSAGE_MAX_PRICE + maxPrice);</b>
+<b class="fc"><i>227</i>&nbsp;        return maxPrice;</b>
+<i>228</i>&nbsp;    }
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    @Override
+<i>231</i>&nbsp;    public int getMinPrice(Connection connection, Map&lt;String, String&gt; parameters) throws DBException, BadRequestException {
+<b class="fc"><i>232</i>&nbsp;        int minPrice = getPrice(connection, SQL_MIN_PRICE + setClause(parameters));</b>
+<b class="fc"><i>233</i>&nbsp;        LOGGER.info(MESSAGE_MIN_PRICE + minPrice);</b>
+<b class="fc"><i>234</i>&nbsp;        return minPrice;</b>
+<i>235</i>&nbsp;    }
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;    private int getPrice(Connection connection, String query) throws DBException, BadRequestException {
+<b class="fc"><i>238</i>&nbsp;        Statement statement = null;</b>
+<b class="fc"><i>239</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>240</i>&nbsp;        try {
+<b class="fc"><i>241</i>&nbsp;            statement = connection.createStatement();</b>
+<b class="fc"><i>242</i>&nbsp;            resultSet = statement.executeQuery(query);</b>
+<b class="fc"><i>243</i>&nbsp;            resultSet.next();</b>
+<b class="fc"><i>244</i>&nbsp;            return resultSet.getInt(1);</b>
+<b class="nc"><i>245</i>&nbsp;        } catch (SQLSyntaxErrorException e) {</b>
+<b class="nc"><i>246</i>&nbsp;            LOGGER.info(ERROR_PRICE_NOT_LOADED);</b>
+<b class="nc"><i>247</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>248</i>&nbsp;            throw new BadRequestException();</b>
+<b class="nc"><i>249</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>250</i>&nbsp;            LOGGER.info(ERROR_PRICE_NOT_LOADED);</b>
+<b class="nc"><i>251</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>252</i>&nbsp;            throw new DBException();</b>
+<i>253</i>&nbsp;        } finally {
+<b class="fc"><i>254</i>&nbsp;            DBUtils.release(resultSet, statement);</b>
+<b class="nc"><i>255</i>&nbsp;        }</b>
+<i>256</i>&nbsp;    }
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;    private int count(Connection connection, String query) throws DBException, BadRequestException {
+<b class="nc"><i>259</i>&nbsp;        Statement statement = null;</b>
+<b class="nc"><i>260</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>261</i>&nbsp;        try {
+<b class="nc"><i>262</i>&nbsp;            statement = connection.createStatement();</b>
+<b class="nc"><i>263</i>&nbsp;            resultSet = statement.executeQuery(query);</b>
+<b class="nc"><i>264</i>&nbsp;            resultSet.next();</b>
+<b class="nc"><i>265</i>&nbsp;            int c = resultSet.getInt(1);</b>
+<b class="nc"><i>266</i>&nbsp;            LOGGER.info(String.format(MESSAGE_BOOKS_COUNTED, c));</b>
+<b class="nc"><i>267</i>&nbsp;            return c;</b>
+<b class="nc"><i>268</i>&nbsp;        } catch (SQLSyntaxErrorException e) {</b>
+<b class="nc"><i>269</i>&nbsp;            LOGGER.info(ERROR_BOOKS_NOT_COUNTED);</b>
+<b class="nc"><i>270</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>271</i>&nbsp;            throw new BadRequestException();</b>
+<b class="nc"><i>272</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>273</i>&nbsp;            LOGGER.info(ERROR_BOOKS_NOT_COUNTED);</b>
+<b class="nc"><i>274</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>275</i>&nbsp;            throw new DBException();</b>
+<i>276</i>&nbsp;        } finally {
+<b class="nc"><i>277</i>&nbsp;            DBUtils.release(resultSet, statement);</b>
+<b class="nc"><i>278</i>&nbsp;        }</b>
+<i>279</i>&nbsp;    }
+<i>280</i>&nbsp;
+<i>281</i>&nbsp;    private void prepareStatement(Book book, PreparedStatement preparedStatement) throws SQLException {
+<b class="nc"><i>282</i>&nbsp;        preparedStatement.setString(1, book.getTag());</b>
+<b class="nc"><i>283</i>&nbsp;        preparedStatement.setString(2, book.getIsbn());</b>
+<b class="nc"><i>284</i>&nbsp;        preparedStatement.setInt(3, book.getQuantity());</b>
+<b class="nc"><i>285</i>&nbsp;        preparedStatement.setInt(4, book.getPublisher().getId());</b>
+<b class="nc"><i>286</i>&nbsp;        preparedStatement.setInt(5, book.getCategory().getId());</b>
+<b class="nc"><i>287</i>&nbsp;        preparedStatement.setDouble(6, book.getPrice());</b>
+<b class="nc"><i>288</i>&nbsp;        preparedStatement.setDate(7, book.getDate());</b>
+<b class="nc"><i>289</i>&nbsp;    }</b>
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;    private List&lt;Book&gt; getAll(Connection connection, PreparedStatement preparedStatement) throws DBException, DaoException {
+<b class="fc"><i>292</i>&nbsp;        List&lt;Book&gt; books = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>293</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>294</i>&nbsp;        try {
+<b class="fc"><i>295</i>&nbsp;            resultSet = preparedStatement.executeQuery();</b>
+<b class="fc"><i>296</i>&nbsp;            while (resultSet.next()) {</b>
+<b class="fc"><i>297</i>&nbsp;                Book book = new Book();</b>
+<b class="fc"><i>298</i>&nbsp;                setBook(connection, resultSet, book);</b>
+<b class="fc"><i>299</i>&nbsp;                setBookDetails(connection, book);</b>
+<b class="fc"><i>300</i>&nbsp;                books.add(book);</b>
+<b class="fc"><i>301</i>&nbsp;            }</b>
+<b class="fc"><i>302</i>&nbsp;            LOGGER.info(MESSAGE_BOOKS_LOADED);</b>
+<b class="nc"><i>303</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>304</i>&nbsp;            LOGGER.info(ERROR_BOOKS_NOT_LOADED);</b>
+<b class="nc"><i>305</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>306</i>&nbsp;            throw new DBException();</b>
+<i>307</i>&nbsp;        } finally {
+<b class="fc"><i>308</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="fc"><i>309</i>&nbsp;        }</b>
+<b class="fc"><i>310</i>&nbsp;        return books;</b>
+<i>311</i>&nbsp;    }
+<i>312</i>&nbsp;
+<i>313</i>&nbsp;    private void setBook(Connection connection, ResultSet resultSet, Book book) throws SQLException, DaoException {
+<b class="fc"><i>314</i>&nbsp;        PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();</b>
+<b class="fc"><i>315</i>&nbsp;        CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();</b>
+<b class="fc"><i>316</i>&nbsp;        book.setId(resultSet.getInt(FIELD_ID));</b>
+<b class="fc"><i>317</i>&nbsp;        book.setTag(resultSet.getString(FIELD_TAG));</b>
+<b class="fc"><i>318</i>&nbsp;        book.setIsbn(resultSet.getString(FIELD_ISBN));</b>
+<b class="fc"><i>319</i>&nbsp;        book.setDate(resultSet.getDate(FIELD_DATE));</b>
+<b class="fc"><i>320</i>&nbsp;        book.setQuantity(resultSet.getInt(FIELD_QUANTITY));</b>
+<b class="fc"><i>321</i>&nbsp;        book.setPublisher(publisherDao.get(connection, resultSet.getInt(FIELD_PUBLISHER_ID)).get());</b>
+<b class="fc"><i>322</i>&nbsp;        book.setCategory(categoryDao.get(connection, resultSet.getInt(FIELD_CATEGORY_ID)).get());</b>
+<b class="fc"><i>323</i>&nbsp;        book.setPrice(resultSet.getDouble(FIELD_PRICE));</b>
+<b class="fc"><i>324</i>&nbsp;        book.setNames(new HashMap&lt;&gt;());</b>
+<b class="fc"><i>325</i>&nbsp;        book.setDescriptions(new HashMap&lt;&gt;());</b>
+<b class="fc"><i>326</i>&nbsp;    }</b>
+<i>327</i>&nbsp;
+<i>328</i>&nbsp;    private void setBookDetails(Connection connection, Book book) throws SQLException {
+<b class="fc"><i>329</i>&nbsp;        PreparedStatement preparedStatement = null;</b>
+<b class="fc"><i>330</i>&nbsp;        ResultSet resultSet = null;</b>
+<i>331</i>&nbsp;        try {
+<b class="fc"><i>332</i>&nbsp;            preparedStatement = connection.prepareStatement(SQL_GET_DETAILS);</b>
+<b class="fc"><i>333</i>&nbsp;            preparedStatement.setInt(1, book.getId());</b>
+<b class="fc"><i>334</i>&nbsp;            resultSet = preparedStatement.executeQuery();</b>
+<b class="fc"><i>335</i>&nbsp;            while (resultSet.next()) {</b>
+<b class="fc"><i>336</i>&nbsp;                book.getNames().put(resultSet.getInt(FIELD_LANGUAGE_ID), resultSet.getString(FIELD_TITlE));</b>
+<b class="fc"><i>337</i>&nbsp;                book.getDescriptions().put(resultSet.getInt(FIELD_LANGUAGE_ID), resultSet.getString(FIELD_DESCRIPTION));</b>
+<i>338</i>&nbsp;            }
+<i>339</i>&nbsp;        } finally {
+<b class="fc"><i>340</i>&nbsp;            DBUtils.release(resultSet, preparedStatement);</b>
+<b class="fc"><i>341</i>&nbsp;        }</b>
+<b class="fc"><i>342</i>&nbsp;    }</b>
+<i>343</i>&nbsp;
+<i>344</i>&nbsp;    private void processDetails(Connection connection, String query, Book book) throws SQLException {
+<i>345</i>&nbsp;        try {
+<b class="nc"><i>346</i>&nbsp;            connection.setAutoCommit(false);</b>
+<b class="nc"><i>347</i>&nbsp;            PreparedStatement preparedStatement = connection.prepareStatement(query);</b>
+<b class="nc"><i>348</i>&nbsp;            CatalogueUtils.setDetailsFromEntity(preparedStatement, book);</b>
+<b class="nc"><i>349</i>&nbsp;            connection.commit();</b>
+<b class="nc"><i>350</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>351</i>&nbsp;            connection.rollback();</b>
+<b class="nc"><i>352</i>&nbsp;            throw e;</b>
+<i>353</i>&nbsp;        } finally {
+<b class="nc"><i>354</i>&nbsp;            DBUtils.release(connection);</b>
+<b class="nc"><i>355</i>&nbsp;        }</b>
+<b class="nc"><i>356</i>&nbsp;    }</b>
+<i>357</i>&nbsp;
+<i>358</i>&nbsp;    private String setClause(Map&lt;String, String&gt; parameters) {
+<b class="fc"><i>359</i>&nbsp;        if (parameters == null || parameters.isEmpty()) {</b>
+<b class="fc"><i>360</i>&nbsp;            return &quot;&quot;;</b>
+<i>361</i>&nbsp;        }
+<b class="nc"><i>362</i>&nbsp;        String categoryId = parameters.get(PARAM_CATEGORY);</b>
+<b class="nc"><i>363</i>&nbsp;        String publisherId = parameters.get(PARAM_PUBLISHER);</b>
+<b class="nc"><i>364</i>&nbsp;        String tag = parameters.get(PARAM_TAG);</b>
+<b class="nc"><i>365</i>&nbsp;        String isbn = parameters.get(PARAM_ISBN);</b>
+<b class="nc"><i>366</i>&nbsp;        String sortBy = parameters.get(PARAM_SORT_BY);</b>
+<b class="nc"><i>367</i>&nbsp;        String sortType = parameters.get(PARAM_SORT_TYPE);</b>
+<b class="nc"><i>368</i>&nbsp;        String priceMin = parameters.get(PARAM_PRICE_MIN);</b>
+<b class="nc"><i>369</i>&nbsp;        String priceMax = parameters.get(PARAM_PRICE_MAX);</b>
+<b class="nc"><i>370</i>&nbsp;        boolean isPricesSet = priceMin != null &amp;&amp; priceMax != null &amp;&amp; !&quot;&quot;.equals(priceMin) &amp;&amp; !&quot;&quot;.equals(priceMax);</b>
+<b class="nc"><i>371</i>&nbsp;        StringBuilder stringBuilder = new StringBuilder(&quot;&quot;);</b>
+<b class="nc"><i>372</i>&nbsp;        if ((categoryId != null &amp;&amp; !&quot;&quot;.equals(categoryId)) ||</b>
+<b class="nc"><i>373</i>&nbsp;                (publisherId != null &amp;&amp; !&quot;&quot;.equals(publisherId)) ||</b>
+<b class="nc"><i>374</i>&nbsp;                (tag != null &amp;&amp; !&quot;&quot;.equals(tag)) ||</b>
+<b class="nc"><i>375</i>&nbsp;                (isbn != null &amp;&amp; !&quot;&quot;.equals(isbn)) ||</b>
+<i>376</i>&nbsp;                isPricesSet) {
+<b class="nc"><i>377</i>&nbsp;            stringBuilder.append(&quot; where &quot;);</b>
+<b class="nc"><i>378</i>&nbsp;            List&lt;String&gt; parts = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>379</i>&nbsp;            if (categoryId != null &amp;&amp; !&quot;&quot;.equals(categoryId)) {</b>
+<b class="nc"><i>380</i>&nbsp;                parts.add(&quot;category_id = &quot; + categoryId);</b>
+<i>381</i>&nbsp;            }
+<b class="nc"><i>382</i>&nbsp;            if (publisherId != null &amp;&amp; !&quot;&quot;.equals(publisherId)) {</b>
+<b class="nc"><i>383</i>&nbsp;                parts.add(&quot;publisher_id = &quot; + publisherId);</b>
+<i>384</i>&nbsp;            }
+<b class="nc"><i>385</i>&nbsp;            if (tag != null &amp;&amp; !&quot;&quot;.equals(tag)) {</b>
+<b class="nc"><i>386</i>&nbsp;                parts.add(&quot;tag like &#39;%&quot; + tag + &quot;%&#39;&quot;);</b>
+<i>387</i>&nbsp;            }
+<b class="nc"><i>388</i>&nbsp;            if (isbn != null &amp;&amp; !&quot;&quot;.equals(isbn)) {</b>
+<b class="nc"><i>389</i>&nbsp;                parts.add(&quot;isbn like &#39;%&quot; + isbn + &quot;%&#39;&quot;);</b>
+<i>390</i>&nbsp;            }
+<b class="nc"><i>391</i>&nbsp;            if (isPricesSet) {</b>
+<b class="nc"><i>392</i>&nbsp;                parts.add(&quot;price &gt;= &quot; + priceMin + &quot; and price &lt;= &quot; + priceMax);</b>
+<i>393</i>&nbsp;            }
+<b class="nc"><i>394</i>&nbsp;            stringBuilder.append(String.join(&quot; and &quot;, parts));</b>
+<i>395</i>&nbsp;        }
+<b class="nc"><i>396</i>&nbsp;        if (sortBy != null &amp;&amp; sortType != null) {</b>
+<b class="nc"><i>397</i>&nbsp;            stringBuilder.append(&quot; order by &quot;).append(sortBy).append(&quot; &quot;).append(sortType);</b>
+<i>398</i>&nbsp;        }
+<b class="nc"><i>399</i>&nbsp;        return stringBuilder.toString();</b>
+<i>400</i>&nbsp;    }
+<i>401</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

@@ -6,6 +6,7 @@ import com.epam.kkorolkov.finalproject.db.entity.Order;
 import com.epam.kkorolkov.finalproject.db.entity.User;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DaoException;
 import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
@@ -23,7 +24,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         } catch (SQLException e) {
             LOGGER.info("Could not count orders.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         }
     }
 
@@ -56,7 +57,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         } catch (SQLException e) {
             LOGGER.info("Could not insert order.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
@@ -95,7 +96,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         } catch (SQLException e) {
             LOGGER.info("Could not delete order with id " + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -113,14 +114,14 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         } catch (SQLException e) {
             LOGGER.info("Could not change status.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
     }
 
     @Override
-    public List<Order> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException {
+    public List<Order> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException, DaoException {
         String query = String.format("%s%s limit ? offset ?", SQL_STATEMENTS.getProperty("mysql.orders.select.all"), setClause(parameters));
         System.out.println(query);
         try {
@@ -131,12 +132,12 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         } catch (SQLException e) {
             LOGGER.info("Could not load orders.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         }
     }
 
     @Override
-    public List<Order> getAllByUser(Connection connection, int limit, int offset, int userId) throws DBException {
+    public List<Order> getAllByUser(Connection connection, int limit, int offset, int userId) throws DBException, DaoException {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.orders.select.by.customer"));
             preparedStatement.setInt(1, userId);
@@ -146,7 +147,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         } catch (SQLException e) {
             LOGGER.info("Could not load orders.");
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         }
     }
 
@@ -184,7 +185,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         return stringBuilder.toString();
     }
 
-    private List<Order> getAll(Connection connection, PreparedStatement preparedStatement) throws SQLException {
+    private List<Order> getAll(Connection connection, PreparedStatement preparedStatement) throws SQLException, DaoException {
         List<Order> orders = new ArrayList<>();
         ResultSet resultSet = null;
         try {
@@ -209,7 +210,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
         return orders;
     }
 
-    private void setOrderDetails(Connection connection, Order order) throws SQLException {
+    private void setOrderDetails(Connection connection, Order order) throws SQLException, DaoException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {

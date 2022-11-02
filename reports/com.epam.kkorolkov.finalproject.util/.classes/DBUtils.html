@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DBUtils</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.util</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DBUtils (com.epam.kkorolkov.finalproject.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DBUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,7%
+  </span>
+  <span class="absValue">
+    (6/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72%
+  </span>
+  <span class="absValue">
+    (18/ 25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.util;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.apache.logging.log4j.LogManager;
+<i>4</i>&nbsp;import org.apache.logging.log4j.Logger;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.sql.Connection;
+<i>7</i>&nbsp;import java.sql.ResultSet;
+<i>8</i>&nbsp;import java.sql.SQLException;
+<i>9</i>&nbsp;import java.sql.Statement;
+<i>10</i>&nbsp;
+<b class="nc"><i>11</i>&nbsp;public class DBUtils {</b>
+<b class="fc"><i>12</i>&nbsp;    private static final Logger LOGGER = LogManager.getLogger(&quot;UTILS&quot;);</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    public static void release(ResultSet resultSet, Statement statement) {
+<b class="fc"><i>15</i>&nbsp;        closeResultSet(resultSet);</b>
+<b class="fc"><i>16</i>&nbsp;        closeStatement(statement);</b>
+<b class="fc"><i>17</i>&nbsp;    }</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    public static void release(Statement statement) {
+<b class="fc"><i>20</i>&nbsp;        closeStatement(statement);</b>
+<b class="fc"><i>21</i>&nbsp;    }</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    private static void closeResultSet(ResultSet resultSet) {
+<i>24</i>&nbsp;        try {
+<b class="fc"><i>25</i>&nbsp;            if (resultSet != null) {</b>
+<b class="fc"><i>26</i>&nbsp;                resultSet.close();</b>
+<i>27</i>&nbsp;            }
+<b class="nc"><i>28</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>29</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="fc"><i>30</i>&nbsp;        }</b>
+<b class="fc"><i>31</i>&nbsp;    }</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    private static void closeStatement(Statement statement){
+<i>34</i>&nbsp;        try {
+<b class="fc"><i>35</i>&nbsp;            if (statement != null) {</b>
+<b class="fc"><i>36</i>&nbsp;                statement.close();</b>
+<i>37</i>&nbsp;            }
+<b class="nc"><i>38</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>39</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="fc"><i>40</i>&nbsp;        }</b>
+<b class="fc"><i>41</i>&nbsp;    }</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    public static void release(Connection connection) {
+<i>44</i>&nbsp;        try {
+<b class="fc"><i>45</i>&nbsp;            if (connection != null) {</b>
+<b class="fc"><i>46</i>&nbsp;                connection.setAutoCommit(true);</b>
+<i>47</i>&nbsp;            }
+<b class="nc"><i>48</i>&nbsp;        } catch (SQLException e) {</b>
+<b class="nc"><i>49</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="fc"><i>50</i>&nbsp;        }</b>
+<b class="fc"><i>51</i>&nbsp;    }</b>
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

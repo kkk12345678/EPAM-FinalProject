@@ -1,0 +1,341 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EditBookServlet</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.admin.book</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EditBookServlet (com.epam.kkorolkov.finalproject.admin.book)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EditBookServlet</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 100)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.admin.book;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.dao.*;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
+<i>6</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Book;
+<i>7</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Category;
+<i>8</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Language;
+<i>9</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Publisher;
+<i>10</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.*;
+<i>11</i>&nbsp;import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
+<i>12</i>&nbsp;import org.apache.logging.log4j.LogManager;
+<i>13</i>&nbsp;import org.apache.logging.log4j.Logger;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import javax.servlet.ServletException;
+<i>16</i>&nbsp;import javax.servlet.annotation.MultipartConfig;
+<i>17</i>&nbsp;import javax.servlet.annotation.WebServlet;
+<i>18</i>&nbsp;import javax.servlet.http.HttpServlet;
+<i>19</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>20</i>&nbsp;import javax.servlet.http.HttpServletResponse;
+<i>21</i>&nbsp;import java.io.BufferedOutputStream;
+<i>22</i>&nbsp;import java.io.FileOutputStream;
+<i>23</i>&nbsp;import java.io.IOException;
+<i>24</i>&nbsp;import java.sql.Connection;
+<i>25</i>&nbsp;import java.sql.Date;
+<i>26</i>&nbsp;import java.util.List;
+<i>27</i>&nbsp;import java.util.Map;
+<i>28</i>&nbsp;import java.util.NoSuchElementException;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;/**
+<i>31</i>&nbsp; * The {@code EditBookServlet} is a servlet which task is to
+<i>32</i>&nbsp; * edit product if it exists in a database or to create one otherwise
+<i>33</i>&nbsp; *
+<i>34</i>&nbsp; * {@code doGet} and {@code doPost} methods are overridden.
+<i>35</i>&nbsp; */
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;@WebServlet(&quot;/admin/edit-book&quot;)
+<i>38</i>&nbsp;@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
+<b class="nc"><i>39</i>&nbsp;public class EditBookServlet extends HttpServlet {</b>
+<i>40</i>&nbsp;    /** Logger */
+<b class="nc"><i>41</i>&nbsp;    private static final Logger LOGGER = LogManager.getLogger(&quot;EDIT BOOK&quot;);</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /** Page to redirect after success */
+<i>44</i>&nbsp;    private static final String REDIRECT_SUCCESS = &quot;/admin/books&quot;;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /** Page to redirect after exception is thrown */
+<i>47</i>&nbsp;    private static final String REDIRECT_ERROR_CONNECTION =
+<i>48</i>&nbsp;            &quot;/error?code=500&amp;message=Unable to connect to the database. Try again later.&quot;;
+<i>49</i>&nbsp;    private static final String REDIRECT_ERROR_DAO =
+<i>50</i>&nbsp;            &quot;/error?code=500&amp;message=Cannot instantiate DAO. See server logs for details.&quot;;
+<i>51</i>&nbsp;    private static final String REDIRECT_ERROR_DB =
+<i>52</i>&nbsp;            &quot;/error?code=500&amp;message=Database error occurred. See server logs for details.&quot;;
+<i>53</i>&nbsp;    private static final String REDIRECT_ERROR_REQUEST =
+<i>54</i>&nbsp;            &quot;/error?code=400&amp;message=Incorrect ID parameter. Is not a valid integer.&quot;;
+<i>55</i>&nbsp;    private static final String REDIRECT_ERROR_VALIDATION =
+<i>56</i>&nbsp;            &quot;/error?code=400&amp;message=&quot;;
+<i>57</i>&nbsp;    private static final String REDIRECT_ERROR_PARAMS =
+<i>58</i>&nbsp;            &quot;/error?code=400&amp;message=Some POST parameters are incorrect. See server logs for details.&quot;;
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    /** Logger messages */
+<i>61</i>&nbsp;    private static final String MESSAGE_ERROR_ID = &quot;ID is not a valid integer.&quot;;
+<i>62</i>&nbsp;    private static final String MESSAGE_ERROR_PARAMS = &quot;Some POST parameters are incorrect.&quot;;
+<i>63</i>&nbsp;    private static final String MESSAGE_ERROR_EMPTY = &quot;No product found with specified ID.&quot;;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /** Directory where uploaded images are stored */
+<i>67</i>&nbsp;    private static final String UPLOAD_DIRECTORY = &quot;static/img/product/&quot;;
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    /** Extension for uploaded images*/
+<i>70</i>&nbsp;    private static final String IMAGE_EXTENSION = &quot;.jpg&quot;;
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /** Request attributes */
+<i>73</i>&nbsp;    private static final String ATTR_BOOK = &quot;book&quot;;
+<i>74</i>&nbsp;    private static final String ATTR_CATEGORIES = &quot;categories&quot;;
+<i>75</i>&nbsp;    private static final String ATTR_PUBLISHERS = &quot;publishers&quot;;
+<i>76</i>&nbsp;    private static final String ATTR_LANGUAGES = &quot;languages&quot;;
+<i>77</i>&nbsp;    private static final String ATTR_TODAY = &quot;today&quot;;
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    /** JSP page to include */
+<i>80</i>&nbsp;    private static final String INCLUDE_JSP = &quot;../jsp/admin/books/edit-book.jsp&quot;;
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    /** Request parameters */
+<i>83</i>&nbsp;    private static final String PARAM_ISBN = &quot;isbn&quot;;
+<i>84</i>&nbsp;    private static final String PARAM_IMAGE = &quot;image&quot;;
+<i>85</i>&nbsp;    private static final String PARAM_ID = &quot;id&quot;;
+<i>86</i>&nbsp;    private static final String PARAM_CATEGORY = &quot;category&quot;;
+<i>87</i>&nbsp;    private static final String PARAM_PUBLISHER = &quot;publisher&quot;;
+<i>88</i>&nbsp;    private static final String PARAM_DATE = &quot;date&quot;;
+<i>89</i>&nbsp;    private static final String PARAM_QUANTITY = &quot;quantity&quot;;
+<i>90</i>&nbsp;    private static final String PARAM_PRICE = &quot;price&quot;;
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    /**
+<i>93</i>&nbsp;     * {@code doGet} method handles GET request.
+<i>94</i>&nbsp;     *
+<i>95</i>&nbsp;     *
+<i>96</i>&nbsp;     * @param request - HttpServletRequest object provided by Tomcat.
+<i>97</i>&nbsp;     * @param response - HttpServletResponse object provided by Tomcat.
+<i>98</i>&nbsp;     *
+<i>99</i>&nbsp;     * @throws ServletException is thrown if the request for the GET could not be handled.
+<i>100</i>&nbsp;     * @throws IOException is thrown if an input or output exception occurs.
+<i>101</i>&nbsp;     */
+<i>102</i>&nbsp;    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<b class="nc"><i>103</i>&nbsp;        String context = request.getServletContext().getContextPath();</b>
+<b class="nc"><i>104</i>&nbsp;        DataSource dataSource = null;</b>
+<b class="nc"><i>105</i>&nbsp;        Connection connection = null;</b>
+<i>106</i>&nbsp;        try {
+<b class="nc"><i>107</i>&nbsp;            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();</b>
+<b class="nc"><i>108</i>&nbsp;            connection = dataSource.getConnection();</b>
+<b class="nc"><i>109</i>&nbsp;            Book book = getBook(request, connection);</b>
+<b class="nc"><i>110</i>&nbsp;            request.setAttribute(ATTR_BOOK, book);</b>
+<b class="nc"><i>111</i>&nbsp;            request.setAttribute(ATTR_CATEGORIES, getCategories(connection));</b>
+<b class="nc"><i>112</i>&nbsp;            request.setAttribute(ATTR_PUBLISHERS, getPublishers( connection));</b>
+<b class="nc"><i>113</i>&nbsp;            request.setAttribute(ATTR_LANGUAGES, getLanguages(connection));</b>
+<b class="nc"><i>114</i>&nbsp;            request.setAttribute(ATTR_TODAY, new Date(System.currentTimeMillis()));</b>
+<b class="nc"><i>115</i>&nbsp;            request.getRequestDispatcher(INCLUDE_JSP).include(request, response);</b>
+<b class="nc"><i>116</i>&nbsp;        } catch (DBConnectionException e) {</b>
+<b class="nc"><i>117</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);</b>
+<b class="nc"><i>118</i>&nbsp;        } catch (DBException e) {</b>
+<b class="nc"><i>119</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DB);</b>
+<b class="nc"><i>120</i>&nbsp;        } catch (DaoException e) {</b>
+<b class="nc"><i>121</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DAO);</b>
+<b class="nc"><i>122</i>&nbsp;        } catch (BadRequestException e) {</b>
+<b class="nc"><i>123</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_REQUEST);</b>
+<i>124</i>&nbsp;        } finally {
+<b class="nc"><i>125</i>&nbsp;            if (dataSource != null) {</b>
+<b class="nc"><i>126</i>&nbsp;                dataSource.release(connection);</b>
+<i>127</i>&nbsp;            }
+<b class="nc"><i>128</i>&nbsp;        }</b>
+<b class="nc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<b class="nc"><i>132</i>&nbsp;        String context = request.getServletContext().getContextPath();</b>
+<b class="nc"><i>133</i>&nbsp;        DataSource dataSource = null;</b>
+<b class="nc"><i>134</i>&nbsp;        Connection connection = null;</b>
+<i>135</i>&nbsp;        try {
+<b class="nc"><i>136</i>&nbsp;            dataSource = AbstractDataSourceFactory.getInstance().getDataSource();</b>
+<b class="nc"><i>137</i>&nbsp;            connection = dataSource.getConnection();</b>
+<b class="nc"><i>138</i>&nbsp;            Book book = setBook(request, connection);</b>
+<b class="nc"><i>139</i>&nbsp;            CatalogueUtils.validate(book);</b>
+<b class="nc"><i>140</i>&nbsp;            saveImage(request);</b>
+<b class="nc"><i>141</i>&nbsp;            BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();</b>
+<b class="nc"><i>142</i>&nbsp;            if (book.getId() == 0) {</b>
+<b class="nc"><i>143</i>&nbsp;                bookDao.insert(connection, book);</b>
+<i>144</i>&nbsp;            } else {
+<b class="nc"><i>145</i>&nbsp;                bookDao.update(connection, book);</b>
+<i>146</i>&nbsp;            }
+<b class="nc"><i>147</i>&nbsp;            response.sendRedirect(context + REDIRECT_SUCCESS);</b>
+<b class="nc"><i>148</i>&nbsp;        } catch (DBConnectionException e) {</b>
+<b class="nc"><i>149</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);</b>
+<b class="nc"><i>150</i>&nbsp;        } catch (DBException e) {</b>
+<b class="nc"><i>151</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DB);</b>
+<b class="nc"><i>152</i>&nbsp;        } catch (DaoException e) {</b>
+<b class="nc"><i>153</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_DAO);</b>
+<b class="nc"><i>154</i>&nbsp;        } catch (BadRequestException e) {</b>
+<b class="nc"><i>155</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_PARAMS);</b>
+<b class="nc"><i>156</i>&nbsp;        } catch (ValidationException e) {</b>
+<b class="nc"><i>157</i>&nbsp;            response.sendRedirect(context + REDIRECT_ERROR_VALIDATION + e.getMessage());</b>
+<i>158</i>&nbsp;        } finally {
+<b class="nc"><i>159</i>&nbsp;            if (dataSource != null) {</b>
+<b class="nc"><i>160</i>&nbsp;                dataSource.release(connection);</b>
+<i>161</i>&nbsp;            }
+<b class="nc"><i>162</i>&nbsp;        }</b>
+<b class="nc"><i>163</i>&nbsp;    }</b>
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;    private void saveImage(HttpServletRequest request) throws IOException, ServletException {
+<b class="nc"><i>166</i>&nbsp;        if (request.getPart(PARAM_IMAGE).getSize() == 0) {</b>
+<b class="nc"><i>167</i>&nbsp;            return;</b>
+<i>168</i>&nbsp;        }
+<b class="nc"><i>169</i>&nbsp;        String isbn = request.getParameter(PARAM_ISBN);</b>
+<b class="nc"><i>170</i>&nbsp;        String file = getServletContext().getRealPath(&quot;/&quot;) + UPLOAD_DIRECTORY + isbn + IMAGE_EXTENSION;</b>
+<b class="nc"><i>171</i>&nbsp;        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream (new FileOutputStream(file))) {</b>
+<b class="nc"><i>172</i>&nbsp;            bufferedOutputStream.write(request.getPart(PARAM_IMAGE).getInputStream().readAllBytes());</b>
+<b class="nc"><i>173</i>&nbsp;            bufferedOutputStream.flush();</b>
+<b class="nc"><i>174</i>&nbsp;        }</b>
+<b class="nc"><i>175</i>&nbsp;    }</b>
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;    private Book setBook(HttpServletRequest request, Connection connection) throws DBException, DaoException, BadRequestException {
+<i>178</i>&nbsp;        try {
+<b class="nc"><i>179</i>&nbsp;            Date date = Date.valueOf(request.getParameter(PARAM_DATE));</b>
+<b class="nc"><i>180</i>&nbsp;            String isbn = request.getParameter(PARAM_ISBN);</b>
+<b class="nc"><i>181</i>&nbsp;            double price = Double.parseDouble(request.getParameter(PARAM_PRICE));</b>
+<b class="nc"><i>182</i>&nbsp;            int quantity = Integer.parseInt(request.getParameter(PARAM_QUANTITY));</b>
+<b class="nc"><i>183</i>&nbsp;            int categoryId = Integer.parseInt(request.getParameter(PARAM_CATEGORY));</b>
+<b class="nc"><i>184</i>&nbsp;            int publisherId = Integer.parseInt(request.getParameter(PARAM_PUBLISHER));</b>
+<b class="nc"><i>185</i>&nbsp;            Book book = new Book();</b>
+<b class="nc"><i>186</i>&nbsp;            CatalogueUtils.setDetailsFromRequest(request, book, getLanguages(connection));</b>
+<b class="nc"><i>187</i>&nbsp;            book.setIsbn(isbn);</b>
+<b class="nc"><i>188</i>&nbsp;            book.setDate(date);</b>
+<b class="nc"><i>189</i>&nbsp;            book.setPrice(price);</b>
+<b class="nc"><i>190</i>&nbsp;            book.setQuantity(quantity);</b>
+<b class="nc"><i>191</i>&nbsp;            book.setCategory(getCategory(connection, categoryId));</b>
+<b class="nc"><i>192</i>&nbsp;            book.setPublisher(getPublisher(connection, publisherId));</b>
+<b class="nc"><i>193</i>&nbsp;            return book;</b>
+<b class="nc"><i>194</i>&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc"><i>195</i>&nbsp;            LOGGER.info(MESSAGE_ERROR_PARAMS);</b>
+<b class="nc"><i>196</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>197</i>&nbsp;            throw new BadRequestException();</b>
+<i>198</i>&nbsp;        }
+<i>199</i>&nbsp;    }
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;    /**
+<i>202</i>&nbsp;     * {@code getBook} method prepares instance of {@code Book}.
+<i>203</i>&nbsp;     * If there is a book in the database with &lt;i&gt;id&lt;/i&gt; provided in request parameter
+<i>204</i>&nbsp;     * returns the corresponding instance
+<i>205</i>&nbsp;     * Otherwise returns book stub provided by {@code Book#create()} method
+<i>206</i>&nbsp;     *
+<i>207</i>&nbsp;     *
+<i>208</i>&nbsp;     * @param request - {@code HttpServletRequest} object provided by Tomcat.
+<i>209</i>&nbsp;     * @param connection - {@code Connection} object to process query.
+<i>210</i>&nbsp;     *
+<i>211</i>&nbsp;     * @return instance of {@code Book}.
+<i>212</i>&nbsp;     *
+<i>213</i>&nbsp;     * @throws DBException if there {@code SQLException} is thrown while querying database.
+<i>214</i>&nbsp;     * @throws BadRequestException if parameter &lt;i&gt;id&lt;/i&gt; is not valid ID.
+<i>215</i>&nbsp;     * @throws DaoException if an instance of DAO cannot be instantiated.
+<i>216</i>&nbsp;     *
+<i>217</i>&nbsp;     * @see Book#create()
+<i>218</i>&nbsp;     */
+<i>219</i>&nbsp;    private Book getBook(HttpServletRequest request, Connection connection) throws DBException, BadRequestException, DaoException {
+<i>220</i>&nbsp;        try {
+<b class="nc"><i>221</i>&nbsp;            int id = Integer.parseInt(request.getParameter(PARAM_ID));</b>
+<b class="nc"><i>222</i>&nbsp;            if (id != 0) {</b>
+<b class="nc"><i>223</i>&nbsp;                BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();</b>
+<b class="nc"><i>224</i>&nbsp;                return bookDao.get(connection, id).orElseThrow(() -&gt; new NoSuchElementException(MESSAGE_ERROR_EMPTY));</b>
+<i>225</i>&nbsp;            }
+<b class="nc"><i>226</i>&nbsp;            return Book.create();</b>
+<b class="nc"><i>227</i>&nbsp;        } catch (NumberFormatException | NoSuchElementException e) {</b>
+<b class="nc"><i>228</i>&nbsp;            LOGGER.info(MESSAGE_ERROR_ID);</b>
+<b class="nc"><i>229</i>&nbsp;            LOGGER.error(e.getMessage());</b>
+<b class="nc"><i>230</i>&nbsp;            throw new BadRequestException();</b>
+<i>231</i>&nbsp;        }
+<i>232</i>&nbsp;    }
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;    private List&lt;Category&gt; getCategories(Connection connection) throws DBException, DaoException {
+<b class="nc"><i>235</i>&nbsp;        CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();</b>
+<b class="nc"><i>236</i>&nbsp;        return categoryDao.getAll(connection);</b>
+<i>237</i>&nbsp;    }
+<i>238</i>&nbsp;
+<i>239</i>&nbsp;    private Category getCategory(Connection connection, int id) throws DBException, DaoException {
+<b class="nc"><i>240</i>&nbsp;        CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();</b>
+<b class="nc"><i>241</i>&nbsp;        return categoryDao.get(connection, id).orElseThrow(DBException::new);</b>
+<i>242</i>&nbsp;    }
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    private Publisher getPublisher(Connection connection, int id) throws DBException, DaoException {
+<b class="nc"><i>245</i>&nbsp;        PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();</b>
+<b class="nc"><i>246</i>&nbsp;        return publisherDao.get(connection, id).orElseThrow(DBException::new);</b>
+<i>247</i>&nbsp;    }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    private List&lt;Publisher&gt; getPublishers(Connection connection) throws DBException, DaoException {
+<b class="nc"><i>250</i>&nbsp;        PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();</b>
+<b class="nc"><i>251</i>&nbsp;        return publisherDao.getAll(connection);</b>
+<i>252</i>&nbsp;    }
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;    private Map&lt;Integer, Language&gt; getLanguages(Connection connection) throws DaoException, DBException {
+<b class="nc"><i>255</i>&nbsp;        LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();</b>
+<b class="nc"><i>256</i>&nbsp;        return languageDao.getAll(connection);</b>
+<i>257</i>&nbsp;    }
+<i>258</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

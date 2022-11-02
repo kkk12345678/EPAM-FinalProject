@@ -1,0 +1,123 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AbstractDaoFactory</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.dao</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AbstractDaoFactory (com.epam.kkorolkov.finalproject.db.dao)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AbstractDaoFactory</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    78,6%
+  </span>
+  <span class="absValue">
+    (11/ 14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.dao;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DaoException;
+<i>4</i>&nbsp;import org.apache.logging.log4j.LogManager;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.io.IOException;
+<i>7</i>&nbsp;import java.io.InputStream;
+<i>8</i>&nbsp;import java.lang.reflect.Constructor;
+<i>9</i>&nbsp;import java.util.Properties;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public abstract class AbstractDaoFactory {
+<i>12</i>&nbsp;    private static AbstractDaoFactory instance;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    public static synchronized AbstractDaoFactory getInstance() throws DaoException {
+<b class="fc"><i>15</i>&nbsp;        if (instance == null) {</b>
+<b class="fc"><i>16</i>&nbsp;            try (InputStream dbSettings = Thread.currentThread().getContextClassLoader().getResourceAsStream(&quot;db/mysql/db.properties&quot;)) {</b>
+<b class="fc"><i>17</i>&nbsp;                Properties dbProperties = new Properties();</b>
+<b class="fc"><i>18</i>&nbsp;                dbProperties.load(dbSettings);</b>
+<b class="fc"><i>19</i>&nbsp;                Class&lt;?&gt; c = Class.forName(dbProperties.getProperty(&quot;dao.fqn&quot;));</b>
+<b class="fc"><i>20</i>&nbsp;                Constructor&lt;?&gt; constructor = c.getDeclaredConstructor();</b>
+<b class="fc"><i>21</i>&nbsp;                instance = (AbstractDaoFactory) constructor.newInstance();</b>
+<b class="fc"><i>22</i>&nbsp;            } catch (IOException | ReflectiveOperationException e) {</b>
+<b class="nc"><i>23</i>&nbsp;                LogManager.getLogger(&quot;DAO&quot;).info(&quot;Could not instantiate DAO.&quot;);</b>
+<b class="nc"><i>24</i>&nbsp;                LogManager.getLogger(&quot;DAO&quot;).error(e.getMessage());</b>
+<b class="nc"><i>25</i>&nbsp;                throw new DaoException();</b>
+<b class="fc"><i>26</i>&nbsp;            }</b>
+<i>27</i>&nbsp;        }
+<b class="fc"><i>28</i>&nbsp;        return instance;</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;
+<b class="fc"><i>31</i>&nbsp;    protected AbstractDaoFactory() {}</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    public abstract BookDao getBookDao();
+<i>34</i>&nbsp;    public abstract CategoryDao getCategoryDao();
+<i>35</i>&nbsp;    public abstract LanguageDao getLanguageDao();
+<i>36</i>&nbsp;    public abstract OrderDao getOrderDao();
+<i>37</i>&nbsp;    public abstract PublisherDao getPublisherDao();
+<i>38</i>&nbsp;    public abstract StatusDao getStatusDao();
+<i>39</i>&nbsp;    public abstract UserDao getUserDao();
+<i>40</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

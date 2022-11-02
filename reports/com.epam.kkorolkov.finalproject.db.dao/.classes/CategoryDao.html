@@ -1,0 +1,66 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CategoryDao</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.epam.kkorolkov.finalproject.db.dao</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CategoryDao (com.epam.kkorolkov.finalproject.db.dao)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CategoryDao</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.epam.kkorolkov.finalproject.db.dao;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.CatalogueEntity;
+<i>4</i>&nbsp;import com.epam.kkorolkov.finalproject.db.entity.Category;
+<i>5</i>&nbsp;import com.epam.kkorolkov.finalproject.exception.DBException;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.sql.Connection;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Optional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public interface CategoryDao extends Dao {
+<i>12</i>&nbsp;    int count(Connection connection) throws DBException;
+<i>13</i>&nbsp;    Optional&lt;Category&gt; get(Connection connection, int id) throws DBException;
+<i>14</i>&nbsp;    Optional&lt;Category&gt; get(Connection connection, String tag) throws DBException;
+<i>15</i>&nbsp;    List&lt;Category&gt; getAll(Connection connection) throws DBException;
+<i>16</i>&nbsp;    void update(Connection connection, Category category) throws DBException;
+<i>17</i>&nbsp;    void delete(Connection connection, int id) throws DBException;
+<i>18</i>&nbsp;    int insert(Connection connection, Category category) throws DBException;
+<i>19</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-11-02 14:46</div>
+</div>
+</body>
+</html>

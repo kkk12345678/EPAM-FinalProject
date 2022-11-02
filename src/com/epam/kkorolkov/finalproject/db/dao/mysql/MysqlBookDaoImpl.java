@@ -4,27 +4,95 @@ import com.epam.kkorolkov.finalproject.db.dao.*;
 import com.epam.kkorolkov.finalproject.db.entity.Book;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
 import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DaoException;
+import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
 import java.util.*;
 
-
+/** */
 public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
+    /** SQL statements */
+    private static final String SQL_COUNT = SQL_STATEMENTS.getProperty("mysql.books.select.count");
+    private static final String SQL_GET_ID = SQL_STATEMENTS.getProperty("mysql.books.select.by.id");
+    private static final String SQL_GET_TAG = SQL_STATEMENTS.getProperty("mysql.books.select.by.tag");
+    private static final String SQL_GET_ALL = SQL_STATEMENTS.getProperty("mysql.books.select.all");
+    private static final String SQL_UPDATE = SQL_STATEMENTS.getProperty("mysql.books.update");
+    private static final String SQL_DELETE = SQL_STATEMENTS.getProperty("mysql.books.delete");
+    private static final String SQL_INSERT = SQL_STATEMENTS.getProperty("mysql.books.insert");
+    private static final String SQL_MAX_PRICE = SQL_STATEMENTS.getProperty("mysql.books.select.max.price");
+    private static final String SQL_MIN_PRICE = SQL_STATEMENTS.getProperty("mysql.books.select.min.price");
+    private static final String SQL_GET_DETAILS = SQL_STATEMENTS.getProperty("mysql.books.descriptions.select");
+    private static final String SQL_INSERT_DETAILS = SQL_STATEMENTS.getProperty("mysql.books.descriptions.insert");
+    private static final String SQL_UPDATE_DETAILS = SQL_STATEMENTS.getProperty("mysql.books.descriptions.update");
+
+    /** Logger success messages */
+    private static final String MESSAGE_BOOKS_COUNTED = "Found %d books.";
+    private static final String MESSAGE_BOOKS_LOADED = "Books were successfully loaded.";
+    private static final String MESSAGE_BOOK_ID_FOUND = "Book with id = %d is successfully found.";
+    private static final String MESSAGE_BOOK_ID_NOT_FOUND = "Book with id = %d is not found.";
+    private static final String MESSAGE_BOOK_TAG_FOUND = "Book with tag = %s is successfully found.";
+    private static final String MESSAGE_BOOK_TAG_NOT_FOUND = "Book with tag = %s is not found.";
+    private static final String MESSAGE_BOOK_UPDATED = "Successfully updated book with id=";
+    private static final String MESSAGE_BOOK_DELETED = "Successfully deleted book with id=";
+    private static final String MESSAGE_BOOK_INSERTED = "Successfully inserted book with id=";
+    private static final String MESSAGE_MAX_PRICE = "Max price is ";
+    private static final String MESSAGE_MIN_PRICE = "Min price is ";
+
+    /** Logger error messages */
+    private static final String ERROR_BOOKS_NOT_COUNTED = "Could not count books.";
+    private static final String ERROR_BOOK_ID_NOT_LOADED = "Book with id = %d could not be retrieved.";
+    private static final String ERROR_BOOK_TAG_NOT_LOADED = "Book with tag = %s could not be retrieved.";
+    private static final String ERROR_BOOKS_NOT_LOADED = "Books cou;d not be retrieved.";
+    private static final String ERROR_BOOK_NOT_UPDATED = "Could not update book with id=";
+    private static final String ERROR_BOOK_NOT_DELETED = "Could not delete book with id=";
+    private static final String ERROR_BOOK_NOT_INSERTED = "Could not insert book ";
+    private static final String ERROR_PRICE_NOT_LOADED = "Could not load price.";
+
+    /** Table fields */
+    private static final String FIELD_ID = "id";
+    private static final String FIELD_TAG = "tag";
+    private static final String FIELD_ISBN = "isbn";
+    private static final String FIELD_DATE = "publishing_date";
+    private static final String FIELD_QUANTITY = "quantity";
+    private static final String FIELD_PUBLISHER_ID = "publisher_id";
+    private static final String FIELD_CATEGORY_ID = "category_id";
+    private static final String FIELD_PRICE = "price";
+    private static final String FIELD_LANGUAGE_ID = "language_id";
+    private static final String FIELD_TITlE = "title";
+    private static final String FIELD_DESCRIPTION = "description";
+
+    /** Request parameters */
+    private static final String PARAM_CATEGORY = "category";
+    private static final String PARAM_PUBLISHER = "publisher";
+    private static final String PARAM_TAG = "tag";
+    private static final String PARAM_ISBN = "isbn";
+    private static final String PARAM_SORT_BY = "sort_by";
+    private static final String PARAM_SORT_TYPE = "sort_type";
+    private static final String PARAM_PRICE_MIN = "price_min";
+    private static final String PARAM_PRICE_MAX = "price_max";
+
+    /**
+     *
+     * @param connection
+     * @param parameters
+     * @return
+     * @throws DBException
+     * @throws BadRequestException
+     */
     @Override
     public int count(Connection connection, Map<String, String> parameters) throws DBException, BadRequestException {
-        String query = SQL_STATEMENTS.getProperty("mysql.books.select.count");
-        query += setClause(parameters);
-        return count(connection, query);
+        return count(connection, SQL_COUNT + setClause(parameters));
     }
 
     @Override
-    public Optional<Book> get(Connection connection, int id) throws DBException {
+    public Optional<Book> get(Connection connection, int id) throws DBException, DaoException {
         Optional<Book> optional = Optional.empty();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.select.by.id"));
+            preparedStatement = connection.prepareStatement(SQL_GET_ID);
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -32,25 +100,27 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
                 setBook(connection, resultSet, book);
                 setBookDetails(connection, book);
                 optional = Optional.of(book);
+                LOGGER.info(String.format(MESSAGE_BOOK_ID_FOUND, id));
+            } else {
+                LOGGER.info(String.format(MESSAGE_BOOK_ID_NOT_FOUND, id));
             }
-            LOGGER.info("Book with id = " + id + " successfully loaded.");
+            return optional;
         } catch (SQLException e) {
-            LOGGER.info("Could not load book with id = " + id);
+            LOGGER.info(String.format(ERROR_BOOK_ID_NOT_LOADED, id));
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return optional;
     }
 
     @Override
-    public Optional<Book> get(Connection connection, String tag) throws DBException {
+    public Optional<Book> get(Connection connection, String tag) throws DBException, DaoException {
         Optional<Book> optional = Optional.empty();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.select.by.tag"));
+            preparedStatement = connection.prepareStatement(SQL_GET_TAG);
             preparedStatement.setString(1, tag);
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -58,35 +128,32 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
                 setBook(connection, resultSet, book);
                 setBookDetails(connection, book);
                 optional = Optional.of(book);
-            }
-            if (optional.isPresent()) {
-                LOGGER.info("Book with tag = " + tag + " successfully loaded.");
+                LOGGER.info(String.format(MESSAGE_BOOK_TAG_FOUND, tag));
             } else {
-                LOGGER.info("Book with tag = " + tag + " was not found.");
+                LOGGER.info(String.format(MESSAGE_BOOK_TAG_NOT_FOUND, tag));
             }
+            return optional;
         } catch (SQLException e) {
-            LOGGER.info("Could not load book with tag = " + tag);
+            LOGGER.info(String.format(ERROR_BOOK_TAG_NOT_LOADED, tag));
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return optional;
     }
 
     @Override
-    public List<Book> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException {
+    public List<Book> getAll(Connection connection, int limit, int offset, Map<String, String> parameters) throws DBException, DaoException {
         PreparedStatement preparedStatement = null;
-        String query = SQL_STATEMENTS.getProperty("mysql.books.select.all") + setClause(parameters) + " limit ? offset ?";
         try {
-            preparedStatement = connection.prepareStatement(query);
+            preparedStatement = connection.prepareStatement(String.format(SQL_GET_ALL, setClause(parameters)));
             preparedStatement.setInt(1, limit);
             preparedStatement.setInt(2, offset);
             return getAll(connection, preparedStatement);
         } catch (SQLException e) {
-            LOGGER.info("Could not load books.");
+            LOGGER.info(ERROR_BOOKS_NOT_LOADED);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -96,22 +163,18 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     public void update(Connection connection, Book book) throws DBException {
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.update"));
+            preparedStatement = connection.prepareStatement(SQL_UPDATE);
             prepareStatement(book, preparedStatement);
             preparedStatement.setInt(8, book.getId());
             preparedStatement.execute();
-            updateBooksDetails(connection, book);
-            LOGGER.info("Successfully updated book with id=" + book.getId());
+            processDetails(connection, SQL_UPDATE_DETAILS, book);
+            LOGGER.info(MESSAGE_BOOK_UPDATED + book.getId());
         } catch (SQLException e) {
-            LOGGER.info("Could not update book with id=" + book.getId());
+            LOGGER.info(ERROR_BOOK_NOT_UPDATED + book.getId());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBUtils.release(connection);
             DBUtils.release(preparedStatement);
         }
     }
@@ -120,14 +183,14 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     public void delete(Connection connection, int id) throws DBException {
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.delete"));
+            preparedStatement = connection.prepareStatement(SQL_DELETE);
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
-            LOGGER.info(String.format("Book with id = %d successfully deleted.", id));
+            LOGGER.info(MESSAGE_BOOK_DELETED + id);
         } catch (SQLException e) {
-            LOGGER.info("Could not delete book with id " + id);
+            LOGGER.info(ERROR_BOOK_NOT_DELETED + id);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(preparedStatement);
         }
@@ -135,93 +198,84 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
 
     @Override
     public int insert(Connection connection, Book book) throws DBException {
-        int id;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(
-                    SQL_STATEMENTS.getProperty("mysql.books.insert"),
-                    Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
             prepareStatement(book, preparedStatement);
             preparedStatement.execute();
             resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
-            id = resultSet.getInt(1);
+            int id = resultSet.getInt(1);
             book.setId(id);
-            insertBookDetails(connection, book);
-            LOGGER.info(String.format("Book with id = %d successfully inserted.", id));
+            processDetails(connection, SQL_INSERT_DETAILS, book);
+            LOGGER.info(MESSAGE_BOOK_INSERTED + id);
+            return id;
         } catch (SQLException e) {
-            LOGGER.info("Could not insert book " + book.getTag());
+            LOGGER.info(ERROR_BOOK_NOT_INSERTED + book.getTag());
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return id;
     }
 
     @Override
     public int getMaxPrice(Connection connection, Map<String, String> parameters) throws DBException, BadRequestException {
-        String query = SQL_STATEMENTS.getProperty("mysql.books.select.max.price");
-        query += setClause(parameters);
-        int maxPrice = getPrice(connection, query);
-        LOGGER.info("Max price is " + maxPrice);
-        return maxPrice;    }
+        int maxPrice = getPrice(connection, SQL_MAX_PRICE + setClause(parameters));
+        LOGGER.info(MESSAGE_MAX_PRICE + maxPrice);
+        return maxPrice;
+    }
 
     @Override
     public int getMinPrice(Connection connection, Map<String, String> parameters) throws DBException, BadRequestException {
-        String query = SQL_STATEMENTS.getProperty("mysql.books.select.min.price");
-        query += setClause(parameters);
-        int minPrice = getPrice(connection, query);
-        LOGGER.info("Min price is " + minPrice);
+        int minPrice = getPrice(connection, SQL_MIN_PRICE + setClause(parameters));
+        LOGGER.info(MESSAGE_MIN_PRICE + minPrice);
         return minPrice;
     }
 
     private int getPrice(Connection connection, String query) throws DBException, BadRequestException {
-        int price;
         Statement statement = null;
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
             resultSet = statement.executeQuery(query);
             resultSet.next();
-            price = resultSet.getInt(1);
+            return resultSet.getInt(1);
         } catch (SQLSyntaxErrorException e) {
-            LOGGER.info("Could not find price.");
+            LOGGER.info(ERROR_PRICE_NOT_LOADED);
             LOGGER.error(e.getMessage());
-            throw new BadRequestException(e);
+            throw new BadRequestException();
         } catch (SQLException e) {
-            LOGGER.info("Could not find price.");
+            LOGGER.info(ERROR_PRICE_NOT_LOADED);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
-        return price;
     }
 
     private int count(Connection connection, String query) throws DBException, BadRequestException {
-        int c;
         Statement statement = null;
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
             resultSet = statement.executeQuery(query);
             resultSet.next();
-            c = resultSet.getInt(1);
-            LOGGER.info(String.format("Found %d books.", c));
+            int c = resultSet.getInt(1);
+            LOGGER.info(String.format(MESSAGE_BOOKS_COUNTED, c));
+            return c;
         } catch (SQLSyntaxErrorException e) {
-            LOGGER.info("Could not count books.");
+            LOGGER.info(ERROR_BOOKS_NOT_COUNTED);
             LOGGER.error(e.getMessage());
-            throw new BadRequestException(e);
+            throw new BadRequestException();
         } catch (SQLException e) {
-            LOGGER.info("Could not count books.");
+            LOGGER.info(ERROR_BOOKS_NOT_COUNTED);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
-        return c;
     }
 
     private void prepareStatement(Book book, PreparedStatement preparedStatement) throws SQLException {
@@ -234,7 +288,7 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         preparedStatement.setDate(7, book.getDate());
     }
 
-    private List<Book> getAll(Connection connection, PreparedStatement preparedStatement) throws DBException {
+    private List<Book> getAll(Connection connection, PreparedStatement preparedStatement) throws DBException, DaoException {
         List<Book> books = new ArrayList<>();
         ResultSet resultSet = null;
         try {
@@ -245,28 +299,28 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
                 setBookDetails(connection, book);
                 books.add(book);
             }
-            LOGGER.info("Books were successfully loaded.");
+            LOGGER.info(MESSAGE_BOOKS_LOADED);
         } catch (SQLException e) {
-            LOGGER.info("Could not load books.");
+            LOGGER.info(ERROR_BOOKS_NOT_LOADED);
             LOGGER.error(e.getMessage());
-            throw new DBException(e);
+            throw new DBException();
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
         return books;
     }
 
-    private void setBook(Connection connection, ResultSet resultSet, Book book) throws SQLException {
+    private void setBook(Connection connection, ResultSet resultSet, Book book) throws SQLException, DaoException {
         PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
         CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
-        book.setId(resultSet.getInt("id"));
-        book.setTag(resultSet.getString("tag"));
-        book.setIsbn(resultSet.getString("isbn"));
-        book.setDate(resultSet.getDate("publishing_date"));
-        book.setQuantity(resultSet.getInt("quantity"));
-        book.setPublisher(publisherDao.get(connection, resultSet.getInt("publisher_id")).get());
-        book.setCategory(categoryDao.get(connection, resultSet.getInt("category_id")).get());
-        book.setPrice(resultSet.getDouble("price"));
+        book.setId(resultSet.getInt(FIELD_ID));
+        book.setTag(resultSet.getString(FIELD_TAG));
+        book.setIsbn(resultSet.getString(FIELD_ISBN));
+        book.setDate(resultSet.getDate(FIELD_DATE));
+        book.setQuantity(resultSet.getInt(FIELD_QUANTITY));
+        book.setPublisher(publisherDao.get(connection, resultSet.getInt(FIELD_PUBLISHER_ID)).get());
+        book.setCategory(categoryDao.get(connection, resultSet.getInt(FIELD_CATEGORY_ID)).get());
+        book.setPrice(resultSet.getDouble(FIELD_PRICE));
         book.setNames(new HashMap<>());
         book.setDescriptions(new HashMap<>());
     }
@@ -275,63 +329,29 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.books.descriptions.select"));
+            preparedStatement = connection.prepareStatement(SQL_GET_DETAILS);
             preparedStatement.setInt(1, book.getId());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                book.getNames().put(resultSet.getInt("language_id"), resultSet.getString("title"));
-                book.getDescriptions().put(resultSet.getInt("language_id"), resultSet.getString("description"));
+                book.getNames().put(resultSet.getInt(FIELD_LANGUAGE_ID), resultSet.getString(FIELD_TITlE));
+                book.getDescriptions().put(resultSet.getInt(FIELD_LANGUAGE_ID), resultSet.getString(FIELD_DESCRIPTION));
             }
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage());
-            throw new SQLException(e);
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
     }
 
-    private void insertBookDetails(Connection connection, Book book) throws SQLException {
-        if (book.getId() != 0) {
-            try {
-                connection.setAutoCommit(false);
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        SQL_STATEMENTS.getProperty("mysql.books.descriptions.insert"));
-                for (int languageId : book.getDescriptions().keySet()) {
-
-                    preparedStatement.setInt(1, book.getId());
-                    preparedStatement.setInt(2, languageId);
-                    preparedStatement.setString(3, book.getNames().get(languageId));
-                    preparedStatement.setString(4, book.getDescriptions().get(languageId));
-                    preparedStatement.execute();
-                }
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                LOGGER.error(e.getMessage());
-            } finally {
-                connection.setAutoCommit(true);
-            }
-        }
-    }
-
-    private void updateBooksDetails(Connection connection, Book book) throws SQLException {
+    private void processDetails(Connection connection, String query, Book book) throws SQLException {
         try {
             connection.setAutoCommit(false);
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    SQL_STATEMENTS.getProperty("mysql.books.descriptions.update"));
-            for (int languageId : book.getDescriptions().keySet()) {
-                preparedStatement.setInt(3, book.getId());
-                preparedStatement.setInt(4, languageId);
-                preparedStatement.setString(1, book.getNames().get(languageId));
-                preparedStatement.setString(2, book.getDescriptions().get(languageId));
-                preparedStatement.execute();
-            }
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            CatalogueUtils.setDetailsFromEntity(preparedStatement, book);
             connection.commit();
         } catch (SQLException e) {
             connection.rollback();
-            LOGGER.error(e.getMessage());
+            throw e;
         } finally {
-            connection.setAutoCommit(true);
+            DBUtils.release(connection);
         }
     }
 
@@ -339,16 +359,15 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
         if (parameters == null || parameters.isEmpty()) {
             return "";
         }
-
-        String categoryId = parameters.get("category_id");
-        String publisherId = parameters.get("publisher_id");
-        String tag = parameters.get("tag");
-        String isbn = parameters.get("isbn");
-        String sortBy = parameters.get("sort_by");
-        String sortType = parameters.get("sort_type");
-        String priceMin = parameters.get("price_min");
-        String priceMax = parameters.get("price_max");
-        final boolean isPricesSet = priceMin != null && priceMax != null && !"".equals(priceMin) && !"".equals(priceMax);
+        String categoryId = parameters.get(PARAM_CATEGORY);
+        String publisherId = parameters.get(PARAM_PUBLISHER);
+        String tag = parameters.get(PARAM_TAG);
+        String isbn = parameters.get(PARAM_ISBN);
+        String sortBy = parameters.get(PARAM_SORT_BY);
+        String sortType = parameters.get(PARAM_SORT_TYPE);
+        String priceMin = parameters.get(PARAM_PRICE_MIN);
+        String priceMax = parameters.get(PARAM_PRICE_MAX);
+        boolean isPricesSet = priceMin != null && priceMax != null && !"".equals(priceMin) && !"".equals(priceMax);
         StringBuilder stringBuilder = new StringBuilder("");
         if ((categoryId != null && !"".equals(categoryId)) ||
                 (publisherId != null && !"".equals(publisherId)) ||

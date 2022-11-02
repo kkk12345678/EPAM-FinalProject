@@ -33,13 +33,23 @@
             <span class="div-input">
                 <p class="edit-label"><fmt:message key="admin.books.edit.category"/>:</p>
                 <select name="category">
-                    <m:select-category category="${requestScope.book.category}"><fmt:message key="admin.books.edit.choose.category"/></m:select-category>
+                    <option selected><fmt:message key="admin.books.edit.choose.category"/></option>
+                    <c:forEach items="${requestScope.categories}" var="category">
+                    <option value="${category.id}" <c:if test="${category.id == requestScope.book.category.id}">selected</c:if>>
+                        <c:forEach items="${category.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach>
+                    </option>
+                    </c:forEach>
                 </select>
             </span>
             <span class="div-input">
                 <p class="edit-label"><fmt:message key="admin.books.edit.publisher"/>:</p>
                 <select name="publisher">
-                    <m:select-publisher publisher="${requestScope.book.publisher}"><fmt:message key="admin.books.edit.choose.publisher"/></m:select-publisher>
+                    <option selected><fmt:message key="admin.books.edit.choose.publisher"/></option>
+                    <c:forEach items="${requestScope.publishers}" var="publisher">
+                    <option value="${publisher.id}" <c:if test="${publisher.id == requestScope.book.publisher.id}">selected</c:if>>
+                        <c:forEach items="${publisher.names}" var="entry"><c:if test="${entry.key == languageId}">${entry.value}</c:if></c:forEach>
+                    </option>
+                    </c:forEach>
                 </select>
             </span>
         </div>

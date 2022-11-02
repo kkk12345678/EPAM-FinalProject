@@ -22,9 +22,9 @@ public class TomcatDataSource implements com.epam.kkorolkov.finalproject.db.data
             LOGGER.info("Connection successful.");
             return ds.getConnection();
         } catch (NamingException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.info("Unable to connect to the database.");
             LOGGER.error(e.getMessage());
-            throw new DBConnectionException("Unable to connect to the database", e);
+            throw new DBConnectionException();
         }
     }
 

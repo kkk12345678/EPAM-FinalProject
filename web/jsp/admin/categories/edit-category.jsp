@@ -4,7 +4,7 @@
     <%@ include file="../menu.jspf"%>
     <div id="data">
     <form action="${pageContext.request.contextPath}/admin/edit-category" method="post">
-        <input name="id" type="hidden" value="${requestScope.category.id}">
+        <input name="id" type="hidden" value="${param.id}">
         <div class="div-input">
             <p class="edit-label">Tag:</p>
             <input class="text-input" type="text" name="tag" value="${requestScope.category.tag}" required>
