@@ -10,21 +10,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * {@code WelcomeFilter} redirects user who visits the main page
+ * to the appropriate page depending on their role.
+ */
 @WebFilter(filterName = "WelcomeFilter")
 public class WelcomeFilter implements Filter {
+    private static final String ATTR_USER = "user";
     private static final Logger LOGGER = LogManager.getLogger("WELCOME");
+    private static final String MESSAGE_USER = "User is ";
+    private static final String MESSAGE_REDIRECT = "Redirecting to";
+    private static final String PAGE_SHOP = "/shop";
+    private static final String PAGE_ADMIN = "/admin";
 
-    public void init(FilterConfig config) throws ServletException {
-
+    /**
+     * The {@code doFilter} method retrieves {@code User} from {@code HttpSession}.
+     * If {@code User} is admin redirects user to administrator's panel,
+     * otherwise redirects to client's main page.
+     *
+     * @param request - request to process.
+     * @param response - response associated with the request.
+     * @param chain Provides access to the next filter in the chain for this filter
+     *              to pass the request and response to for further processing.
+     *
+     * @throws IOException if an I/O error occurs during this filter's processing of the request.
+     */
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException {
+        User user = (User) ((HttpServletRequest) request).getSession().getAttribute(ATTR_USER);
+        LOGGER.info(MESSAGE_USER + user);
+        String page = (user == null || !user.getIsAdmin()) ? PAGE_SHOP : PAGE_ADMIN;
+        LOGGER.info(MESSAGE_REDIRECT + page);
+        ((HttpServletResponse) response).sendRedirect(request.getServletContext().getContextPath() + page);
     }
 
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        User user = (User) ((HttpServletRequest) req).getSession().getAttribute("user");
-        LOGGER.info("User is " + user);
-        String page = (user == null || !user.getIsAdmin()) ? "/shop" : "/admin";
-        LOGGER.info("Redirecting to " + page);
-        ((HttpServletResponse) resp).sendRedirect(req.getServletContext().getContextPath() + page);
-    }
-    public void destroy() {
-    }
+    public void init(FilterConfig config) {}
+
+    public void destroy() {}
 }

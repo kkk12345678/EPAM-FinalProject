@@ -5,8 +5,8 @@ import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.User;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import org.apache.logging.log4j.LogManager;
@@ -87,9 +87,9 @@ public class ShopFrontServlet extends HttpServlet {
             request.setAttribute(ATTR_CATEGORIES, categoryDao.getAll(connection));
             request.setAttribute(ATTR_BOOKS, bookDao.getAll(connection, LIMIT, LIMIT * (page - 1), parameters));
             request.getRequestDispatcher(INCLUDE_PAGE).include(request, response);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

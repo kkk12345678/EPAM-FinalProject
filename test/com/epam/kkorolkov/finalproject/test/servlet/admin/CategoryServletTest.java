@@ -5,12 +5,11 @@ import com.epam.kkorolkov.finalproject.admin.category.EditCategoryServlet;
 import com.epam.kkorolkov.finalproject.admin.category.GetCategoriesServlet;
 import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
 import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
-import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.db.datasource.OneConnectionDataSourceFactory;
+import com.epam.kkorolkov.finalproject.db.datasource.MyDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -45,8 +44,8 @@ public class CategoryServletTest extends Mockito {
     {
         try {
             categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
-            dataSource = OneConnectionDataSourceFactory.getInstance().getDataSource();
-        } catch (DaoException | DBConnectionException e) {
+            dataSource = MyDataSourceFactory.getInstance().getDataSource();
+        } catch (DaoException | DbConnectionException e) {
             e.printStackTrace();
         }
         when(context.getContextPath()).thenReturn("");
@@ -55,7 +54,7 @@ public class CategoryServletTest extends Mockito {
 
 
     @Test
-    void categoryServletTest() throws ServletException, IOException, DBException {
+    void categoryServletTest() throws ServletException, IOException, DbException {
         getCategoriesServletDoGetTest();
         editCategoryServletDoGetSuccessWithZeroIdTest();
         editCategoryServletDoGetInvalidIdTest();
@@ -68,7 +67,7 @@ public class CategoryServletTest extends Mockito {
 
     public static class Categories extends ArrayList<Category> {}
 
-    void getCategoriesServletDoGetTest() throws ServletException, IOException, DBException {
+    void getCategoriesServletDoGetTest() throws ServletException, IOException, DbException {
         when(request.getRequestDispatcher(INCLUDE_JSP)).thenReturn(dispatcher);
         ArgumentCaptor<Categories> captor = ArgumentCaptor.forClass(Categories.class);
         new GetCategoriesServlet().doGet(request, response);
@@ -101,7 +100,8 @@ public class CategoryServletTest extends Mockito {
         verify(response, times(2)).sendRedirect(REDIRECT_ERROR_ID);
     }
 
-    void editCategoryServletDoPostCreateSuccessTest() throws IOException, DBException {
+    @Test
+    void editCategoryServletDoPostCreateSuccessTest() throws IOException, DbException {
         Connection connection = dataSource.getConnection();
         when(request.getParameter("id")).thenReturn("0");
         when(request.getParameter("tag")).thenReturn("some-tag");
@@ -124,7 +124,7 @@ public class CategoryServletTest extends Mockito {
         dataSource.release(connection);
     }
 
-    void editCategoryServletDoPostUpdateSuccessTest() throws IOException, DBException {
+    void editCategoryServletDoPostUpdateSuccessTest() throws IOException, DbException {
         Connection connection = dataSource.getConnection();
         Category category = categoryDao.get(connection, "some-tag").orElseThrow();
         when(request.getParameter("id")).thenReturn(String.valueOf(category.getId()));
@@ -140,7 +140,7 @@ public class CategoryServletTest extends Mockito {
         dataSource.release(connection);
     }
 
-    void editCategoryServletDoPostCreateExistingTest() throws IOException, DBException {
+    void editCategoryServletDoPostCreateExistingTest() throws IOException {
         when(request.getParameter("id")).thenReturn("0");
         when(request.getParameter("tag")).thenReturn("some-tag");
         when(request.getParameter("name1")).thenReturn("new-name1");
@@ -151,7 +151,7 @@ public class CategoryServletTest extends Mockito {
         verify(response).sendRedirect(REDIRECT_ERROR_DB);
     }
 
-    void deleteCategoryServletDoPostSuccessTest() throws DBException, IOException {
+    void deleteCategoryServletDoPostSuccessTest() throws DbException, IOException {
         Connection connection = dataSource.getConnection();
         int n = categoryDao.count(connection);
         Category category = categoryDao.get(connection, "some-tag").orElseThrow();

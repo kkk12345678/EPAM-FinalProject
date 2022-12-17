@@ -44,7 +44,7 @@
                 <c:forEach items="${requestScope.orders}" var="order">
                 <tr class="order" id="row-${order.id}" onclick="makeVisible(${order.id})">
                     <td class="row-center">${order.id}</td>
-                    <td>${order.user.firstName} ${order.user.lastName}</td>
+                    <td>${order.user.firstName} ${order.user.lastName} (ID: ${order.user.id})</td>
                     <td class="row-right">${order.total}</td>
                     <td class="row-right">
                         <form action="${pageContext.request.contextPath}/update-status" method="post">

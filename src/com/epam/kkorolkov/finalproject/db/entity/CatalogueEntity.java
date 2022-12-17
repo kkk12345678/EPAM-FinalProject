@@ -1,6 +1,7 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
 import java.util.Map;
+
 /**
  * Represents a record in the database table
  * which represents entities in the catalogue.
@@ -14,6 +15,7 @@ public abstract class CatalogueEntity extends Entity {
      * information to a user.
      */
     private String tag;
+
     /**
      * Each entity has <i>names</i> and <i>descriptions</i> records
      * in different languages. These maps are to represent information

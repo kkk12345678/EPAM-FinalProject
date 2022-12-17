@@ -8,10 +8,10 @@ import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
 import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.db.datasource.OneConnectionDataSourceFactory;
+import com.epam.kkorolkov.finalproject.db.datasource.MyDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.entity.Publisher;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,10 +27,11 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PublisherServletTest extends Mockito {
+    private static final String REDIRECT_ERROR_DAO =
+            "/error?code=500&message=Cannot instantiate DAO. See server logs for details.";
     private static final String REDIRECT_ERROR_ID =
             "/error?code=400&message=ID parameter is incorrect. See server logs for details.";
     private static final String REDIRECT_ERROR_DB =
@@ -50,8 +51,8 @@ public class PublisherServletTest extends Mockito {
     {
         try {
             publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
-            dataSource = OneConnectionDataSourceFactory.getInstance().getDataSource();
-        } catch (DaoException | DBConnectionException e) {
+            dataSource = MyDataSourceFactory.getInstance().getDataSource();
+        } catch (DaoException | DbConnectionException e) {
             e.printStackTrace();
         }
         when(context.getContextPath()).thenReturn("");
@@ -61,7 +62,7 @@ public class PublisherServletTest extends Mockito {
     public static class Publishers extends ArrayList<Publisher> {}
 
     @Test
-    void publisherServletTest() throws ServletException, IOException, DBException {
+    void publisherServletTest() throws ServletException, IOException, DbException {
         getPublishersServletDoGetTest();
         editPublisherServletDoGetSuccessWithZeroIdTest();
         editPublisherServletDoGetInvalidIdTest();
@@ -72,7 +73,7 @@ public class PublisherServletTest extends Mockito {
         deletePublisherServletDoPostSuccessTest();
     }
 
-    void getPublishersServletDoGetTest() throws ServletException, IOException, DBException {
+    void getPublishersServletDoGetTest() throws ServletException, IOException, DbException {
         when(request.getRequestDispatcher(INCLUDE_JSP)).thenReturn(dispatcher);
         ArgumentCaptor<Publishers> captor = ArgumentCaptor.forClass(Publishers.class);
         new GetPublishersServlet().doGet(request, response);
@@ -93,6 +94,7 @@ public class PublisherServletTest extends Mockito {
     }
 
 
+
     void editPublisherServletDoGetInvalidIdTest() throws ServletException, IOException {
         when(request.getParameter("id")).thenReturn("k");
         new EditPublisherServlet().doGet(request, response);
@@ -105,7 +107,7 @@ public class PublisherServletTest extends Mockito {
         verify(response, times(2)).sendRedirect(REDIRECT_ERROR_ID);
     }
 
-    void editPublisherServletDoPostCreateSuccessTest() throws IOException, DBException {
+    void editPublisherServletDoPostCreateSuccessTest() throws IOException, DbException {
         Connection connection = dataSource.getConnection();
         when(request.getParameter("id")).thenReturn("0");
         when(request.getParameter("tag")).thenReturn("some-tag");
@@ -128,7 +130,7 @@ public class PublisherServletTest extends Mockito {
         dataSource.release(connection);
     }
 
-    void editPublisherServletDoPostUpdateSuccessTest() throws IOException, DBException {
+    void editPublisherServletDoPostUpdateSuccessTest() throws IOException, DbException {
         Connection connection = dataSource.getConnection();
         Publisher publisher = publisherDao.get(connection, "some-tag").orElseThrow();
         when(request.getParameter("id")).thenReturn(String.valueOf(publisher.getId()));
@@ -155,7 +157,7 @@ public class PublisherServletTest extends Mockito {
         verify(response).sendRedirect(REDIRECT_ERROR_DB);
     }
 
-    void deletePublisherServletDoPostSuccessTest() throws DBException, IOException {
+    void deletePublisherServletDoPostSuccessTest() throws DbException, IOException {
         Connection connection = AbstractDataSourceFactory.getInstance().getDataSource().getConnection();
         int n = publisherDao.count(connection);
         Publisher publisher = publisherDao.get(connection, "some-tag").orElseThrow();
@@ -165,4 +167,15 @@ public class PublisherServletTest extends Mockito {
         assertEquals(n - 1, publisherDao.count(connection));
         dataSource.release(connection);
     }
+
+    /*
+    @Test
+    void daoExceptionTest() throws ServletException, IOException {
+        AbstractDaoFactory abstractDaoFactory = mock(AbstractDaoFactory.class);
+        when(abstractDaoFactory.getPublisherDao()).thenThrow(DaoException.class);
+        new EditPublisherServlet().doGet(request, response);
+        verify(response, times(1)).sendRedirect(REDIRECT_ERROR_DAO);
+    }
+
+     */
 }

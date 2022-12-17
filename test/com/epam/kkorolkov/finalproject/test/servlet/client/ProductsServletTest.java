@@ -2,12 +2,11 @@ package com.epam.kkorolkov.finalproject.test.servlet.client;
 
 import com.epam.kkorolkov.finalproject.client.ShopFrontServlet;
 import com.epam.kkorolkov.finalproject.db.dao.*;
-import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.db.datasource.OneConnectionDataSourceFactory;
+import com.epam.kkorolkov.finalproject.db.datasource.MyDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.entity.Book;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import com.epam.kkorolkov.finalproject.test.servlet.admin.CategoryServletTest;
 import com.epam.kkorolkov.finalproject.test.servlet.admin.PublisherServletTest;
@@ -67,8 +66,8 @@ public class ProductsServletTest extends Mockito {
             publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
             categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
             bookDao = AbstractDaoFactory.getInstance().getBookDao();
-            dataSource = OneConnectionDataSourceFactory.getInstance().getDataSource();
-        } catch (DaoException | DBConnectionException e) {
+            dataSource = MyDataSourceFactory.getInstance().getDataSource();
+        } catch (DaoException | DbConnectionException e) {
             e.printStackTrace();
         }
         when(context.getContextPath()).thenReturn("");
@@ -94,8 +93,8 @@ public class ProductsServletTest extends Mockito {
         when(request.getParameter(PARAM_PAGE)).thenReturn("1");
         ArgumentCaptor<PublisherServletTest.Publishers> publishersCaptor = ArgumentCaptor.forClass(PublisherServletTest.Publishers.class);
         ArgumentCaptor<CategoryServletTest.Categories> categoriesCaptor = ArgumentCaptor.forClass(CategoryServletTest.Categories.class);
-        ArgumentCaptor<Integer> minPriceCaptor = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Integer> maxPriceCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Double> minPriceCaptor = ArgumentCaptor.forClass(Double.class);
+        ArgumentCaptor<Double> maxPriceCaptor = ArgumentCaptor.forClass(Double.class);
         ArgumentCaptor<Books> booksCaptor = ArgumentCaptor.forClass(Books.class);
         new ShopFrontServlet().doGet(request, response);
         verify(request).setAttribute(eq(ATTR_PUBLISHERS), publishersCaptor.capture());

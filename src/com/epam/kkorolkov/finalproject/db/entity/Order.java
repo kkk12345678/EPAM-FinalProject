@@ -1,14 +1,25 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents a record in <i>orders</i> table.
+ */
 public class Order extends Entity {
+    /** Order status */
     private Status status;
+
+    /** Customer */
     private User user;
+
+    /** Sum of the order */
     private Double total;
+
+    /** Date of order placement */
     private Date dateAdded;
+
+    /** Contains details of the order, i.e. titles and quantities */
     private Map<Book, Integer> details;
 
     public Map<Book, Integer> getDetails() {

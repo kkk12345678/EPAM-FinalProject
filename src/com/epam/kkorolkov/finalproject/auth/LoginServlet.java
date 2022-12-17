@@ -1,8 +1,8 @@
 package com.epam.kkorolkov.finalproject.auth;
 
 import com.epam.kkorolkov.finalproject.db.entity.User;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import com.epam.kkorolkov.finalproject.util.UserUtils;
 import org.apache.logging.log4j.LogManager;
@@ -76,9 +76,9 @@ public class LoginServlet extends HttpServlet {
             }
             LOGGER.info(String.format(MESSAGE_SUCCESSFUL_LOGIN, user.getId(), page));
             response.sendRedirect(context + page);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

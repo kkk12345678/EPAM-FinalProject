@@ -1,23 +1,16 @@
 package com.epam.kkorolkov.finalproject.db.datasource;
 
-
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class OneConnectionDataSource implements DataSource {
-    private static final Logger LOGGER = LogManager.getLogger("DB");
-
-    private final String dbUrl;
-    private final String dbUser;
-    private final String dbPassword;
-    private final String dbDriver;
-
+/**
+ * An instance {@code OneConnectionDataSource} implements {@link DataSource}
+ * without any database connection pool realization.
+ */
+public class OneConnectionDataSource extends AbstractDataSource implements DataSource {
     public OneConnectionDataSource(String dbDriver, String dbUrl, String dbUser, String dbPassword) {
         this.dbUrl = dbUrl;
         this.dbUser = dbUser;
@@ -25,27 +18,41 @@ public class OneConnectionDataSource implements DataSource {
         this.dbDriver = dbDriver;
     }
 
+    /**
+     * @return an instance of {@link Connection} using
+     * {@link DriverManager#getConnection(String)} method.
+     *
+     * @throws DbConnectionException is thrown if
+     * it is not possible connect to the database.
+     */
     @Override
-    public Connection getConnection() throws DBConnectionException {
+    public Connection getConnection() throws DbConnectionException {
         try {
             Class.forName(dbDriver);
-            String connectionUrl = dbUrl + "?user=" + dbUser +"&password=" + dbPassword;
-            Connection connection = DriverManager.getConnection(connectionUrl);
-            LOGGER.info("Connection successful.");
+            Connection connection = DriverManager
+                    .getConnection(String.format(mySqlConnectionUrlFormat, dbUrl, dbUser, dbPassword));
+            LOGGER.info(MESSAGE_SUCCESS);
             return connection;
         } catch (SQLException | ClassNotFoundException e) {
-            LOGGER.info("Unable to connect to the database.");
+            LOGGER.info(MESSAGE_ERROR);
             LOGGER.error(e.getMessage());
-            throw new DBConnectionException();
+            throw new DbConnectionException();
         }
     }
 
+    /**
+     * Closes an instance of {@link Connection}.
+     * If {@link SQLException} is thrown while invoking {@code close} method
+     * it is ignored.
+     *
+     * @param connection an instance of {@link Connection} to be closed.
+     */
     @Override
     public void release(Connection connection) {
         if (connection != null) {
             try {
                 connection.close();
-                LOGGER.info("Connection closed.");
+                LOGGER.info(MESSAGE_CLOSE);
             } catch (SQLException e) {
                 LOGGER.error(e.getMessage());
             }

@@ -2,12 +2,26 @@ package com.epam.kkorolkov.finalproject.db.entity;
 
 import java.util.Objects;
 
+/**
+ * Represents a record in <i>users</i> table.
+ */
 public class User extends Entity {
+    /** User's email */
     private String email;
+
+    /** User's hashed password */
     private String password;
+
+    /** User's first name */
     private String firstName;
+
+    /** User's last name */
     private String lastName;
+
+    /** Indicates whether a user has administrator's privileges */
     private boolean isAdmin;
+
+    /** Indicates whether a user is blocked */
     private boolean isBlocked;
 
     public String getEmail() {
@@ -78,14 +92,14 @@ public class User extends Entity {
         return this.getId() == user.getId() &&
                 isAdmin == user.isAdmin &&
                 isBlocked == user.isBlocked &&
-                getEmail().equals(user.getEmail()) &&
-                getPassword().equals(user.getPassword()) &&
-                getFirstName().equals(user.getFirstName()) &&
-                getLastName().equals(user.getLastName());
+                email.equals(user.getEmail()) &&
+                password.equals(user.getPassword()) &&
+                firstName.equals(user.getFirstName()) &&
+                lastName.equals(user.getLastName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getId(), getEmail(), getPassword(), getFirstName(), getLastName(), isAdmin, isBlocked);
+        return Objects.hash(this.getId(), email, password, firstName, lastName, isAdmin, isBlocked);
     }
 }

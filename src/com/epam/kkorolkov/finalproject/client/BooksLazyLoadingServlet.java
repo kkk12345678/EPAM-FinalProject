@@ -5,9 +5,8 @@ import com.epam.kkorolkov.finalproject.db.dao.BookDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Book;
-import com.epam.kkorolkov.finalproject.exception.BadRequestException;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import com.google.gson.Gson;
@@ -62,9 +61,9 @@ public class BooksLazyLoadingServlet extends HttpServlet {
             try (PrintWriter writer = response.getWriter()) {
                 writer.println(json);
             }
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

@@ -2,7 +2,6 @@ package com.epam.kkorolkov.finalproject.client;
 
 import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
 import com.epam.kkorolkov.finalproject.db.dao.BookDao;
-import com.epam.kkorolkov.finalproject.db.dao.LanguageDao;
 import com.epam.kkorolkov.finalproject.db.dao.OrderDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
@@ -10,10 +9,9 @@ import com.epam.kkorolkov.finalproject.db.entity.Book;
 import com.epam.kkorolkov.finalproject.db.entity.Order;
 import com.epam.kkorolkov.finalproject.db.entity.User;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
-import com.epam.kkorolkov.finalproject.util.DBUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,9 +84,9 @@ public class OrderServlet extends HttpServlet {
             session.removeAttribute(ATTR_CART);
             LOGGER.info(String.format(MESSAGE_SUCCESS, id));
             response.sendRedirect(context + REDIRECT_SUCCESS + id);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);
@@ -121,7 +119,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-    private Order getOrder(Connection connection, Map<Integer, Integer> cart, User user, double total) throws DBException, DaoException {
+    private Order getOrder(Connection connection, Map<Integer, Integer> cart, User user, double total) throws DbException, DaoException {
         Order order = new Order();
         order.setUser(user);
         order.setTotal(total);
@@ -130,7 +128,7 @@ public class OrderServlet extends HttpServlet {
         Optional<Book> optional;
         for (int bookId : cart.keySet()) {
             optional = bookDao.get(connection, bookId);
-            details.put(optional.orElseThrow(DBException::new), cart.get(bookId));
+            details.put(optional.orElseThrow(DbException::new), cart.get(bookId));
         }
         order.setDetails(details);
         return order;

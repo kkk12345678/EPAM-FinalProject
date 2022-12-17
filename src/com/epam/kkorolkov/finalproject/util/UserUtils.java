@@ -5,7 +5,7 @@ import com.epam.kkorolkov.finalproject.db.dao.UserDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.User;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import com.epam.kkorolkov.finalproject.exception.ValidationException;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +17,10 @@ import java.sql.Connection;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Class {@code UserUtils} contains static utility methods to
+ * work with user data.
+ */
 public class UserUtils {
     private static final Logger LOGGER = LogManager.getLogger("UTILS");
 
@@ -32,6 +36,13 @@ public class UserUtils {
     private static final String REGEX_EMAIL =
             "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
 
+    /**
+     * Hashes user's password using algorithm specified in {@code ALGORITHM} constant.
+     *
+     * @param password non-hashed password
+     * @return hashed password
+     * @throws NoSuchAlgorithmException is thrown if {@code ALGORITHM} is incorrect.
+     */
     public static String hash(String password) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(ALGORITHM);
         byte[] bytes = md.digest((SALT + password).getBytes());
@@ -42,7 +53,20 @@ public class UserUtils {
         return sb.toString();
     }
 
-    public static Optional<User> validate(String email, String password) throws DBException, DaoException, NoSuchAlgorithmException {
+    /**
+     * Validates user's credentials.
+     *
+     * @param email - user's email.
+     * @param password - user's password.
+     *
+     * @return {@code Optional<User>} which wraps {@code User} instance if there is a user
+     * in the database with specified credentials, otherwise {@code Optional.empty()}.
+     *
+     * @throws DbException is thrown if {@code SQLException} was thrown.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     * @throws NoSuchAlgorithmException is thrown if {@code ALGORITHM} is incorrect.
+     */
+    public static Optional<User> validate(String email, String password) throws DbException, DaoException, NoSuchAlgorithmException {
         DataSource dataSource = null;
         Connection connection = null;
         try {
@@ -61,6 +85,14 @@ public class UserUtils {
         }
     }
 
+    /**
+     * Validates email entered in forms. Checks whether {@code email} matches
+     * the pattern specified in constant {@code REGEX_EMAIL}.
+     *
+     * @param email - user's email.
+     *
+     * @throws ValidationException is thrown if {@code email} does not match the pattern.
+     */
     public static void validateEmail(String email) throws ValidationException {
         if (!Pattern.matches(REGEX_EMAIL, email)) {
             LOGGER.info(MESSAGE_EMAIL_INVALID + ": " + email);

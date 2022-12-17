@@ -3,9 +3,14 @@ package com.epam.kkorolkov.finalproject.db.entity;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Represents a record in the database table <i>publishers</i>
+ * which represents publishers in the catalogue.
+ */
 public class Publisher extends CatalogueEntity {
-
-
+    /**
+     * @return a stub of an instance of {@code Publisher} class.
+     */
     public static Publisher create() {
         Publisher publisher = new Publisher();
         publisher.setId(0);

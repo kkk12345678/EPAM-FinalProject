@@ -19,12 +19,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * The {@code EditCategoryServlet} is a servlet which task is to
+ * edit a record in the table <i>categories</i> if it exists or to create one otherwise.
+ *
+ * {@code doGet} and {@code doPost} methods are overridden.
+ */
 @WebServlet("/admin/edit-category")
 public class EditCategoryServlet extends HttpServlet {
+    /** Logger */
     protected static final Logger LOGGER = LogManager.getLogger("EDIT CATEGORY");
 
     /** Page to redirect after successful edition or creation */
@@ -52,10 +58,18 @@ public class EditCategoryServlet extends HttpServlet {
     /** Request parameters */
     private static final String PARAM_ID = "id";
 
-
     /** JSP page to include */
     private static final String INCLUDE_JSP = "../jsp/admin/categories/edit-category.jsp";
 
+    /**
+     * {@code doPost} method handles POST request. Creates or updates
+     * a category. Field values are retrieved from request parameters.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -73,9 +87,9 @@ public class EditCategoryServlet extends HttpServlet {
                 categoryDao.update(connection, category);
             }
             response.sendRedirect(context + REDIRECT_SUCCESS);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);
@@ -90,6 +104,15 @@ public class EditCategoryServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code doGet} method handles GET request.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -105,9 +128,9 @@ public class EditCategoryServlet extends HttpServlet {
             }
             request.setAttribute(ATTR_LANGUAGES, getLanguages(connection));
             request.getRequestDispatcher(INCLUDE_JSP).include(request, response);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);
@@ -122,7 +145,16 @@ public class EditCategoryServlet extends HttpServlet {
         }
     }
 
-    private Map<Integer, Language> getLanguages(Connection connection) throws DBException, DaoException {
+    /**
+     * @return {@link Map} containing all records in the table <i>languages</i>.
+     *
+     * @param connection - an instance of {@link Connection}
+     *                   which provides ability to connect to the database.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
+    private Map<Integer, Language> getLanguages(Connection connection) throws DbException, DaoException {
         LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();
         return languageDao.getAll(connection);
     }

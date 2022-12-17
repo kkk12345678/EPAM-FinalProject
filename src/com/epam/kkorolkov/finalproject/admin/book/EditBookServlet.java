@@ -29,11 +29,10 @@ import java.util.NoSuchElementException;
 
 /**
  * The {@code EditBookServlet} is a servlet which task is to
- * edit product if it exists in a database or to create one otherwise
+ * edit product if it exists in a database or to create one otherwise.
  *
  * {@code doGet} and {@code doPost} methods are overridden.
  */
-
 @WebServlet("/admin/edit-book")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class EditBookServlet extends HttpServlet {
@@ -61,7 +60,6 @@ public class EditBookServlet extends HttpServlet {
     private static final String MESSAGE_ERROR_ID = "ID is not a valid integer.";
     private static final String MESSAGE_ERROR_PARAMS = "Some POST parameters are incorrect.";
     private static final String MESSAGE_ERROR_EMPTY = "No product found with specified ID.";
-
 
     /** Directory where uploaded images are stored */
     private static final String UPLOAD_DIRECTORY = "static/img/product/";
@@ -91,10 +89,10 @@ public class EditBookServlet extends HttpServlet {
 
     /**
      * {@code doGet} method handles GET request.
+     * Represents to an administrator a page with a form to edit or create a book.
      *
-     *
-     * @param request - HttpServletRequest object provided by Tomcat.
-     * @param response - HttpServletResponse object provided by Tomcat.
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request for the GET could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.
@@ -113,9 +111,9 @@ public class EditBookServlet extends HttpServlet {
             request.setAttribute(ATTR_LANGUAGES, getLanguages(connection));
             request.setAttribute(ATTR_TODAY, new Date(System.currentTimeMillis()));
             request.getRequestDispatcher(INCLUDE_JSP).include(request, response);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);
@@ -128,6 +126,16 @@ public class EditBookServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code doPost} method handles POST request. Creates or updates
+     * book. Field values are retrieved from request parameters.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the POST could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -145,9 +153,9 @@ public class EditBookServlet extends HttpServlet {
                 bookDao.update(connection, book);
             }
             response.sendRedirect(context + REDIRECT_SUCCESS);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);
@@ -162,6 +170,14 @@ public class EditBookServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code saveImage} method saves image file retrieved from the request to disc drive.
+     *
+     * @param request - {@code HttpServletRequest} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the image cannot be retrieved from the request.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     private void saveImage(HttpServletRequest request) throws IOException, ServletException {
         if (request.getPart(PARAM_IMAGE).getSize() == 0) {
             return;
@@ -174,7 +190,20 @@ public class EditBookServlet extends HttpServlet {
         }
     }
 
-    private Book setBook(HttpServletRequest request, Connection connection) throws DBException, DaoException, BadRequestException {
+    /**
+     * {@code setBook} method creates an instance of {@code Book} class with
+     * field values retrieved from the request parameters.
+     *
+     * @param request - {@code HttpServletRequest} object provided by Tomcat.
+     * @param connection - instance of {@code Connection} provided by {@code Datasource}
+     *
+     * @return {@code Book} instance.
+     *
+     * @throws DbException is thrown if query cannot be executed.
+     * @throws DaoException is thrown if DAO instance cannot be instantiated.
+     * @throws BadRequestException is thrown if request parameters are invalid.
+     */
+    private Book setBook(HttpServletRequest request, Connection connection) throws DbException, DaoException, BadRequestException {
         try {
             Date date = Date.valueOf(request.getParameter(PARAM_DATE));
             String isbn = request.getParameter(PARAM_ISBN);
@@ -204,19 +233,18 @@ public class EditBookServlet extends HttpServlet {
      * returns the corresponding instance
      * Otherwise returns book stub provided by {@code Book#create()} method
      *
-     *
      * @param request - {@code HttpServletRequest} object provided by Tomcat.
      * @param connection - {@code Connection} object to process query.
      *
      * @return instance of {@code Book}.
      *
-     * @throws DBException if there {@code SQLException} is thrown while querying database.
-     * @throws BadRequestException if parameter <i>id</i> is not valid ID.
-     * @throws DaoException if an instance of DAO cannot be instantiated.
+     * @throws DbException is thrown if there {@code SQLException} is thrown while querying database.
+     * @throws BadRequestException is thrown if parameter <i>id</i> is not valid ID.
+     * @throws DaoException is thrown if an instance of DAO cannot be instantiated.
      *
      * @see Book#create()
      */
-    private Book getBook(HttpServletRequest request, Connection connection) throws DBException, BadRequestException, DaoException {
+    private Book getBook(HttpServletRequest request, Connection connection) throws DbException, BadRequestException, DaoException {
         try {
             int id = Integer.parseInt(request.getParameter(PARAM_ID));
             if (id != 0) {
@@ -231,27 +259,76 @@ public class EditBookServlet extends HttpServlet {
         }
     }
 
-    private List<Category> getCategories(Connection connection) throws DBException, DaoException {
+    /**
+     * @return {@link List} containing all records in the table <i>categories</i>.
+     *
+     * @param connection - an instance of {@link Connection}
+     *                   which provides ability to connect to the database.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
+    private List<Category> getCategories(Connection connection) throws DbException, DaoException {
         CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
         return categoryDao.getAll(connection);
     }
 
-    private Category getCategory(Connection connection, int id) throws DBException, DaoException {
+    /**
+     * @return an instance of {@link Category} containing a record
+     * in the table <i>categories</i> with the specified id.
+     *
+     * @param id - id of a category which data is to be retrieved.
+     * @param connection - an instance of {@link Connection}
+     *                   which provides ability to connect to the database.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
+    private Category getCategory(Connection connection, int id) throws DbException, DaoException {
         CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
-        return categoryDao.get(connection, id).orElseThrow(DBException::new);
+        return categoryDao.get(connection, id).orElseThrow(DbException::new);
     }
 
-    private Publisher getPublisher(Connection connection, int id) throws DBException, DaoException {
+    /**
+     * @return an instance of {@link Publisher} containing a record
+     * in the table <i>publishers</i> with the specified id.
+     *
+     * @param id - id of a publisher which data is to be retrieved.
+     * @param connection - an instance of {@link Connection}
+     *                   which provides ability to connect to the database.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
+    private Publisher getPublisher(Connection connection, int id) throws DbException, DaoException {
         PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
-        return publisherDao.get(connection, id).orElseThrow(DBException::new);
+        return publisherDao.get(connection, id).orElseThrow(DbException::new);
     }
 
-    private List<Publisher> getPublishers(Connection connection) throws DBException, DaoException {
+    /**
+     * @return {@link List} containing all records in the table <i>publishers</i>.
+     *
+     * @param connection - an instance of {@link Connection}
+     *                   which provides ability to connect to the database.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
+    private List<Publisher> getPublishers(Connection connection) throws DbException, DaoException {
         PublisherDao publisherDao = AbstractDaoFactory.getInstance().getPublisherDao();
         return publisherDao.getAll(connection);
     }
 
-    private Map<Integer, Language> getLanguages(Connection connection) throws DaoException, DBException {
+    /**
+     * @return {@link Map} containing all records in the table <i>languages</i>.
+     *
+     * @param connection - an instance of {@link Connection}
+     *                   which provides ability to connect to the database.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
+    private Map<Integer, Language> getLanguages(Connection connection) throws DaoException, DbException {
         LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();
         return languageDao.getAll(connection);
     }

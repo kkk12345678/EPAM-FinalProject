@@ -104,7 +104,7 @@
         </c:forEach>
     </div>
 </div>
-<button class="control-button" onclick="loadBooks('<fmt:message key="user.label.price"/>', '<fmt:message key="user.label.quantity"/>')"><fmt:message key="products.button.load.more"/></button>
+<button class="control-button" onclick="loadBooks('<fmt:message key="user.label.price"/>', '<fmt:message key="user.label.quantity"/>', ${languageId})"><fmt:message key="products.button.load.more"/></button>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/load.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/slider.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/sort.js"></script>

@@ -5,9 +5,8 @@ import com.epam.kkorolkov.finalproject.db.dao.CategoryDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Category;
-import com.epam.kkorolkov.finalproject.exception.BadRequestException;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 
 import javax.servlet.ServletException;
@@ -22,10 +21,15 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The {@code ImportCategoriesFromCsvServlet} is a servlet which task is to insert
+ * into the table <i>categories</i> data which is contained in a *.csv file.
+ *
+ * {@code doPost} method is overridden.
+ */
 @WebServlet("/admin/import-categories")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class ImportCategoriesFromCsvServlet extends HttpServlet {
-
     /** Page to redirect after successful import */
     private static final String REDIRECT_SUCCESS = "/admin/categories";
 
@@ -40,6 +44,17 @@ public class ImportCategoriesFromCsvServlet extends HttpServlet {
     /** Request parameters */
     private static final String PARAM_FILE = "file";
 
+    /**
+     * Method {@code doPost} reads uploaded *.csv file line by line.
+     * Data in each line is stored in an instance of {@link Category} and then
+     * on {@link CategoryDao} the method {@link CategoryDao#insert(Connection, Category)} is invoked.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -49,9 +64,9 @@ public class ImportCategoriesFromCsvServlet extends HttpServlet {
             connection = dataSource.getConnection();
             CategoryDao categoryDao = AbstractDaoFactory.getInstance().getCategoryDao();
             reader.readLine();
+            Category category = new Category();
             while (reader.ready()) {
                 String[] data = reader.readLine().split(",");
-                Category category = new Category();
                 Map<Integer, String> descriptions = new HashMap<>();
                 Map<Integer, String> names = new HashMap<>();
                 category.setTag(data[0]);
@@ -64,9 +79,9 @@ public class ImportCategoriesFromCsvServlet extends HttpServlet {
                 categoryDao.insert(connection, category);
             }
             response.sendRedirect(REDIRECT_SUCCESS);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

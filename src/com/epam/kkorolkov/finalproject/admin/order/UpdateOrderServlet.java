@@ -4,8 +4,8 @@ import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
 import com.epam.kkorolkov.finalproject.db.dao.OrderDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,8 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 
+/**
+ * The {@code UpdateOrderServlet} is a servlet which task is to
+ * change order status in the table <i>orders</i>.
+ *
+ * Only {@code doPost} method is overridden.
+ */
 @WebServlet("/update-status")
 public class UpdateOrderServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("UPDATE STATUS");
 
     /** Page to redirect after exception is thrown */
@@ -39,6 +46,17 @@ public class UpdateOrderServlet extends HttpServlet {
     /** Logger messages */
     private static final String MESSAGE_ERROR_PAGE = "Some POST parameters are specified incorrectly.";
 
+    /**
+     * {@code doPost} method handles POST request. Updates a row
+     * in the table <i>orders</i> changing order status.
+     * Reads request parameters {@code orderId} and {@code statusId} and invokes
+     * {@link OrderDao#updateStatus(Connection, int, int)} method.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -52,9 +70,9 @@ public class UpdateOrderServlet extends HttpServlet {
             OrderDao orderDao = AbstractDaoFactory.getInstance().getOrderDao();
             orderDao.updateStatus(connection, orderId, statusId);
             response.sendRedirect(page);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

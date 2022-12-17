@@ -5,8 +5,8 @@ import com.epam.kkorolkov.finalproject.db.dao.LanguageDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Language;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,11 +21,16 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class {@code SetSessionFilter} sets {@code HttpSession} parameters
+ * 'cart' and 'languages' if they are not set previously.
+ */
 @WebFilter(filterName = "SetSessionFilter")
 public class SetSessionFilter implements Filter {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("SESSION");
 
-    /* Page to redirect after exception is thrown */
+    /** Page to redirect after exception is thrown */
     private static final String REDIRECT_ERROR_CONNECTION =
             "/error?code=500&message=Unable to connect to the database. Try again later.";
     private static final String REDIRECT_ERROR_DAO =
@@ -33,23 +38,37 @@ public class SetSessionFilter implements Filter {
     private static final String REDIRECT_ERROR_DB =
             "/error?code=500&message=Database error occurred. See server logs for details.";
 
+    /** Session attributes */
+    private static final String ATTR_CART = "cart";
+    private static final String ATTR_LANGUAGES = "languages";
 
-    public void destroy() {
-    }
+    /** Logger messages */
+    private static final String MESSAGE_SUCCESS = "Session attribute 'languages' has been set.";
 
+    /**
+     * Sets 'cart' attribute to empty {@code Map} if it is null;
+     * Sets 'languages' attribute to {@code Map} containing all
+     * languages from the database, if the attribute is null;
+     *
+     * @param request - request to process.
+     * @param response - response associated with the request.
+     * @param chain Provides access to the next filter in the chain for this filter
+     *              to pass the request and response to for further processing.
+     *
+     * @throws IOException if an I/O error occurs during this filter's processing of the request
+     * @throws ServletException is thrown if if the processing fails for any other reason.
+     */
     @SuppressWarnings("unchecked")
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) resp;
-        String context = request.getServletContext().getContextPath();
-        HttpSession session = request.getSession();
-
-        Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("cart");
-        if (cart == null) {
-            session.setAttribute("cart", new HashMap<>());
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        String context = httpServletRequest.getServletContext().getContextPath();
+        HttpSession session = httpServletRequest.getSession();
+        if (session.getAttribute(ATTR_CART) == null) {
+            session.setAttribute(ATTR_CART, new HashMap<>());
         }
-
-        Map<Integer, Language> languages = (Map<Integer, Language>) session.getAttribute("languages");
+        Map<Integer, Language> languages = (Map<Integer, Language>) session.getAttribute(ATTR_LANGUAGES);
         if (languages == null) {
             DataSource dataSource = null;
             Connection connection = null;
@@ -57,24 +76,25 @@ public class SetSessionFilter implements Filter {
                 dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
                 connection = dataSource.getConnection();
                 LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();
-                session.setAttribute("languages", languageDao.getAll(connection));
-                LOGGER.info("Session attribute 'languages' has been set.");
-            } catch (DBConnectionException e) {
-                response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-            } catch (DBException e) {
-                response.sendRedirect(context + REDIRECT_ERROR_DB);
+                session.setAttribute(ATTR_LANGUAGES, languageDao.getAll(connection));
+                LOGGER.info(MESSAGE_SUCCESS);
+
+            } catch (DbConnectionException e) {
+                httpServletResponse.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
+            } catch (DbException e) {
+                httpServletResponse.sendRedirect(context + REDIRECT_ERROR_DB);
             } catch (DaoException e) {
-                response.sendRedirect(context + REDIRECT_ERROR_DAO);
+                httpServletResponse.sendRedirect(context + REDIRECT_ERROR_DAO);
             } finally {
                 if (dataSource != null) {
                     dataSource.release(connection);
                 }
             }
         }
-        chain.doFilter(req, resp);
+        chain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    public void init(FilterConfig config) throws ServletException {
+    public void destroy() {}
 
-    }
+    public void init(FilterConfig config) {}
 }

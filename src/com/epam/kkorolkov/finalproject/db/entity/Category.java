@@ -1,18 +1,12 @@
 package com.epam.kkorolkov.finalproject.db.entity;
 
-import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Represents a record in the database table <i>categories</i>
+ * which represents categories in the catalogue.
+ */
 public class Category extends CatalogueEntity {
-    public static Category create() {
-        Category category = new Category();
-        category.setId(0);
-        category.setNames(new HashMap<>());
-        category.setTag("");
-        category.setDescriptions(new HashMap<>());
-        return category;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -36,7 +36,7 @@ const cancelFilter = function () {
 }
 
 let page = 1;
-const loadBooks = function (labelPrice, labelQuantity) {
+const loadBooks = function (labelPrice, labelQuantity, languageId) {
     page++;
     const url = new URL(document.URL);
     url.searchParams.set("page", page.toString());
@@ -45,11 +45,10 @@ const loadBooks = function (labelPrice, labelQuantity) {
     const xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", "./load-books?" + urlParts[1], false);
     xmlHttp.send();
-    document.getElementById("books").innerHTML += bookHtml(xmlHttp.responseText, labelPrice, labelQuantity);
+    document.getElementById("books").innerHTML += bookHtml(xmlHttp.responseText, labelPrice, labelQuantity, languageId);
 }
 
-const bookHtml = function (bookJson, labelPrice, labelQuantity) {
-    const languageId = getLanguageId();
+const bookHtml = function (bookJson, labelPrice, labelQuantity, languageId) {
     const books = JSON.parse(bookJson);
     let result = "";
     for (const i in books) {
@@ -62,13 +61,6 @@ const bookHtml = function (bookJson, labelPrice, labelQuantity) {
             '<div class="book-link"><a href="./product/' + books[i]["tag"] + '">' + books[i]["names"][languageId] + '</a></div></div></div>';
     }
     return result;
-}
-
-const getLanguageId = function() {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", "./locale", false);
-    xmlHttp.send();
-    return xmlHttp.responseText;
 }
 
 

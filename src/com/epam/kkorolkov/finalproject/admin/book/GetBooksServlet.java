@@ -7,8 +7,8 @@ import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.exception.BadRequestException;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import com.epam.kkorolkov.finalproject.util.CatalogueUtils;
 import org.apache.logging.log4j.LogManager;
@@ -23,8 +23,16 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.Map;
 
+/**
+ * The {@code GetBooksServlet} is a servlet which task is to retrieve
+ * data corresponding to filtered rows in the table <i>books</i> and
+ * represent them to administrator's page.
+ *
+ * {@code doGet} method is overridden.
+ */
 @WebServlet("/admin/books")
 public class GetBooksServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("GET BOOKS");
 
     /** Number of shown products per page */
@@ -59,6 +67,17 @@ public class GetBooksServlet extends HttpServlet {
     private static final String ATTR_CURRENT_PAGE = "currentPage";
     private static final String ATTR_TOTAL_PAGES = "totalPages";
 
+    /**
+     * {@code doGet} method handles GET request. Retrieves data from
+     * {@link BookDao#getAll(Connection, int, int, Map)} using
+     * filter parameters specified in request parameters.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pageParameter = request.getParameter(PARAM_PAGE);
         String context = request.getServletContext().getContextPath();
@@ -77,21 +96,16 @@ public class GetBooksServlet extends HttpServlet {
             Map<String, String> parameters = CatalogueUtils.setBookParameters(request);
             int totalPages = (bookDao.count(connection, parameters) - 1) / LIMIT + 1;
             int page = Integer.parseInt(pageParameter);
-            if (page > totalPages) {
-                page = totalPages;
-            }
-            if (page < 1) {
-                page = 1;
-            }
+            page = Math.max(1, Math.min(page, totalPages));
             request.setAttribute(ATTR_BOOKS, bookDao.getAll(connection, LIMIT, LIMIT * (page - 1), parameters));
             request.setAttribute(ATTR_CATEGORIES, categoryDao.getAll(connection));
             request.setAttribute(ATTR_PUBLISHERS, publisherDao.getAll(connection));
             request.setAttribute(ATTR_TOTAL_PAGES, totalPages);
             request.setAttribute(ATTR_CURRENT_PAGE, page);
             request.getRequestDispatcher(INCLUDE_JSP).include(request, response);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

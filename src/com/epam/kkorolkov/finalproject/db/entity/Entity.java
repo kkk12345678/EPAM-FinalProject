@@ -10,11 +10,13 @@ import java.io.Serializable;
  * <i>statuses</i>, <i>languages</i>, <i>orders</i>, <i>users</i>.
  */
 public abstract class Entity implements Serializable {
+    /** Primary key of a record */
     private int id;
 
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }

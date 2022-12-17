@@ -1,19 +1,14 @@
 package com.epam.kkorolkov.finalproject.test.servlet.admin;
 
-import com.epam.kkorolkov.finalproject.admin.publisher.GetPublishersServlet;
 import com.epam.kkorolkov.finalproject.admin.user.*;
 import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
-import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.dao.UserDao;
-import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.db.datasource.OneConnectionDataSourceFactory;
-import com.epam.kkorolkov.finalproject.db.entity.Publisher;
+import com.epam.kkorolkov.finalproject.db.datasource.MyDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.entity.User;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
-import com.epam.kkorolkov.finalproject.util.UserUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -49,11 +44,12 @@ public class UserServletTest extends Mockito {
 
     UserDao userDao;
     DataSource dataSource;
+
     {
         try {
             userDao = AbstractDaoFactory.getInstance().getUserDao();
-            dataSource = OneConnectionDataSourceFactory.getInstance().getDataSource();
-        } catch (DaoException | DBConnectionException e) {
+            dataSource = MyDataSourceFactory.getInstance().getDataSource();
+        } catch (DaoException | DbConnectionException e) {
             e.printStackTrace();
         }
         when(context.getContextPath()).thenReturn("");
@@ -124,7 +120,7 @@ public class UserServletTest extends Mockito {
         connection.close();
     }
 
-    private void getUsersServletTest() throws ServletException, IOException, DBException {
+    private void getUsersServletTest() throws ServletException, IOException, DbException {
         when(request.getRequestDispatcher(INCLUDE_JSP)).thenReturn(dispatcher);
         ArgumentCaptor<Users> captor = ArgumentCaptor.forClass(Users.class);
         new GetUsersServlet().doGet(request, response);

@@ -4,8 +4,8 @@ import com.epam.kkorolkov.finalproject.db.dao.AbstractDaoFactory;
 import com.epam.kkorolkov.finalproject.db.dao.BookDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,14 +19,13 @@ import java.sql.Connection;
 
 /**
  * The {@code DeleteBookServlet} is a servlet which task is to
- * delete from the database record of product.
+ * delete from a record the table <i>books</i>.
  *
  * Only {@code doPost} method is overridden.
- *
  */
-
 @WebServlet("/admin/delete-book")
 public class DeleteBookServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("DELETE BOOK");
 
     /** Page to redirect after successful request processing */
@@ -55,20 +54,20 @@ public class DeleteBookServlet extends HttpServlet {
      *     <li><i>page</i> - number of a page to which it is necessary to
      *     be redirected after successful deletion.</li></ul>
      *
-     * In order to implement the behavior method gets {@code DataSource} from the factory
-     * and then gets {@code Connection} on the provided datasource. These operations may
-     * produce {@code DBConnectionException} which indicates that database is unreachable.<br><br>
+     * In order to implement the behavior method gets {@link DataSource} from the factory
+     * and then gets {@link Connection} on the provided datasource. These operations may
+     * produce {@code DbConnectionException} which indicates that database is unreachable.<br><br>
      *
-     * The next step is to get {@code BookDao} from the factory. This may produce
-     * {@code DaoException} if DAO is cannot be instantiated.<br><br>
+     * The next step is to get {@link BookDao} from the factory. This may produce
+     * {@link DaoException} if DAO is cannot be instantiated.<br><br>
      *
      * Finally, method {@code delete} is invoked on obtained DAO. This may produce
-     * {@code NumberFormatException} if POST parameter <i>id</i> is not a positive integer,
-     * or {@code DBException} if in the database there is no record with <i>id</i>
-     * or during communication some {@code SQLException} is thrown.<br><br>
+     * {@link NumberFormatException} if POST parameter <i>id</i> is not a positive integer,
+     * or {@link DbException} if in the database there is no record with <i>id</i>
+     * or during communication some {@link java.sql.SQLException} is thrown.<br><br>
      *
-     * @param request - {@code HttpServletRequest} object provided by Tomcat.
-     * @param response - {@code HttpServletResponse} object provided by Tomcat.
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
      * @throws IOException is thrown if an input or output exception occurs.
      *
      * @see AbstractDataSourceFactory#getDataSource()
@@ -86,9 +85,9 @@ public class DeleteBookServlet extends HttpServlet {
             BookDao bookDao = AbstractDaoFactory.getInstance().getBookDao();
             bookDao.delete(connection, Integer.parseInt(idParameter));
             response.sendRedirect(context + String.format(REDIRECT_FORMAT,  request.getParameter(PARAM_PAGE)));
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

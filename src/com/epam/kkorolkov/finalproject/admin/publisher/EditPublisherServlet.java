@@ -21,6 +21,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
 
+/**
+ * The {@code EditPublisherServlet} is a servlet which task is to
+ * edit a record in the table <i>publishers</i> if it exists or to create one otherwise.
+ *
+ * {@code doGet} and {@code doPost} methods are overridden.
+ */
 @WebServlet("/admin/edit-publisher")
 public class EditPublisherServlet extends HttpServlet {
     protected static final Logger LOGGER = LogManager.getLogger("EDIT PUBLISHER");
@@ -53,6 +59,15 @@ public class EditPublisherServlet extends HttpServlet {
     /** JSP page to include */
     private static final String INCLUDE_JSP = "../jsp/admin/publishers/edit-publisher.jsp";
 
+    /**
+     * {@code doPost} method handles POST request. Creates or updates
+     * a publisher. Field values are retrieved from request parameters.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -70,9 +85,9 @@ public class EditPublisherServlet extends HttpServlet {
                 publisherDao.update(connection, publisher);
             }
             response.sendRedirect(context + REDIRECT_SUCCESS);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);
@@ -87,6 +102,15 @@ public class EditPublisherServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code doGet} method handles GET request.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -102,9 +126,9 @@ public class EditPublisherServlet extends HttpServlet {
             }
             request.setAttribute(ATTR_LANGUAGES, getLanguages(connection));
             request.getRequestDispatcher(INCLUDE_JSP).include(request, response);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);
@@ -119,7 +143,16 @@ public class EditPublisherServlet extends HttpServlet {
         }
     }
 
-    private Map<Integer, Language> getLanguages(Connection connection) throws DBException, DaoException {
+    /**
+     * @return {@link Map} containing all records in the table <i>languages</i>.
+     *
+     * @param connection - an instance of {@link Connection}
+     *                   which provides ability to connect to the database.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
+    private Map<Integer, Language> getLanguages(Connection connection) throws DbException, DaoException {
         LanguageDao languageDao = AbstractDaoFactory.getInstance().getLanguageDao();
         return languageDao.getAll(connection);
     }

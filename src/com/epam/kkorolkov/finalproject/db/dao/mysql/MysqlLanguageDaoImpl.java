@@ -2,69 +2,59 @@ package com.epam.kkorolkov.finalproject.db.dao.mysql;
 
 import com.epam.kkorolkov.finalproject.db.dao.LanguageDao;
 import com.epam.kkorolkov.finalproject.db.entity.Language;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import java.sql.*;
 import java.util.*;
 
+/**
+ *  Provides MySQL specific implementation of {@link LanguageDao}.
+ */
 public class MysqlLanguageDaoImpl extends MysqlAbstractDao implements LanguageDao {
+    /** SQL statements */
+    private static final String SQL_GET_ALL = SQL_STATEMENTS.getProperty("mysql.languages.select.all");
+
+    /** Logger success messages */
+    private static final String MESSAGE_LANGUAGES_LOADED = "All languages were successfully loaded.";
+
+    /** Logger error messages */
+    private static final String ERROR_LANGUAGES_NOT_LOADED = "Could not load languages";
+
+    /**
+     * MySQL specific realization of {@link LanguageDao#getAll(Connection)} method.
+     * Retrieves all rows from the table <i>languages</i>.
+     *
+     * @param connection - an instance of {@link Connection} to reach the database.
+     *
+     * @return {@link Map} representing all rows from the table.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     */
     @Override
-    public Map<Integer, Language> getAll(Connection connection) throws DBException {
+    public Map<Integer, Language> getAll(Connection connection) throws DbException {
         Map<Integer, Language> languages = new HashMap<>();
         Statement statement = null;
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
-            resultSet = statement.executeQuery(SQL_STATEMENTS.getProperty("mysql.languages.select.all"));
+            resultSet = statement.executeQuery(SQL_GET_ALL);
             while (resultSet.next()) {
                 Language language = new Language();
                 language.setId(resultSet.getInt(1));
-                language.setCode(resultSet.getString(4));
                 language.setImage(resultSet.getString(3));
                 language.setLocale(resultSet.getString(5));
                 language.setName(resultSet.getString(2));
                 languages.put(language.getId(), language);
             }
-            LOGGER.info("All languages were successfully loaded.");
+            LOGGER.info(MESSAGE_LANGUAGES_LOADED);
+            return languages;
         } catch (SQLException e) {
-            LOGGER.info("Could not load languages");
+            LOGGER.info(ERROR_LANGUAGES_NOT_LOADED);
             LOGGER.error(e.getMessage());
-            throw new DBException();
+            throw new DbException();
         } finally {
             DBUtils.release(resultSet, statement);
         }
-        return languages;
-    }
-
-    @Override
-    public Optional<Language> getByLocale(Connection connection, String locale) throws DBException {
-        Optional<Language> optional = Optional.empty();
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            preparedStatement = connection.prepareStatement(SQL_STATEMENTS.getProperty("mysql.languages.select.by.locale"));
-            preparedStatement.setString(1, locale);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                Language language = new Language();
-                language.setId(resultSet.getInt("id"));
-                language.setLocale(locale);
-                language.setName(resultSet.getString("name"));
-                optional = Optional.of(language);
-            }
-            if (optional.isEmpty()) {
-                LOGGER.info("No language found with locale = " + locale);
-            } else {
-                LOGGER.info("Language was found with locale = " + locale);
-            }
-        } catch (SQLException e) {
-            LOGGER.info("Could not load language with locale = " + locale);
-            LOGGER.error(e.getMessage());
-            throw new DBException();
-        } finally {
-            DBUtils.release(resultSet, preparedStatement);
-        }
-        return optional;
     }
 }

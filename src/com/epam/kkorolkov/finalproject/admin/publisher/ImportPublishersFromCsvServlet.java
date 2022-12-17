@@ -5,10 +5,9 @@ import com.epam.kkorolkov.finalproject.db.dao.PublisherDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.Publisher;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
-import com.epam.kkorolkov.finalproject.util.DBUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -24,6 +23,12 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The {@code ImportPublishersFromCsvServlet} is a servlet which task is to insert
+ * into the table <i>publishers</i> data which is contained in a *.csv file.
+ *
+ * {@code doPost} method is overridden.
+ */
 @WebServlet("/admin/import-publishers")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
 public class ImportPublishersFromCsvServlet extends HttpServlet {
@@ -42,6 +47,17 @@ public class ImportPublishersFromCsvServlet extends HttpServlet {
     /** Request parameters */
     private static final String PARAM_FILE = "file";
 
+    /**
+     * Method {@code doPost} reads uploaded *.csv file line by line.
+     * Data in each line is stored in an instance of {@link Publisher} and then
+     * on {@link PublisherDao} the method {@link PublisherDao#insert(Connection, Publisher)} is invoked.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;
@@ -66,9 +82,9 @@ public class ImportPublishersFromCsvServlet extends HttpServlet {
                 publisherDao.insert(connection, publisher);
             }
             response.sendRedirect(context + REDIRECT_SUCCESS);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

@@ -5,8 +5,8 @@ import com.epam.kkorolkov.finalproject.db.dao.UserDao;
 import com.epam.kkorolkov.finalproject.db.datasource.AbstractDataSourceFactory;
 import com.epam.kkorolkov.finalproject.db.datasource.DataSource;
 import com.epam.kkorolkov.finalproject.db.entity.User;
-import com.epam.kkorolkov.finalproject.exception.DBConnectionException;
-import com.epam.kkorolkov.finalproject.exception.DBException;
+import com.epam.kkorolkov.finalproject.exception.DbConnectionException;
+import com.epam.kkorolkov.finalproject.exception.DbException;
 import com.epam.kkorolkov.finalproject.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,14 +52,14 @@ public class BlockUserServlet extends HttpServlet {
             connection = dataSource.getConnection();
             if (connection != null) {
                 UserDao userDao = AbstractDaoFactory.getInstance().getUserDao();
-                User user = userDao.get(connection, id).orElseThrow(DBException::new);
+                User user = userDao.get(connection, id).orElseThrow(DbException::new);
                 user.setBlocked(true);
                 userDao.update(connection, user);
             }
             response.sendRedirect(context + REDIRECT_SUCCESS);
-        } catch (DBConnectionException e) {
+        } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
-        } catch (DBException e) {
+        } catch (DbException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DB);
         } catch (DaoException e) {
             response.sendRedirect(context + REDIRECT_ERROR_DAO);

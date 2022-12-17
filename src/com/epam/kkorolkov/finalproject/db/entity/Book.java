@@ -4,15 +4,36 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Represents a record in the database table
+ * which represents books in the catalogue.
+ */
 public class Book extends CatalogueEntity {
+
+    /**
+     * Each book has a unique ISBN (international serial number).
+     * This field is used to identify a book as well as an image filename.
+     */
     private String isbn;
+
+    /** Current quantity of a book on stock */
     private int quantity;
+
+    /** Publisher of a book */
     private Publisher publisher;
+
+    /** Category of a book */
     private Category category;
+
+    /** Publishing date */
     private Date date;
+
+    /** Price of a book */
     private Double price;
 
-
+    /**
+     * @return a stub of an instance of a {@code Book} class.
+     */
     public static Book create() {
         Book book = new Book();
         book.setId(0);
