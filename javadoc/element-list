@@ -1,0 +1,17 @@
+com.epam.kkorolkov.finalproject.admin
+com.epam.kkorolkov.finalproject.admin.book
+com.epam.kkorolkov.finalproject.admin.category
+com.epam.kkorolkov.finalproject.admin.order
+com.epam.kkorolkov.finalproject.admin.publisher
+com.epam.kkorolkov.finalproject.admin.user
+com.epam.kkorolkov.finalproject.auth
+com.epam.kkorolkov.finalproject.client
+com.epam.kkorolkov.finalproject.db.dao
+com.epam.kkorolkov.finalproject.db.dao.mysql
+com.epam.kkorolkov.finalproject.db.datasource
+com.epam.kkorolkov.finalproject.db.entity
+com.epam.kkorolkov.finalproject.exception
+com.epam.kkorolkov.finalproject.filter
+com.epam.kkorolkov.finalproject.listener
+com.epam.kkorolkov.finalproject.tag
+com.epam.kkorolkov.finalproject.util
