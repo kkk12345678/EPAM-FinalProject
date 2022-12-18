@@ -57,9 +57,9 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
      * MySQL specific realization of {@link UserDao#getAll(Connection)} method.
      * Retrieves rows from the table <i>users</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
-     * @return {@link List<User>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -89,7 +89,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
      * MySQL specific realization of {@link UserDao#update(Connection, User)} method.
      * Updates a row which represents a user in the table <i>users</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      * @param user- a user to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
@@ -117,8 +117,8 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
      * MySQL specific realization of {@link UserDao#delete(Connection, int)} method.
      * Deletes a row which represents a user in the table <i>users</i>.
      *
-     * @param connection - an  of {@link Connection} to reach the database.
-     * @param id - id of a user to be deleted.
+     * @param connection an  of {@link Connection} to reach the database.
+     * @param id id of a user to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -143,8 +143,10 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
      * MySQL specific realization of {@link UserDao#insert(Connection, User)} method.
      * Inserts a row to the table <i>users</i> with data specified in user.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param user - a user to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param user a user to be inserted.
+     *
+     * @return the id of the inserted {@link User}.
      *
      * @throws DbException is thrown if data cannot be deleted.
      * @throws ValidationException is thrown if user data is incorrect or
@@ -154,7 +156,6 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
     public int insert(Connection connection, User user) throws DbException, ValidationException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        int id;
         try {
             UserUtils.validateEmail(user.getEmail());
             preparedStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
@@ -162,9 +163,10 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
             preparedStatement.execute();
             resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
-            id = resultSet.getInt(1);
+            int id = resultSet.getInt(1);
             LOGGER.info(String.format(MESSAGE_USER_INSERTED,
                     user.getFirstName(), user.getLastName(), id));
+            return id;
         } catch (SQLException e) {
             LOGGER.info(ERROR_USER_NOT_INSERTED + user.getId());
             LOGGER.error(e.getMessage());
@@ -172,28 +174,29 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         } finally {
             DBUtils.release(resultSet, preparedStatement);
         }
-        return id;
+
     }
 
     /**
      * MySQL specific realization of {@link UserDao#count(Connection)} method.
+     *
      * @return number of rows in the table <i>users</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
     @Override
     public int count(Connection connection) throws DbException {
-        int c;
         Statement statement = null;
         ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
             resultSet = statement.executeQuery(SQL_COUNT);
             resultSet.next();
-            c = resultSet.getInt(1);
+            int c = resultSet.getInt(1);
             LOGGER.info(String.format(MESSAGE_USERS_COUNTED, c));
+            return c;
         } catch (SQLException e) {
             LOGGER.info(ERROR_USERS_NOT_COUNTED);
             LOGGER.error(e.getMessage());
@@ -201,7 +204,6 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
         } finally {
             DBUtils.release(resultSet, statement);
         }
-        return c;
     }
 
     /**
@@ -211,10 +213,10 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a user to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a user to find.
      *
-     * @return {@link Optional<User>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -249,10 +251,10 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
      * If table does not contain a row with specified {@code email}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param email - email of a user to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param email email of a user to find.
      *
-     * @return {@link Optional<User>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -281,10 +283,10 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
     }
 
     /**
-     * An utility method that prepares {@link PreparedStatement} with data from the {@link User} instance.
+     * A utility method that prepares {@link PreparedStatement} with data from the {@link User} instance.
      *
-     * @param preparedStatement - an instance of {@link PreparedStatement} to be prepared.
-     * @param user - an instance of {@link User} with data to set.
+     * @param preparedStatement an instance of {@link PreparedStatement} to be prepared.
+     * @param user an instance of {@link User} with data to set.
      *
      * @throws SQLException is thrown if {@link SQLException} is thrown while preparing statement.
      */
@@ -298,7 +300,7 @@ public class MysqlUserDaoImpl extends MysqlAbstractDao implements UserDao {
     }
 
     /**
-     * An utility method that extracts an instance of {@link User}
+     * A utility method that extracts an instance of {@link User}
      * from the {@link ResultSet} instance.
      *
      * @param resultSet an instance of {@link ResultSet} containing necessary data.

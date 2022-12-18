@@ -60,15 +60,15 @@ public class CatalogueUtils {
     private static final String MESSAGE_ERROR_TAG_FORMATTED = "Entity with tag %s already exists.";
 
     /**
-     * {@code validate(Book book)} method checks whether {@code Book} instance
+     * {@code validate(Book book)} method checks whether {@link Book} instance
      * is valid e.i. all necessary fields are present, ISBN is valid, and there is
      * no record in the database with the {@code tag} field.
      *
-     * @param book - instance of {@code Book} to validate.
+     * @param book instance of {@link Book} to validate.
      *
-     * @throws DbException if {@code SQLException} was thrown.
-     * @throws DaoException if DAO cannot be instantiated.
-     * @throws ValidationException if validation failed.
+     * @throws DbException is thrown if {@link SQLException} was thrown.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     * @throws ValidationException is thrown if validation failed.
      */
     public static void validate(Book book) throws DbException, DaoException, ValidationException {
         validate((CatalogueEntity) book);
@@ -80,14 +80,14 @@ public class CatalogueUtils {
 
     /**
      * {@code validate(CatalogueEntity entity)} method checks whether
-     * {@code CatalogueEntity} instance is valid e.i. all necessary fields are present
+     * {@link CatalogueEntity} instance is valid e.i. all necessary fields are present
      * and there is no record in the database with the {@code tag} field.
      *
-     * @param entity - instance of {@code CatalogueEntity} to validate.
+     * @param entity instance of {@link CatalogueEntity} to validate.
      *
-     * @throws DbException if {@code SQLException} was thrown.
-     * @throws DaoException if DAO cannot be instantiated.
-     * @throws ValidationException if validation failed.
+     * @throws DbException is thrown if {@link SQLException} was thrown.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     * @throws ValidationException is thrown if validation failed.
      */
     @SuppressWarnings("rawtypes")
     public static void validate(CatalogueEntity entity) throws DbException, DaoException, ValidationException {
@@ -137,7 +137,7 @@ public class CatalogueUtils {
     /**
      * {@code validateIsbn} method checks whether ISBN is valid.
      *
-     * @param isbn - ISBN to validate
+     * @param isbn ISBN to be validated.
      *
      * @return {@code true} if ISBN is valid, {@code false} otherwise.
      */
@@ -161,14 +161,14 @@ public class CatalogueUtils {
     }
 
     /**
-     * Method {@code setBookParameters} is an utility method which
+     * Method {@code setBookParameters} is a utility method which
      * retrieves necessary parameters from GET request and puts them
-     * to an instance of {@code Map} which later will be processed
+     * to an instance of {@link Map} which later will be processed
      * by SQL SELECT query.
      *
-     * @param request - instance of {@code HttpServletRequest} to process.
+     * @param request instance of {@link HttpServletRequest} to process.
      *
-     * @return {@code Map} with necessary entries.
+     * @return {@link Map} with necessary entries.
      */
     public static Map<String, String> setBookParameters(HttpServletRequest request) {
         String categoryId = request.getParameter(PARAM_CATEGORY);
@@ -206,14 +206,14 @@ public class CatalogueUtils {
     }
 
     /**
-     * Method {@code setOrderParameters} is an utility method which
+     * Method {@code setOrderParameters} is a utility method which
      * retrieves necessary parameters from GET request and puts them
-     * to an instance of {@code Map} which later will be processed
+     * to an instance of {@link Map} which later will be processed
      * by SQL SELECT query.
      *
-     * @param request - instance of {@code HttpServletRequest} to process.
+     * @param request instance of {@link HttpServletRequest} to process.
      *
-     * @return {@code Map} with necessary entries.
+     * @return {@link Map} with necessary entries.
      */
     public static Map<String, String> setOrderParameters(HttpServletRequest request) {
         Map<String, String> parameters = new HashMap<>();
@@ -237,18 +237,23 @@ public class CatalogueUtils {
     }
 
     /**
-     * Method {@code setDetailsFromRequest} is an utility method which
+     * Method {@code setDetailsFromRequest} is a utility method which
      * retrieves necessary parameters from GET request and puts them
-     * to an instance of {@code Map} which later will be processed
+     * to an instance of {@link Map} which later will be processed
      * by SQL SELECT query.
      *
-     * @param request - instance of {@code HttpServletRequest} to process.
-     * @param catalogueEntity - instance of {@code catalogueEntity} to process.
-     * @param languages - {@code Map} of languages.
+     * @param request an instance of {@link HttpServletRequest} to process.
+     * @param catalogueEntity an instance of {@link CatalogueEntity} to process.
+     * @param languages {@link Map} of languages.
      *
      * @throws BadRequestException is thrown if some request parameters are invalid.
      */
-    public static void setDetailsFromRequest(HttpServletRequest request, CatalogueEntity catalogueEntity, Map<Integer, Language> languages) throws BadRequestException {
+    public static void setDetailsFromRequest(
+            HttpServletRequest request,
+            CatalogueEntity catalogueEntity,
+            Map<Integer, Language> languages)
+            throws BadRequestException {
+
         Map<Integer, String> names = new HashMap<>();
         Map<Integer, String> descriptions = new HashMap<>();
         String tag = request.getParameter(PARAM_TAG);
@@ -270,16 +275,17 @@ public class CatalogueUtils {
     }
 
     /**
-     * Method {@code setDetailsFromEntity} is an utility method which
-     * sets {@code PreparedStatement} parameters from an instance
-     * of {@code CatalogueEntity}.
+     * Method {@code setDetailsFromEntity} is a utility method which
+     * sets {@link PreparedStatement} parameters from an instance
+     * of {@link CatalogueEntity}.
      *
-     * @param preparedStatement - {@code PreparedStatement} to be set.
-     * @param catalogueEntity - instance of {@code CatalogueEntity} where necessary data is contained.
+     * @param preparedStatement an instance of {@link PreparedStatement} to be set.
+     * @param catalogueEntity instance of {@link CatalogueEntity} where necessary data is contained.
      *
      * @throws SQLException is thrown if {@code PreparedStatement} cannot be set or executed.
      */
-    public static void setDetailsFromEntity(PreparedStatement preparedStatement, CatalogueEntity catalogueEntity) throws SQLException {
+    public static void setDetailsFromEntity(PreparedStatement preparedStatement, CatalogueEntity catalogueEntity)
+            throws SQLException {
         for (int languageId : catalogueEntity.getDescriptions().keySet()) {
             preparedStatement.setInt(3, catalogueEntity.getId());
             preparedStatement.setInt(4, languageId);
@@ -294,13 +300,14 @@ public class CatalogueUtils {
      * {@code names} and {@code descriptions} to one of tables <i>publisher_descriptions</i>,
      * <i>category_descriptions</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param entity - an instance of {@link CatalogueEntity} containing necessary data.
-     * @param query - SQL query to be executed.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param entity an instance of {@link CatalogueEntity} containing necessary data.
+     * @param query SQL query to be executed.
      *
      * @throws SQLException is thrown if {@link SQLException} is thrown while processing the query.
      */
-    public static void processCatalogueEntityDetails(Connection connection, CatalogueEntity entity, String query) throws SQLException {
+    public static void processCatalogueEntityDetails(Connection connection, CatalogueEntity entity, String query)
+            throws SQLException {
         PreparedStatement preparedStatement = null;
         try {
             connection.setAutoCommit(false);
@@ -315,5 +322,4 @@ public class CatalogueUtils {
             DBUtils.release(connection);
         }
     }
-
 }

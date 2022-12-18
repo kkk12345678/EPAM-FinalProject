@@ -18,10 +18,10 @@ public class DBUtils {
     private static final Logger LOGGER = LogManager.getLogger("UTILS");
 
     /**
-     * Close previously opened {@code ResultSet} and {@code Statement}.
+     * Close previously opened {@link ResultSet} and {@link Statement}.
      *
-     * @param resultSet - {@code ResultSet} instance to close;
-     * @param statement - {@code Statement} instance to close;
+     * @param resultSet {@link ResultSet} instance to be closed;
+     * @param statement {@link Statement} instance to be closed;
      */
     public static void release(ResultSet resultSet, Statement statement) {
         closeResultSet(resultSet);
@@ -29,18 +29,18 @@ public class DBUtils {
     }
 
     /**
-     * Close previously opened {@code Statement}.
+     * Closes previously opened {@link Statement}.
      *
-     * @param statement - {@code Statement} instance to close;
+     * @param statement an instance {@link Statement} instance to be closed;
      */
     public static void release(Statement statement) {
         closeStatement(statement);
     }
 
     /**
-     * Close previously opened {@code Connection}.
+     * Closes previously opened {@link Connection}.
      *
-     * @param connection - {@code Connection} instance to close;
+     * @param connection {@link Connection} instance to be closed;
      */
     public static void release(Connection connection) {
         try {
@@ -52,6 +52,11 @@ public class DBUtils {
         }
     }
 
+    /**
+     * Closes previously opened {@link ResultSet}.
+     *
+     * @param resultSet {@link ResultSet} instance to be closed;
+     */
     private static void closeResultSet(ResultSet resultSet) {
         try {
             if (resultSet != null) {
@@ -62,6 +67,11 @@ public class DBUtils {
         }
     }
 
+    /**
+     * Closes previously opened {@link Statement}.
+     *
+     * @param statement {@link Statement} instance to be closed;
+     */
     private static void closeStatement(Statement statement){
         try {
             if (statement != null) {

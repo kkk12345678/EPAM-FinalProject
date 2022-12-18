@@ -27,6 +27,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * The {@code OrderServlet} is a servlet which task is to
+ * insert a record to the table <i>orders</i> as well as to show
+ * order placement confirmation to a customer.
+ *
+ * {@code doGet} and {@code doPost} methods are overridden.
+ */
 @WebServlet("/order")
 public class OrderServlet extends HttpServlet {
     /** Logger */
@@ -63,6 +70,16 @@ public class OrderServlet extends HttpServlet {
     /** JSP page to include */
     private static final String INCLUDE_JSP = "./jsp/client/success.jsp";
 
+    /**
+     * {@code doPost} method handles POST request.
+     * It inserts a row to the table <i>orders</i>.
+     * Method reads {@link HttpSession} attributes such as {@code cart} and {@code user},
+     * and invokes {@link OrderDao#insert(Connection, Order)}.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     @SuppressWarnings("unchecked")
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
@@ -101,6 +118,16 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code doGet} method handles GET request.
+     * It shows the order placement success page to a customer.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         try {
@@ -119,6 +146,20 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code getOrder} is a utility method which creates an instance of
+     * {@link Order} using data specified in the parameters.
+     *
+     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param cart - {@link Map} containing order details information.
+     * @param user - an instance of {@link User} containing customer's information.
+     * @param total - the total sum of the order.
+     *
+     * @return an instance of {@link Order} with necessary data.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     */
     private Order getOrder(Connection connection, Map<Integer, Integer> cart, User user, double total) throws DbException, DaoException {
         Order order = new Order();
         order.setUser(user);

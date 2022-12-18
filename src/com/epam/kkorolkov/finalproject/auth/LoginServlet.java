@@ -17,8 +17,15 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
+/**
+ * The {@code LoginServlet} is a servlet which task is to
+ * authenticate a user using data in the table <i>users</i>.
+ *
+ * {@code doGet} and {@code doPost} methods are overridden.
+ */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("LOGIN");
 
     /** Page to redirect after successful login */
@@ -57,6 +64,17 @@ public class LoginServlet extends HttpServlet {
     /** JSP page to include */
     private static final String INCLUDE_JSP = "./jsp/auth/login.jsp";
 
+    /**
+     * {@code doPost} method handles POST request. Authenticates the user which
+     * data is read from the request parameters.
+     * Depending on success or failure of the authentication redirects the user
+     * to the corresponding page.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         String email = request.getParameter(PARAM_EMAIL);
@@ -87,6 +105,19 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code doGet} method handles GET request.
+     * Reads user's data from the session.
+     * Shows the log in form to the user, if there is no session set.
+     * Otherwise redirects a user to the page corresponding
+     * to the user's role (admin or client).
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute(PARAM_USER);
         LOGGER.info(MESSAGE_CURRENT_USER + user);

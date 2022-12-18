@@ -52,8 +52,8 @@ public class UpdateOrderServlet extends HttpServlet {
      * Reads request parameters {@code orderId} and {@code statusId} and invokes
      * {@link OrderDao#updateStatus(Connection, int, int)} method.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws IOException is thrown if an input or output exception occurs.
      */

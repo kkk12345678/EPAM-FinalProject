@@ -21,10 +21,10 @@ public class MyDataSource extends AbstractDataSource implements DataSource {
     /**
      * Constructs an instance of {@code MyDataSource} with necessary driver and credentials.
      *
-     * @param dbDriver - database driver.
-     * @param dbUrl - database URL.
-     * @param dbUser - database user.
-     * @param dbPassword - user's password.
+     * @param dbDriver database driver.
+     * @param dbUrl database URL.
+     * @param dbUser database user.
+     * @param dbPassword user's password.
      */
     public MyDataSource(String dbDriver, String dbUrl, String dbUser, String dbPassword) {
         this.dbUrl = dbUrl;

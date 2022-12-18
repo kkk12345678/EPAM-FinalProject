@@ -18,8 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 
+/**
+ * The {@code BlockUserServlet} is a servlet which task is to
+ * update field {@code isBlocked} by setting it to {@code true}.
+ *
+ * Only {@code doPost} method is overridden.
+ */
 @WebServlet("/admin/block-user")
 public class BlockUserServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("BLOCK USER");
 
     /** Page to redirect after successful request processing */
@@ -41,6 +48,16 @@ public class BlockUserServlet extends HttpServlet {
     /** Keys of request parameters */
     private static final String PARAM_ID = "id";
 
+    /**
+     * {@code doPost} method handles POST request with the parameter which specify a user id.
+     * Method reads request parameter, invokes {@link UserDao#get(Connection, int)}
+     * to get an instance of {@link User}, changes the field {@code isBlocked},
+     * and invokes {@link UserDao#update(Connection, User)}.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         String idParameter = request.getParameter(PARAM_ID);
@@ -50,12 +67,10 @@ public class BlockUserServlet extends HttpServlet {
             int id = Integer.parseInt(idParameter);
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
-            if (connection != null) {
-                UserDao userDao = AbstractDaoFactory.getInstance().getUserDao();
-                User user = userDao.get(connection, id).orElseThrow(DbException::new);
-                user.setBlocked(true);
-                userDao.update(connection, user);
-            }
+            UserDao userDao = AbstractDaoFactory.getInstance().getUserDao();
+            User user = userDao.get(connection, id).orElseThrow(DbException::new);
+            user.setBlocked(true);
+            userDao.update(connection, user);
             response.sendRedirect(context + REDIRECT_SUCCESS);
         } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);

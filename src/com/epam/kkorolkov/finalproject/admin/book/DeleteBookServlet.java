@@ -49,25 +49,25 @@ public class DeleteBookServlet extends HttpServlet {
     private static final String PARAM_PAGE = "page";
 
     /**
-     * {@code doPost} method handles POST request with two parameters:<br><ul>
-     *     <li><i>id</i> - id of a book to be deleted</li>
-     *     <li><i>page</i> - number of a page to which it is necessary to
-     *     be redirected after successful deletion.</li></ul>
+     * {@code doPost} method handles POST request with two parameters:
+     * {@code id} - id of a book to be deleted and {@code page}
+     * - number of a page to which it is necessary to
+     * be redirected after successful deletion.
      *
      * In order to implement the behavior method gets {@link DataSource} from the factory
      * and then gets {@link Connection} on the provided datasource. These operations may
-     * produce {@code DbConnectionException} which indicates that database is unreachable.<br><br>
+     * produce {@link DbConnectionException} which indicates that database is unreachable.
      *
      * The next step is to get {@link BookDao} from the factory. This may produce
-     * {@link DaoException} if DAO is cannot be instantiated.<br><br>
+     * {@link DaoException} if DAO is cannot be instantiated.
      *
      * Finally, method {@code delete} is invoked on obtained DAO. This may produce
      * {@link NumberFormatException} if POST parameter <i>id</i> is not a positive integer,
      * or {@link DbException} if in the database there is no record with <i>id</i>
      * or during communication some {@link java.sql.SQLException} is thrown.<br><br>
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      * @throws IOException is thrown if an input or output exception occurs.
      *
      * @see AbstractDataSourceFactory#getDataSource()

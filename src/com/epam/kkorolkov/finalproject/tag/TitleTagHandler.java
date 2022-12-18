@@ -20,7 +20,7 @@ public class TitleTagHandler extends SimpleTagSupport {
     private final StringWriter stringWriter = new StringWriter();
 
     /**
-     * Writes to {@code JspWriter} appropriate value of 'title' tag.
+     * Writes to {@link JspWriter} appropriate value of 'title' tag.
      *
      * @throws IOException is thrown if an input or output exception occurs.
      * @throws JspException is thrown if an error occurred while the fragment.

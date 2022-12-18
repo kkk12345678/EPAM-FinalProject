@@ -18,7 +18,7 @@ public class CharsetFilter implements Filter {
     /**
      * Method {@code init} sets encoding field to 'UTF-8' if it is not yet set.
      *
-     * @param config - a filter configuration object used by a servlet container to pass information
+     * @param config a filter configuration object used by a servlet container to pass information
      * to a filter during initialization.
      */
     public void init(FilterConfig config) {
@@ -31,12 +31,13 @@ public class CharsetFilter implements Filter {
     /**
      * Method {@code doFilter} sets encoding 'UTF-8' to both request and response.
      *
-     * @param request - request to process.
-     * @param response - response associated with the request.
-     * @param chain Provides access to the next filter in the chain for this filter
+     * @param request request to process.
+     * @param response response associated with the request.
+     * @param chain provides access to the next filter in the chain for this filter
      *              to pass the request and response to for further processing.
      *
-     * @throws IOException if an I/O error occurs during this filter's processing of the request
+     * @throws IOException is thrown if an I/O error occurs
+     * during this filter's processing of the request
      * @throws ServletException is thrown if if the processing fails for any other reason.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

@@ -72,8 +72,8 @@ public class GetBooksServlet extends HttpServlet {
      * {@link BookDao#getAll(Connection, int, int, Map)} using
      * filter parameters specified in request parameters.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request for the GET could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.

@@ -57,8 +57,8 @@ public class ImportBooksFromCsvServlet extends HttpServlet {
      * Data in each line is stored in an instance of {@link Book} and then
      * on {@link BookDao} the method {@link BookDao#insert(Connection, Book)} is invoked.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.

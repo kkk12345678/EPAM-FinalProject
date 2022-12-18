@@ -8,6 +8,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -24,16 +25,17 @@ public class WelcomeFilter implements Filter {
     private static final String PAGE_ADMIN = "/admin";
 
     /**
-     * The {@code doFilter} method retrieves {@code User} from {@code HttpSession}.
-     * If {@code User} is admin redirects user to administrator's panel,
+     * The {@code doFilter} method retrieves {@link User} from {@link HttpSession}.
+     * If {@link User} is admin redirects user to administrator's panel,
      * otherwise redirects to client's main page.
      *
-     * @param request - request to process.
-     * @param response - response associated with the request.
-     * @param chain Provides access to the next filter in the chain for this filter
+     * @param request request to process.
+     * @param response response associated with the request.
+     * @param chain provides access to the next filter in the chain for this filter
      *              to pass the request and response to for further processing.
      *
-     * @throws IOException if an I/O error occurs during this filter's processing of the request.
+     * @throws IOException is thrown if an I/O error occurs
+     * during this filter's processing of the request.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException {
         User user = (User) ((HttpServletRequest) request).getSession().getAttribute(ATTR_USER);

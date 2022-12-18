@@ -33,12 +33,13 @@ public class SecurityFilter implements Filter {
      * Method {@code doFilter} retrieves a {@code User} from {@code HttpSession} and
      * redirect them to error page if user is not an administrator.
      *
-     * @param request - request to process.
-     * @param response - response associated with the request.
-     * @param chain Provides access to the next filter in the chain for this filter
+     * @param request request to process.
+     * @param response response associated with the request.
+     * @param chain provides access to the next filter in the chain for this filter
      *              to pass the request and response to for further processing.
      *
-     * @throws IOException if an I/O error occurs during this filter's processing of the request
+     * @throws IOException is thrown if an I/O error occurs
+     * during this filter's processing of the request
      * @throws ServletException is thrown if if the processing fails for any other reason.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

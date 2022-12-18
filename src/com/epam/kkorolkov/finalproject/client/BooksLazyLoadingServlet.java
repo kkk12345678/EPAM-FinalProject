@@ -23,8 +23,16 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The {@code BooksLazyLoadingServlet} is a servlet which task is to
+ * retrieve data from the table <i>books</i> with parameters specified
+ * in request parameters.
+ *
+ * Only {@code doGet} method is overridden.
+ */
 @WebServlet("/load-books")
 public class BooksLazyLoadingServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("GET BOOKS");
 
     /** Number of shown products per page */
@@ -46,6 +54,17 @@ public class BooksLazyLoadingServlet extends HttpServlet {
     /** Logger messages */
     private static final String MESSAGE_ERROR_PAGE = "Page parameter is specified incorrectly.";
 
+    /**
+     * {@code doGet} method handles GET request. Retrieves data from
+     * {@link BookDao#getAll(Connection, int, int, Map)} using
+     * filter parameters specified in request parameters. Writes the result
+     * to the response in JSON format.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         Map<String, String> parameters = CatalogueUtils.setBookParameters(request);

@@ -53,18 +53,19 @@ public class DeletePublisherServlet extends HttpServlet {
      *
      * In order to implement the behavior method gets {@link DataSource} from the factory
      * and then gets {@link Connection} on the provided datasource. These operations may
-     * produce {@link DbConnectionException} which indicates that database is unreachable.<br><br>
+     * produce {@link DbConnectionException} which indicates that database is unreachable.
      *
      * The next step is to get {@link PublisherDao} from the factory. This may produce
      * {@link DaoException} if DAO is cannot be instantiated.<br><br>
      *
-     * Finally, method {@code delete} is invoked on obtained DAO. This may produce
-     * {@link NumberFormatException} if POST parameter <i>id</i> is not a positive integer,
-     * or {@link DbException} if in the database there is no record with <i>id</i>
-     * or during communication some {@link java.sql.SQLException} is thrown.<br><br>
+     * Finally, method {@link PublisherDao#delete(Connection, int)} is invoked on obtained DAO.
+     * This may produce {@link NumberFormatException} if POST parameter <i>id</i>
+     * is not a positive integer, or {@link DbException} if in the database
+     * there is no record with <i>id</i> or during communication some
+     * {@link java.sql.SQLException} is thrown.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      * @throws IOException is thrown if an input or output exception occurs.
      *
      * @see AbstractDataSourceFactory#getDataSource()

@@ -49,7 +49,7 @@ public class DeleteCategoryServlet extends HttpServlet {
 
     /**
      * {@code doPost} method handles POST request with one parameter
-     * <i>id</i> - id of a category to be deleted.
+     * {@code id} - id of a category to be deleted.
      *
      * In order to implement the behavior method gets {@link DataSource} from the factory
      * and then gets {@link Connection} on the provided datasource. These operations may
@@ -63,8 +63,9 @@ public class DeleteCategoryServlet extends HttpServlet {
      * or {@link DbException} if in the database there is no record with <i>id</i>
      * or during communication some {@link java.sql.SQLException} is thrown.<br><br>
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
      * @throws IOException is thrown if an input or output exception occurs.
      *
      * @see AbstractDataSourceFactory#getDataSource()

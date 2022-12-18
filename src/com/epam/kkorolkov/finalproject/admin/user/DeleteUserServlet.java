@@ -63,8 +63,8 @@ public class DeleteUserServlet extends HttpServlet {
      * or {@link DbException} if in the database there is no record with <i>id</i>
      * or during communication some {@link java.sql.SQLException} is thrown.<br><br>
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      * @throws IOException is thrown if an input or output exception occurs.
      *
      * @see AbstractDataSourceFactory#getDataSource()

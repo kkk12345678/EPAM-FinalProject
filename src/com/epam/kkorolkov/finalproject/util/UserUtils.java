@@ -40,7 +40,9 @@ public class UserUtils {
      * Hashes user's password using algorithm specified in {@code ALGORITHM} constant.
      *
      * @param password non-hashed password
+     *
      * @return hashed password
+     *
      * @throws NoSuchAlgorithmException is thrown if {@code ALGORITHM} is incorrect.
      */
     public static String hash(String password) throws NoSuchAlgorithmException {

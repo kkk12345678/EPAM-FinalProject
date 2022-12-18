@@ -49,8 +49,8 @@ public class ImportCategoriesFromCsvServlet extends HttpServlet {
      * Data in each line is stored in an instance of {@link Category} and then
      * on {@link CategoryDao} the method {@link CategoryDao#insert(Connection, Category)} is invoked.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.

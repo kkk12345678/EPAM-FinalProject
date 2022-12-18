@@ -25,7 +25,7 @@ public class MysqlLanguageDaoImpl extends MysqlAbstractDao implements LanguageDa
      * MySQL specific realization of {@link LanguageDao#getAll(Connection)} method.
      * Retrieves all rows from the table <i>languages</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @return {@link Map} representing all rows from the table.
      *

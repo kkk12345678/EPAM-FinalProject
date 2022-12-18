@@ -65,8 +65,8 @@ public class EditCategoryServlet extends HttpServlet {
      * {@code doPost} method handles POST request. Creates or updates
      * a category. Field values are retrieved from request parameters.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws IOException is thrown if an input or output exception occurs.
      */
@@ -106,9 +106,10 @@ public class EditCategoryServlet extends HttpServlet {
 
     /**
      * {@code doGet} method handles GET request.
+     * Shows an form to edit a {@link Category}.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request for the GET could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.
@@ -148,7 +149,7 @@ public class EditCategoryServlet extends HttpServlet {
     /**
      * @return {@link Map} containing all records in the table <i>languages</i>.
      *
-     * @param connection - an instance of {@link Connection}
+     * @param connection an instance of {@link Connection}
      *                   which provides ability to connect to the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.

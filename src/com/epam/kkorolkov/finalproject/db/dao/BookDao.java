@@ -18,8 +18,8 @@ public interface BookDao {
      * @return number of rows in the table <i>books</i> with
      * where clause specified by the filter given in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param parameters parameters of where clause.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws BadRequestException is thrown if some of parameters are invalid.
@@ -32,10 +32,10 @@ public interface BookDao {
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a book to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a book to find.
      *
-     * @return {@link Optional<Book>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -48,10 +48,10 @@ public interface BookDao {
      * If table does not contain a row with specified {@code tag}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param tag - tag of a book to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param tag tag of a book to find.
      *
-     * @return {@link Optional<Book>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -62,12 +62,12 @@ public interface BookDao {
      * Method {@code getAll} retrieves rows from the table <i>books</i> with specified limit, offset,
      * and where clause specified by the filter given in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param limit - number of rows to retrieve.
-     * @param offset - number of a row to begin with.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param limit number of rows to retrieve.
+     * @param offset number of a row to begin with.
+     * @param parameters parameters of where clause.
      *
-     * @return {@link List<Book>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -77,8 +77,8 @@ public interface BookDao {
     /**
      * Method {@code update} update a row which represents a book in the table <i>books</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param book - a book to be updated.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param book a book to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -87,8 +87,8 @@ public interface BookDao {
     /**
      * Method {@code delete} deletes a row which represents a book in the table <i>books</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a publisher to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a publisher to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -97,8 +97,10 @@ public interface BookDao {
     /**
      * Method {@code insert} inserts a row to the table <i>books</i> with data specified in book.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param book - a book to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param book a book to be inserted.
+     *
+     * @return the {@code id} of the inserted {@link Book}.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -108,8 +110,8 @@ public interface BookDao {
      * Method {@code getMaxPrice} retrieves a maximum price among filtered rows in <i>books</i> table
      * with where clause specified in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param parameters parameters of where clause.
      *
      * @return a maximum price among filtered <i>books</i> table by where clause
      * specified in {@code parameters}.
@@ -123,8 +125,8 @@ public interface BookDao {
      * Method {@code getMinPrice} retrieves a minimum price among filtered rows in <i>books</i> table
      * with where clause specified in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param parameters parameters of where clause.
      *
      * @return a minimum price among filtered <i>books</i> table by where clause
      * specified in {@code parameters}.

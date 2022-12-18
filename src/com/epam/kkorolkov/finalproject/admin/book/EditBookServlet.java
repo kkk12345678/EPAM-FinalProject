@@ -91,8 +91,8 @@ public class EditBookServlet extends HttpServlet {
      * {@code doGet} method handles GET request.
      * Represents to an administrator a page with a form to edit or create a book.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request for the GET could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.
@@ -130,8 +130,8 @@ public class EditBookServlet extends HttpServlet {
      * {@code doPost} method handles POST request. Creates or updates
      * book. Field values are retrieved from request parameters.
      *
-     * @param request - {@link HttpServletRequest} object provided by Tomcat.
-     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request for the POST could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.
@@ -173,7 +173,7 @@ public class EditBookServlet extends HttpServlet {
     /**
      * {@code saveImage} method saves image file retrieved from the request to disc drive.
      *
-     * @param request - {@code HttpServletRequest} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the image cannot be retrieved from the request.
      * @throws IOException is thrown if an input or output exception occurs.
@@ -191,11 +191,11 @@ public class EditBookServlet extends HttpServlet {
     }
 
     /**
-     * {@code setBook} method creates an instance of {@code Book} class with
+     * {@code setBook} method creates an instance of {@link Book} class with
      * field values retrieved from the request parameters.
      *
-     * @param request - {@code HttpServletRequest} object provided by Tomcat.
-     * @param connection - instance of {@code Connection} provided by {@code Datasource}
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @return {@code Book} instance.
      *
@@ -228,18 +228,18 @@ public class EditBookServlet extends HttpServlet {
     }
 
     /**
-     * {@code getBook} method prepares instance of {@code Book}.
-     * If there is a book in the database with <i>id</i> provided in request parameter
+     * {@code getBook} method prepares instance of {@link Book}.
+     * If there is a book in the database with {@code id} provided in request parameter
      * returns the corresponding instance
-     * Otherwise returns book stub provided by {@code Book#create()} method
+     * Otherwise returns book stub provided by {@link Book#create()} method
      *
-     * @param request - {@code HttpServletRequest} object provided by Tomcat.
-     * @param connection - {@code Connection} object to process query.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param connection {@link Connection} object to process query.
      *
-     * @return instance of {@code Book}.
+     * @return instance of {@link Book}.
      *
-     * @throws DbException is thrown if there {@code SQLException} is thrown while querying database.
-     * @throws BadRequestException is thrown if parameter <i>id</i> is not valid ID.
+     * @throws DbException is thrown if there {@link java.sql.SQLException} is thrown while querying database.
+     * @throws BadRequestException is thrown if parameter {@code id} is not valid id.
      * @throws DaoException is thrown if an instance of DAO cannot be instantiated.
      *
      * @see Book#create()
@@ -262,7 +262,7 @@ public class EditBookServlet extends HttpServlet {
     /**
      * @return {@link List} containing all records in the table <i>categories</i>.
      *
-     * @param connection - an instance of {@link Connection}
+     * @param connection an instance of {@link Connection}
      *                   which provides ability to connect to the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
@@ -277,8 +277,8 @@ public class EditBookServlet extends HttpServlet {
      * @return an instance of {@link Category} containing a record
      * in the table <i>categories</i> with the specified id.
      *
-     * @param id - id of a category which data is to be retrieved.
-     * @param connection - an instance of {@link Connection}
+     * @param id id of a category which data is to be retrieved.
+     * @param connection an instance of {@link Connection}
      *                   which provides ability to connect to the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
@@ -293,8 +293,8 @@ public class EditBookServlet extends HttpServlet {
      * @return an instance of {@link Publisher} containing a record
      * in the table <i>publishers</i> with the specified id.
      *
-     * @param id - id of a publisher which data is to be retrieved.
-     * @param connection - an instance of {@link Connection}
+     * @param id id of a publisher which data is to be retrieved.
+     * @param connection an instance of {@link Connection}
      *                   which provides ability to connect to the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
@@ -308,7 +308,7 @@ public class EditBookServlet extends HttpServlet {
     /**
      * @return {@link List} containing all records in the table <i>publishers</i>.
      *
-     * @param connection - an instance of {@link Connection}
+     * @param connection an instance of {@link Connection}
      *                   which provides ability to connect to the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
@@ -322,7 +322,7 @@ public class EditBookServlet extends HttpServlet {
     /**
      * @return {@link Map} containing all records in the table <i>languages</i>.
      *
-     * @param connection - an instance of {@link Connection}
+     * @param connection an instance of {@link Connection}
      *                   which provides ability to connect to the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.

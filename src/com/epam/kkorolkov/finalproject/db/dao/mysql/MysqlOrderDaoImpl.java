@@ -72,8 +72,8 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
      * @return number of rows in the table <i>orders</i> with
      * where clause specified by the filter given in {@code parameters}.
      *
-     * @param connection - instance of {@link Connection} to reach the database.
-     * @param parameters - parameters of where clause.
+     * @param connection instance of {@link Connection} to reach the database.
+     * @param parameters parameters of where clause.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -93,8 +93,8 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
      * MySQL specific realization of {@link OrderDao#insert(Connection, Order)} method.
      * Inserts a row to the table <i>orders</i> with data specified in book.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param order - an order to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param order an order to be inserted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -129,8 +129,9 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
      * MySQL specific realization of method which inserts into the table
      * <i>order_details</i> necessary data.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param order - an order which details to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param order an order which details to be inserted.
+     *
      * @throws SQLException is thrown if data cannot be inserted.
      */
     private void insertDetails(Connection connection, Order order) throws SQLException {
@@ -158,8 +159,8 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
      * MySQL specific realization of {@link OrderDao#delete(Connection, int)} method.
      * Deletes a row which represents an order in the table <i>orders</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of an order to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of an order to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -184,9 +185,9 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
      * MySQL specific realization of method which changes status
      * for a selected order in the table <i>orders</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param orderId - id of an order to change status.
-     * @param statusId - id of a status to change to.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param orderId id of an order to change status.
+     * @param statusId id of a status to change to.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -213,12 +214,12 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
      * Retrieves rows from the table <i>orders</i> with specified limit, offset,
      * and where clause specified by the filter given in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param limit - number of rows to retrieve.
-     * @param offset - number of a row to begin with.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param limit number of rows to retrieve.
+     * @param offset number of a row to begin with.
+     * @param parameters parameters of where clause.
      *
-     * @return {@link List<Book>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -242,12 +243,12 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
      * MySQL specific realization of {@link OrderDao#getAllByUser(Connection, int, int, int)} method.
      * Retrieves rows from the table <i>orders</i> with specified limit, offset for specified customer.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param limit - number of rows to retrieve.
-     * @param offset - number of a row to begin with.
-     * @param userId - id of a customer.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param limit number of rows to retrieve.
+     * @param offset number of a row to begin with.
+     * @param userId id of a customer.
      *
-     * @return {@link List<Book>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -270,7 +271,7 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
     /**
      * Constructs SQL query where clause based on {@code parameters} map.
      *
-     * @param parameters - parameters of where clause.
+     * @param parameters parameters of where clause.
      * @return where clause of the SQL query.
      */
     private String setClause(Map<String, String> parameters) {
@@ -310,10 +311,10 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
     /**
      * Retrieves rows from the table <i>orders</i> with an arbitrary {@link PreparedStatement}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      * @param preparedStatement an SQL statement to be executed.
      *
-     * @return {@link List<Order>} representing selected rows.
+     * @return {@link List} representing selected rows.
      *
      * @throws SQLException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -346,8 +347,8 @@ public class MysqlOrderDaoImpl extends MysqlAbstractDao implements OrderDao {
     /**
      * Sets details from the table <i>order_details</i> to an instance of {@link Order}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param order - an order which details are to be selected.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param order an order which details are to be selected.
      *
      * @throws SQLException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.

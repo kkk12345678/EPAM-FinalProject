@@ -14,7 +14,7 @@ public interface CategoryDao {
     /**
      * @return number of rows in the table <i>categories</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -26,10 +26,10 @@ public interface CategoryDao {
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a category to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a category to find.
      *
-     * @return {@link Optional<Category>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -41,10 +41,10 @@ public interface CategoryDao {
      * If table does not contain a row with specified {@code tag}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param tag - tag of a category to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param tag tag of a category to find.
      *
-     * @return {@link Optional<Category>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -53,9 +53,9 @@ public interface CategoryDao {
     /**
      * Method {@code getAll} retrieves all rows from the table <i>categories</i>
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
-     * @return {@link List<Category>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -64,8 +64,8 @@ public interface CategoryDao {
     /**
      * Method {@code update} updates a row which represents a category in the table <i>categories</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param category - a category to be updated.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param category a category to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -74,8 +74,8 @@ public interface CategoryDao {
     /**
      * Method {@code delete} deletes a row which represents a category in the table <i>categories</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a category to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a category to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -84,8 +84,10 @@ public interface CategoryDao {
     /**
      * Method {@code insert} inserts a row to the table <i>categories</i> with data specified in category.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param category - a category to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param category a category to be inserted.
+     *
+     * @return {@code id} of the inserted {@link Category}.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */

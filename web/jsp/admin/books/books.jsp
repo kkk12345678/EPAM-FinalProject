@@ -1,5 +1,4 @@
 <%@ include file="../header.jspf"%>
-
 <div id="content">
     <%@ include file="../menu.jspf"%>
     <div id="data">

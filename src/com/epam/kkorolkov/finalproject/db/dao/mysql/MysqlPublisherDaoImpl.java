@@ -57,7 +57,7 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
      * MySQL specific realization of {@link PublisherDao#count(Connection)} method.
      * @return number of rows in the table <i>publishers</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -89,10 +89,10 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a publisher to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a publisher to find.
      *
-     * @return {@link Optional<Publisher>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -136,10 +136,10 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
      * If table does not contain a row with specified {@code tag}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param tag - tag of a publisher to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param tag tag of a publisher to find.
      *
-     * @return {@link Optional<Publisher>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -180,9 +180,9 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
      * MySQL specific realization of {@link PublisherDao#getAll(Connection)} method.
      * Retrieves all rows from the table <i>publishers</i>
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
-     * @return {@link List<Publisher>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -218,8 +218,8 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
      * MySQL specific realization of {@link PublisherDao#update(Connection, Publisher)} method.
      * Updates a row which represents a publisher in the table <i>publishers</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param publisher - a publisher to be updated.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param publisher a publisher to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -246,8 +246,8 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
      * MySQL specific realization of {@link PublisherDao#delete(Connection, int)} method.
      * Deletes a row which represents a publisher in the table <i>publishers</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a publisher to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a publisher to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -272,8 +272,8 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
      * MySQL specific realization of {@link PublisherDao#insert(Connection, Publisher)} method.
      * Method {@code insert} inserts a row to the table <i>publishers</i> with data specified in publisher.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param publisher - a publisher to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param publisher a publisher to be inserted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -305,10 +305,10 @@ public class MysqlPublisherDaoImpl extends MysqlAbstractDao implements Publisher
     /**
      * MySQL specific method which retrieves {@code names} and {@code descriptions}
      * from the table <i>publisher_descriptions</i> and sets them to
-     * the corresponding instance of a {@code publisher} for all languages.
+     * the corresponding instance of a {@link Publisher} for all languages.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param publisher - an instance of {@link Publisher} to set
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param publisher an instance of {@link Publisher} to set
      *                  {@code names} and {@code descriptions} to.
      *
      * @throws DbException is thrown if data cannot be retrieved.

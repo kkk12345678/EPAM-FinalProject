@@ -6,11 +6,9 @@ import java.io.IOException;
 
 /**
  *  Class {@code PagesTagHandler} supports custom JSP tag
- *  '<pages>'. It is used to render pagination control buttons.
- *  The tag has two required parameters: <ul>
- *      <li>current</li> - the current page;
- *      <li>total</li> - total number of pages;
- *  </ul>
+ *  {@code pages}. It is used to render pagination control buttons.
+ *  The tag has two required parameters: {@code current} - the current page,
+ *  and {@code total} - total number of pages;
  */
 public class PagesTagHandler extends SimpleTagSupport {
     /** HTML tags */
@@ -39,7 +37,7 @@ public class PagesTagHandler extends SimpleTagSupport {
     }
 
     /**
-     * Writes to {@code JspWriter} HTML tags necessary to
+     * Writes to {@link JspWriter} HTML tags necessary to
      * render pagination control buttons.
      *
      * @throws IOException is thrown if an input or output exception occurs.

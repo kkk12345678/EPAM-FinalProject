@@ -25,8 +25,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * The {@code CartServlet} is a servlet which task is to
+ * show a customer the cart, and edit it, if necessary.
+ *
+ * Only {@code doGet} method is overridden.
+ */
 @WebServlet("/cart")
 public class CartServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("CART");
 
     /** Page to redirect after successful request processing */
@@ -64,13 +71,30 @@ public class CartServlet extends HttpServlet {
     private static final String INCLUDE_JSP = "./jsp/client/cart.jsp";
 
 
+    /**
+     * {@code doGet} method handles GET request.
+     * Shows the cart to a customer.
+     *
+     * If request parameter {@code action} contains one of commands
+     * {@code increase}, {@code decrease}, {@code delete}, and {@code add}
+     * increases or decreases the quantity, deletes or adds a book
+     * which {@code id} is specified in request parameter {@code id}.
+     *
+     * {@link Map} representing the cart is stored in the instance
+     * of {@link HttpSession}.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         String action = request.getParameter(PARAM_ACTION);
         String idParameter = request.getParameter(PARAM_ID);
         HttpSession session = request.getSession();
-
         Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute(ATTR_CART);
         try {
             if (action == null) {
@@ -126,6 +150,20 @@ public class CartServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code prepareRequest} is a utility method which sets {@code cart}
+     * attribute to a {@link HttpSession} object.
+     * For each row in the cart looks up for a {@link Book} with the specified {@code id}
+     * and stores it in the {@code detailedCart}.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param cart {@link Map} containing information about current books and quantities in the cart.
+     *
+     * @throws DbException is thrown if data cannot be retrieved.
+     * @throws DaoException is thrown if DAO cannot be instantiated.
+     * @throws BadRequestException is thrown if attempting to add a book
+     * which is not present in the table <i>books</i>.
+     */
     private void prepareRequest(HttpServletRequest request, Map<Integer, Integer> cart) throws DbException, DaoException, BadRequestException {
         Map<Book, Integer> detailedCart = new HashMap<>();
         DataSource dataSource = null;

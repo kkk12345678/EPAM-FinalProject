@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Class {@code ErrorServlet} is a servlet which task is to change session
+ * attribute {@code locale}.
+ */
 @WebServlet("/change-locale")
 public class ChangeLocaleServlet extends HttpServlet {
     /** Keys of request parameters */
@@ -19,10 +23,10 @@ public class ChangeLocaleServlet extends HttpServlet {
 
     /**
      * {@code doGet} method handles GET request.
-     * Sets session attribute 'locale' as specified in GET parameter 'locale'.
+     * Sets session attribute {@code locale} as specified in GET parameter {@code locale}.
      *
-     * @param request - {@code HttpServletRequest} object provided by Tomcat.
-     * @param response - {@code HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws IOException is thrown if an input or output exception occurs.
      */

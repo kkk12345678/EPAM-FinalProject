@@ -60,7 +60,7 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * MySQL specific realization of {@link CategoryDao#count(Connection)} method.
      * @return number of rows in the table <i>categories</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -91,10 +91,10 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a category to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a category to find.
      *
-     * @return {@link Optional<Category>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -136,10 +136,10 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * If table does not contain a row with specified {@code tag}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param tag - tag of a category to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param tag tag of a category to find.
      *
-     * @return {@link Optional<Category>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -180,8 +180,8 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * from the table <i>category_descriptions</i> and sets them to
      * the corresponding instance of a {@code } for all languages.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param category - an instance of {@link Category} to set
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param category an instance of {@link Category} to set
      *                  {@code names} and {@code descriptions} to.
      *
      * @throws DbException is thrown if data cannot be retrieved.
@@ -211,9 +211,9 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * MySQL specific realization of {@link CategoryDao#getAll(Connection)} method.
      * Retrieves all rows from the table <i>categories</i>
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
-     * @return {@link List<Category>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -249,8 +249,8 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * MySQL specific realization of {@link CategoryDao#update(Connection, Category)} method.
      * Updates a row which represents a category in the table <i>categories</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param category - a category to be updated.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param category a category to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -277,8 +277,8 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * MySQL specific realization of {@link CategoryDao#delete(Connection, int)} method.
      * Deletes a row which represents a category in the table <i>categories</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a category to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a category to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -303,8 +303,8 @@ public class MysqlCategoryDaoImpl extends MysqlAbstractDao implements CategoryDa
      * MySQL specific realization of {@link CategoryDao#insert(Connection, Category)} method.
      * Method {@code insert} inserts a row to the table <i>categories</i> with data specified in category.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param category - a category to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param category a category to be inserted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */

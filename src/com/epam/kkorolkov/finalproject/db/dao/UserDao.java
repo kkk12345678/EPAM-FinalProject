@@ -18,10 +18,10 @@ public interface UserDao {
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a user to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a user to find.
      *
-     * @return {@link Optional<User>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -34,9 +34,9 @@ public interface UserDao {
      * returns empty {@link Optional}.
      *
      * @param connection - an instance of {@link Connection} to reach the database.
-     * @param email - email of a user to find.
+     * @param email email of a user to find.
      *
-     * @return {@link Optional<User>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -45,9 +45,9 @@ public interface UserDao {
     /**
      * Method {@code getAll} retrieves all rows from the table <i>users</i>
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
-     * @return {@link List<User>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -56,8 +56,8 @@ public interface UserDao {
     /**
      * Method {@code update} updates a row which represents a user in the table <i>users</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param user- a user to be updated.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param user a user to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -66,8 +66,8 @@ public interface UserDao {
     /**
      * Method {@code delete} deletes a row which represents a user in the table <i>users</i>.
      *
-     * @param connection - an  of {@link Connection} to reach the database.
-     * @param id - id of a user to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a user to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -76,8 +76,10 @@ public interface UserDao {
     /**
      * Method {@code insert} inserts a row to the table <i>users</i> with data specified in user.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param user - a user to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param user a user to be inserted.
+     *
+     * @return {@code id} of the inserted {@link User}.
      *
      * @throws DbException is thrown if data cannot be deleted.
      * @throws ValidationException is thrown if user data is incorrect or
@@ -88,7 +90,7 @@ public interface UserDao {
     /**
      * @return number of rows in the table <i>users</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */

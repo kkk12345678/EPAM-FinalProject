@@ -22,8 +22,8 @@ public class ErrorServlet extends HttpServlet {
     /**
      * {@code doGet} method handles GET request.
      *
-     * @param request - {@code HttpServletRequest} object provided by Tomcat.
-     * @param response - {@code HttpServletResponse} object provided by Tomcat.
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
      *
      * @throws ServletException is thrown if the request for the GET could not be handled.
      * @throws IOException is thrown if an input or output exception occurs.

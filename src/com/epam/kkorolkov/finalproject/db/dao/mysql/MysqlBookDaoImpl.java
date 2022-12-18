@@ -93,8 +93,8 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * @return number of rows in the table <i>books</i> with
      * where clause specified by the filter given in {@code parameters}.
      *
-     * @param connection - instance of {@link Connection} to reach the database.
-     * @param parameters - parameters of where clause.
+     * @param connection instance of {@link Connection} to reach the database.
+     * @param parameters parameters of where clause.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws BadRequestException is thrown if some of parameters are invalid.
@@ -110,10 +110,10 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - instance of {@link Connection} to reach the database.
-     * @param id - id of a book to find.
+     * @param connection instance of {@link Connection} to reach the database.
+     * @param id id of a book to find.
      *
-     * @return {@link Optional<Book>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -152,10 +152,10 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * If table does not contain a row with specified {@code tag}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param tag - tag of a book to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param tag tag of a book to find.
      *
-     * @return {@link Optional<Book>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -193,12 +193,12 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * Retrieves rows from the table <i>books</i> with specified limit, offset,
      * and where clause specified by the filter given in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param limit - number of rows to retrieve.
-     * @param offset - number of a row to begin with.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param limit number of rows to retrieve.
+     * @param offset number of a row to begin with.
+     * @param parameters parameters of where clause.
      *
-     * @return {@link List<Book>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -224,8 +224,8 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * MySQL specific realization of {@link BookDao#update(Connection, Book)} method.
      * Updates a row which represents a book in the table <i>books</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param book - a book to be updated.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param book a book to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -253,8 +253,8 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * MySQL specific realization of {@link BookDao#delete(Connection, int)} method.
      * Deletes a row which represents a book in the table <i>books</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a book to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a book to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -279,8 +279,8 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * MySQL specific realization of {@link BookDao#insert(Connection, Book)} method.
      * Inserts a row to the table <i>books</i> with data specified in book.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param book - a book to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param book a book to be inserted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -313,8 +313,8 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * Retrieves a maximum price among filtered rows in <i>books</i> table
      * with where clause specified in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param parameters parameters of where clause.
      *
      * @return a maximum price among filtered <i>books</i> table by where clause
      * specified in {@code parameters}.
@@ -334,8 +334,8 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
      * Retrieves a minimum price among filtered rows in <i>books</i> table
      * with where clause specified in {@code parameters}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param parameters - parameters of where clause.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param parameters parameters of where clause.
      *
      * @return a minimum price among filtered <i>books</i> table by where clause
      * specified in {@code parameters}.
@@ -353,8 +353,8 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     /**
      * Common method for finding maximum and minimum price. Retrieves data specified by {@code query} parameter.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param query - an SQL query to execute.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param query an SQL query to execute.
      *
      * @return a maximum or minimum price depending on the query.
      *
@@ -385,10 +385,10 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     /**
      * Common method for counting rows with specified SQL query.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param query - an SQL query to execute.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param query an SQL query to execute.
      *
-     * @return number of rows in the table satisfying parameters..
+     * @return number of rows in the table satisfying parameters.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws BadRequestException is thrown if some of parameters are invalid.
@@ -417,10 +417,10 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     /**
-     * An utility method that prepares {@link PreparedStatement} with data from the {@link Book} instance.
+     * A utility method that prepares {@link PreparedStatement} with data from the {@link Book} instance.
      *
-     * @param book - an instance of {@link Book} with data to set.
-     * @param preparedStatement - an instance of {@link PreparedStatement} to be prepared.
+     * @param book an instance of {@link Book} with data to set.
+     * @param preparedStatement an instance of {@link PreparedStatement} to be prepared.
      *
      * @throws SQLException is thrown if {@link SQLException} is thrown while preparing statement.
      */
@@ -437,10 +437,10 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     /**
      * Common method for retrieving rows with parameters specified in {@code preparedStatement}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param preparedStatement - a statement to be executed.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param preparedStatement a statement to be executed.
      *
-     * @return {@link List<Book>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -468,11 +468,11 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     /**
-     * An utility method that sets data from {@code resultSet} to the {@link Book} instance.
+     * A utility method that sets data from {@code resultSet} to the {@link Book} instance.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      * @param resultSet an instance of {@link ResultSet} containing necessary data.
-     * @param book - an instance of {@link Book} to save data to.
+     * @param book an instance of {@link Book} to save data to.
      *
      * @throws SQLException is thrown if {@link SQLException} is thrown while processing {@code resultSet}.
      * @throws DaoException is thrown if DAO cannot be instantiated.
@@ -495,11 +495,11 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     /**
-     * An utility method that sets data which is retrieved from
+     * A utility method that sets data which is retrieved from
      * <i>book_descriptions</i> table to the {@link Book} instance.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param book - an instance of {@link Book} to store data to.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param book an instance of {@link Book} to store data to.
      *
      * @throws SQLException is thrown if {@link SQLException} is thrown while processing the query.
      */
@@ -520,12 +520,12 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     /**
-     * An utility method that depending on {@code query} inserts or updates data
+     * A utility method that depending on {@code query} inserts or updates data
      * from an instance of {@link Book} to the table <i>book_descriptions</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param query - MySQL insert or update query for the table <i>book_descriptions</i>.
-     * @param book - an instance of {@link Book} to get data from.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param query MySQL insert or update query for the table <i>book_descriptions</i>.
+     * @param book an instance of {@link Book} to get data from.
      *
      * @throws SQLException is thrown if {@link SQLException} is thrown while processing the query.
      */
@@ -544,9 +544,9 @@ public class MysqlBookDaoImpl extends MysqlAbstractDao implements BookDao {
     }
 
     /**
-     * An utility method that depending on {@code parameters} sets where clause for MySQL select query.
+     * A utility method that depending on {@code parameters} sets where clause for MySQL select query.
      *
-     * @param parameters - an instance of {@link Map} representing filter parameters.
+     * @param parameters an instance of {@link Map} representing filter parameters.
      *
      * @return where clause string representing the filter set by user.
      */

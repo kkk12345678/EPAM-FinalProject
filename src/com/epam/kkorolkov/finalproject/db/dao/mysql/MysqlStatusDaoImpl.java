@@ -37,10 +37,10 @@ public class MysqlStatusDaoImpl extends MysqlAbstractDao implements StatusDao {
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a status to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a status to find.
      *
-     * @return {@link Optional<Status>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -77,9 +77,9 @@ public class MysqlStatusDaoImpl extends MysqlAbstractDao implements StatusDao {
      * MySQL specific realization of {@link StatusDao#getAll(Connection)} )} method.
      * Retrieves all rows from the table <i>statuses</i>
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
-     * @return {@link List<Status>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */

@@ -21,8 +21,15 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 
+/**
+ * The {@code AddUserServlet} is a servlet which task is to
+ * add a user the table <i>users</i> by an administrator.
+ *
+ * Only {@code doPost} method is overridden.
+ */
 @WebServlet("/admin/add-user")
 public class AddUserServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("ADD USER");
 
     /** Page to redirect after successful request processing */
@@ -49,6 +56,15 @@ public class AddUserServlet extends HttpServlet {
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_PASSWORD = "password";
 
+    /**
+     * {@code doPost} method handles POST request with the parameters which specify a user.
+     * Method reads request parameters, saves them to an instance of {@link User},
+     * and invokes {@link UserDao#insert(Connection, User)}.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         String firstName = request.getParameter(PARAM_FIRST_NAME);

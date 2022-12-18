@@ -15,10 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.Map;
 
+/**
+ * The {@code AdminServlet} is a servlet which task is to represent main administrator's page.
+ * It contains number of rows in the tables <i>categories</i>, <i>publishers</i>,
+ * <i>books</i>, <i>orders</i>, and <i>users</i>.
+ *
+ * Only {@code doGet} method is overridden.
+ */
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
-
     /** Page to redirect after exception is thrown */
     private static final String REDIRECT_ERROR_CONNECTION =
             "/error?code=500&message=Unable to connect to the database. Try again later.";
@@ -40,6 +47,19 @@ public class AdminServlet extends HttpServlet {
     /** JSP page to include */
     private static final String INCLUDE_JSP = "./jsp/admin/welcome.jsp";
 
+    /**
+     * {@code doGet} method handles GET request. Retrieves data from
+     * {@link UserDao#count(Connection)}, {@link OrderDao#count(Connection, Map)},
+     * {@link PublisherDao#count(Connection)}, {@link CategoryDao#count(Connection)},
+     * and {@link BookDao#count(Connection, Map)}. Finally, sets corresponding attributes
+     * to {@code request}.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         Connection connection = null;

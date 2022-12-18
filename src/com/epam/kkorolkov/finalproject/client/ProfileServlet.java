@@ -21,8 +21,15 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The {@code ProfileServlet} is a servlet which task is to represent
+ * a list of orders placed by a current user.
+ *
+ * {@code doGet} method is overridden.
+ */
 @WebServlet("/profile")
 public class ProfileServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("PROFILE");
 
     /** Number of shown orders per page */
@@ -60,6 +67,18 @@ public class ProfileServlet extends HttpServlet {
     private static final String ATTR_CURRENT_PAGE = "currentPage";
     private static final String ATTR_TOTAL_PAGES = "totalPages";
 
+    /**
+     * {@code doGet} method handles GET request. Reads current customer's
+     * data from the {@link javax.servlet.http.HttpSession}. Retrieves data from
+     * {@link OrderDao#getAllByUser(Connection, int, int, int)} and
+     * shows it to a customer.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         User user = (User) request.getSession().getAttribute(ATTR_USER);

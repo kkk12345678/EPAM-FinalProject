@@ -2,6 +2,7 @@ package com.epam.kkorolkov.finalproject.listener;
 
 import org.apache.logging.log4j.LogManager;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -18,10 +19,10 @@ public class ContextListener implements ServletContextListener {
     private static final String LOGGER_NAME = "INIT";
 
     /**
-     * {@code contextInitialized} gets real context path from {@code ServletContextEvent}
+     * {@code contextInitialized} gets real context path from {@link ServletContextEvent}
      * and sets system property used to get logs folder.
      *
-     * @param sce - information about the ServletContext that was initialized.
+     * @param sce information about the {@link ServletContext} that was initialized.
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {

@@ -18,6 +18,13 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.Optional;
 
+/**
+ * The {@code ProductServlet} is a servlet which task is to represent
+ * a product corresponding to a row in the table <i>books</i>
+ * to a customer.
+ *
+ * {@code doGet} method is overridden.
+ */
 @WebServlet("/product/*")
 public class ProductServlet extends HttpServlet {
     /** Page to redirect if book not found */
@@ -37,6 +44,16 @@ public class ProductServlet extends HttpServlet {
     /** JSP page to include */
     private static final String INCLUDE_JSP = "../jsp/client/product.jsp";
 
+    /**
+     * {@code doGet} method handles GET request. Retrieves data from
+     * {@link BookDao#get(Connection, int)} and shows it to a customer.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         DataSource dataSource = null;

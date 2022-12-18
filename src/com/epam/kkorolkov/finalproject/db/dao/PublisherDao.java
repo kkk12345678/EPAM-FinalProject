@@ -14,7 +14,7 @@ public interface PublisherDao {
     /**
      * @return number of rows in the table <i>publishers</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -26,10 +26,10 @@ public interface PublisherDao {
      * If table does not contain a row with specified {@code id}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a publisher to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a publisher to find.
      *
-     * @return {@link Optional<Publisher>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -41,10 +41,10 @@ public interface PublisherDao {
      * If table does not contain a row with specified {@code tag}
      * returns empty {@link Optional}.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param tag - tag of a publisher to find.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param tag tag of a publisher to find.
      *
-     * @return {@link Optional<Publisher>} representing a row from the table.
+     * @return {@link Optional} representing a row from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -53,9 +53,9 @@ public interface PublisherDao {
     /**
      * Method {@code getAll} retrieves all rows from the table <i>publishers</i>
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
-     * @return {@link List<Publisher>} representing all rows from the table.
+     * @return {@link List} representing all rows from the table.
      *
      * @throws DbException is thrown if data cannot be retrieved.
      */
@@ -64,8 +64,8 @@ public interface PublisherDao {
     /**
      * Method {@code update} updates a row which represents a publisher in the table <i>publishers</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param publisher - a publisher to be updated.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param publisher a publisher to be updated.
      *
      * @throws DbException is thrown if data cannot be updated.
      */
@@ -74,8 +74,8 @@ public interface PublisherDao {
     /**
      * Method {@code delete} deletes a row which represents a publisher in the table <i>publishers</i>.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param id - id of a publisher to be deleted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param id id of a publisher to be deleted.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */
@@ -84,8 +84,10 @@ public interface PublisherDao {
     /**
      * Method {@code insert} inserts a row to the table <i>publishers</i> with data specified in publisher.
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
-     * @param publisher - a publisher to be inserted.
+     * @param connection an instance of {@link Connection} to reach the database.
+     * @param publisher a publisher to be inserted.
+     *
+     * @return {@code id} of the inserted {@link Publisher}.
      *
      * @throws DbException is thrown if data cannot be deleted.
      */

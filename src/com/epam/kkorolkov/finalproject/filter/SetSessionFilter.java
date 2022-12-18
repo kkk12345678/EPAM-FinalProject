@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class {@code SetSessionFilter} sets {@code HttpSession} parameters
+ * Class {@code SetSessionFilter} sets {@link HttpSession} parameters
  * 'cart' and 'languages' if they are not set previously.
  */
 @WebFilter(filterName = "SetSessionFilter")
@@ -50,12 +50,13 @@ public class SetSessionFilter implements Filter {
      * Sets 'languages' attribute to {@code Map} containing all
      * languages from the database, if the attribute is null;
      *
-     * @param request - request to process.
-     * @param response - response associated with the request.
-     * @param chain Provides access to the next filter in the chain for this filter
+     * @param request request to process.
+     * @param response response associated with the request.
+     * @param chain provides access to the next filter in the chain for this filter
      *              to pass the request and response to for further processing.
      *
-     * @throws IOException if an I/O error occurs during this filter's processing of the request
+     * @throws IOException is thrown if an I/O error occurs
+     * during this filter's processing of the request
      * @throws ServletException is thrown if if the processing fails for any other reason.
      */
     @SuppressWarnings("unchecked")

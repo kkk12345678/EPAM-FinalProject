@@ -20,6 +20,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.Optional;
 
+/**
+ * The {@code SingupServlet} is a servlet which task is to
+ * insert a record into the table <i>users</i>.
+ *
+ * {@code doGet} and {@code doPost} methods are overridden.
+ */
 @WebServlet("/signup")
 public class SingupServlet extends HttpServlet {
     /** Page to redirect after successful signup */
@@ -48,10 +54,19 @@ public class SingupServlet extends HttpServlet {
     /** Request attributes */
     private static final String ATTR_USER = "user";
 
-
     /** JSP page to include */
     private static final String INCLUDE_JSP = "./jsp/auth/signup.jsp";
 
+    /**
+     * {@code doPost} method handles POST request. Creates a user and using
+     * {@link UserDao#insert(Connection, User)} method inserts a record
+     * to the table <i>users</i>.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String context = request.getServletContext().getContextPath();
         Connection connection = null;
@@ -92,6 +107,16 @@ public class SingupServlet extends HttpServlet {
         }
     }
 
+    /**
+     * {@code doGet} method handles GET request.
+     * Shows the sign up form to a user.
+     *
+     * @param request - {@link HttpServletRequest} object provided by Tomcat.
+     * @param response - {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher(INCLUDE_JSP).include(request, response);
     }

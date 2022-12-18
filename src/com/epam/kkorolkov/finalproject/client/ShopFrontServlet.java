@@ -21,8 +21,16 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.Map;
 
+/**
+ * The {@code ShopFrontServlet} is a servlet which task is to represent main client's page.
+ * It contains first {@code LIMIT} number of rows in the table <i>books</i> with
+ * the filter parameters specified in request.
+ *
+ * Only {@code doGet} method is overridden.
+ */
 @WebServlet("/shop")
 public class ShopFrontServlet extends HttpServlet {
+    /** Logger */
     private static final Logger LOGGER = LogManager.getLogger("GET BOOKS");
 
     /** Number of shown products per page */
@@ -59,6 +67,22 @@ public class ShopFrontServlet extends HttpServlet {
     private static final String ATTR_MAX_PRICE = "maxPrice";
     private static final String ATTR_MIN_PRICE = "minPrice";
 
+    /**
+     * {@code doGet} method handles GET request. Retrieves data from the table <i>books</i>
+     * using {@link BookDao#getAll(Connection, int, int, Map)}, using
+     * filter parameters specified in request parameters.
+     * In order to fill filter form retrieves data from the tables
+     * <i>categories</i> and <i>publishers</i> using {@link CategoryDao#getAll(Connection)} and
+     * {@link PublisherDao#getAll(Connection)} respectively. Also retrieves
+     * maximum and minimum prices using {@link BookDao#getMaxPrice(Connection, Map)} and
+     * {@link BookDao#getMinPrice(Connection, Map)} respectively.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         User user = (User) request.getSession().getAttribute(ATTR_USER);

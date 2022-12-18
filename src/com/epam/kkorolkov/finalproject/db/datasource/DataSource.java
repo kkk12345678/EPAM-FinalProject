@@ -11,7 +11,7 @@ public interface DataSource {
     /**
      * Method {@code getConnection} provides an instance of {@link Connection} needed to execute queries.
      *
-     * @return instance of {@link Connection}.
+     * @return an instance of {@link Connection}.
      *
      * @throws DbConnectionException is thrown if database could not be reached.
      */

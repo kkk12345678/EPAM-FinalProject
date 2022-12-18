@@ -4,7 +4,7 @@
 <div id="add-user-modal">
     <form action="${pageContext.request.contextPath}/admin/add-user" method="post">
         <input class="user-input" type="text" name="firstname" placeholder="<fmt:message key="admin.users.header.firstname"/>" required>
-        <input class="user-input" type="text" name="lastname" placeholder="<fmt:message key="admin.users.header.laststname"/>" required>
+        <input class="user-input" type="text" name="lastname" placeholder="<fmt:message key="admin.users.header.lastname"/>" required>
         <input class="user-input" type="email" name="email" placeholder="<fmt:message key="admin.users.header.email"/>" required>
         <input class="user-input" type="password" name="password" placeholder="<fmt:message key="admin.users.header.password"/>" required>
         <button class="control-button"><fmt:message key="admin.users.button.add"/></button>
@@ -20,7 +20,7 @@
                 <tr>
                     <th><fmt:message key="admin.users.header.id"/></th>
                     <th><fmt:message key="admin.users.header.firstname"/></th>
-                    <th><fmt:message key="admin.users.header.laststname"/></th>
+                    <th><fmt:message key="admin.users.header.lastname"/></th>
                     <th><fmt:message key="admin.users.header.email"/></th>
                     <th><fmt:message key="admin.users.header.administrator"/></th>
                     <th><fmt:message key="admin.users.header.blocked"/></th>

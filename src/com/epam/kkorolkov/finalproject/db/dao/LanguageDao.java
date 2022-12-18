@@ -13,7 +13,7 @@ public interface LanguageDao {
     /**
      * Method {@code getAll} retrieves all rows from the table <i>languages</i>
      *
-     * @param connection - an instance of {@link Connection} to reach the database.
+     * @param connection an instance of {@link Connection} to reach the database.
      *
      * @return {@link Map} representing all rows from the table where key is <i>language_id</i>.
      *

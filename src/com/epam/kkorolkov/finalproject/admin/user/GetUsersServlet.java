@@ -18,6 +18,13 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 
+/**
+ * The {@code GetBooksServlet} is a servlet which task is to retrieve
+ * data corresponding to all rows in the table <i>users</i> and
+ * represent them to administrator's page.
+ *
+ * {@code doGet} method is overridden.
+ */
 @WebServlet("/admin/users")
 public class GetUsersServlet extends HttpServlet {
     /** Page to redirect after exception is thrown */
@@ -34,6 +41,16 @@ public class GetUsersServlet extends HttpServlet {
     /** JSP page to include */
     private static final String INCLUDE_JSP = "../jsp/admin/users/users.jsp";
 
+    /**
+     * {@code doGet} method handles GET request. Retrieves data from
+     * {@link UserDao#getAll(Connection)}.
+     *
+     * @param request {@link HttpServletRequest} object provided by Tomcat.
+     * @param response {@link HttpServletResponse} object provided by Tomcat.
+     *
+     * @throws ServletException is thrown if the request for the GET could not be handled.
+     * @throws IOException is thrown if an input or output exception occurs.
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String context = request.getServletContext().getContextPath();
         Connection connection = null;
@@ -42,10 +59,8 @@ public class GetUsersServlet extends HttpServlet {
             dataSource = AbstractDataSourceFactory.getInstance().getDataSource();
             connection = dataSource.getConnection();
             UserDao userDao = AbstractDaoFactory.getInstance().getUserDao();
-            if (connection != null) {
-                List<User> users = userDao.getAll(connection);
-                request.setAttribute(ATTR_USERS, users);
-            }
+            List<User> users = userDao.getAll(connection);
+            request.setAttribute(ATTR_USERS, users);
             request.getRequestDispatcher(INCLUDE_JSP).include(request, response);
         } catch (DbConnectionException e) {
             response.sendRedirect(context + REDIRECT_ERROR_CONNECTION);
